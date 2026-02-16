@@ -1,5 +1,8 @@
+'use client'
+
 import Sidebar from '@/components/layout/Sidebar'
 import TabBar from '@/components/layout/TabBar'
+import { UnitProvider } from '@/hooks/useUnits'
 
 export default function DashboardLayout({
   children,
@@ -7,12 +10,14 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen" style={{ background: '#FBFBFD' }}>
-      <Sidebar />
-      <main style={{ marginLeft: 'var(--sidebar-width)' }} className="p-8">
-        <TabBar />
-        {children}
-      </main>
-    </div>
+    <UnitProvider>
+      <div className="min-h-screen bg-background">
+        <Sidebar />
+        <main style={{ marginLeft: 'var(--sidebar-width)' }} className="p-8">
+          <TabBar />
+          {children}
+        </main>
+      </div>
+    </UnitProvider>
   )
 }

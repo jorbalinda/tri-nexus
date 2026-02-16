@@ -56,17 +56,17 @@ export default function DropZone({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer ${
           isDragging
-            ? 'border-blue-500 bg-blue-50/50'
-            : 'border-gray-200 hover:border-gray-300 bg-gray-50/30'
+            ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30'
+            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-gray-50/30 dark:bg-gray-800/30'
         }`}
       >
         <label className="cursor-pointer flex flex-col items-center gap-3">
-          <Upload size={32} className="text-gray-300" />
+          <Upload size={32} className="text-gray-300 dark:text-gray-600" />
           <div>
-            <p className="text-sm font-semibold text-gray-600">
+            <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">
               Drop files here or click to browse
             </p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               Supports {acceptedTypes.join(', ')} files
             </p>
           </div>
@@ -85,22 +85,22 @@ export default function DropZone({
           {files.map((file, i) => (
             <div
               key={i}
-              className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 border border-gray-100"
+              className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
             >
               <div className="flex items-center gap-3">
-                <FileText size={18} className="text-gray-400" />
+                <FileText size={18} className="text-gray-400 dark:text-gray-500" />
                 <div>
-                  <p className="text-sm font-medium text-gray-700">{file.name}</p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{file.name}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
                     {(file.size / 1024).toFixed(1)} KB
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => removeFile(i)}
-                className="p-1 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
+                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
               >
-                <X size={16} className="text-gray-400" />
+                <X size={16} className="text-gray-400 dark:text-gray-500" />
               </button>
             </div>
           ))}

@@ -20,22 +20,22 @@ export default function LogPage() {
   return (
     <div className="max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Log Data</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Log Data</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Record workouts, manual metrics, or upload activity files
         </p>
       </div>
 
       {/* Tab pills */}
-      <div className="flex items-center gap-1 bg-gray-200/50 rounded-2xl p-1.5 mb-8 w-fit">
+      <div className="flex items-center gap-1 bg-gray-200/50 dark:bg-gray-800/50 rounded-2xl p-1.5 mb-8 w-fit">
         {tabs.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
             className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
               activeTab === key
-                ? 'bg-white shadow-sm text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-[var(--card-bg)] shadow-sm text-blue-600'
+                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
             }`}
           >
             {label}
@@ -47,11 +47,11 @@ export default function LogPage() {
       {activeTab === 'manual' && <ManualLogForm />}
       {activeTab === 'upload' && (
         <Card>
-          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 mb-6">
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-6">
             Upload Activity Files
           </p>
           <DropZone onFilesSelected={(files) => console.log('Files:', files)} />
-          <p className="text-xs text-gray-400 mt-4">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
             File parsing will be available in a future update. Files are stored for when parsing is enabled.
           </p>
         </Card>

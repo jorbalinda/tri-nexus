@@ -72,13 +72,13 @@ export default function ManualLogForm() {
   ]
 
   const inputClass =
-    'w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
-  const labelClass = 'block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5'
+    'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
+  const labelClass = 'block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5'
 
   return (
     <Card>
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400">
+        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
           Manual Data Entry
         </p>
 
@@ -95,7 +95,7 @@ export default function ManualLogForm() {
               className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                 category === key
                   ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
               {label}

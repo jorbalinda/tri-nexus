@@ -41,35 +41,74 @@ export function calculateTSB(workouts: Workout[]): number {
   return Math.round(calculateCTL(workouts) - calculateATL(workouts))
 }
 
-function calculateEWMA(workouts: Workout[], period: number): number {
+// ---------------------------------------------------------------------------
+// Series variants — expose daily intermediate values
+// ---------------------------------------------------------------------------
+
+export interface DailyStressPoint {
+  date: string
+  value: number
+}
+
+/** CTL series (42-day EWMA) — daily values */
+export function calculateCTLSeries(workouts: Workout[]): DailyStressPoint[] {
+  return calculateEWMASeries(workouts, 42)
+}
+
+/** ATL series (7-day EWMA) — daily values */
+export function calculateATLSeries(workouts: Workout[]): DailyStressPoint[] {
+  return calculateEWMASeries(workouts, 7)
+}
+
+/** TSB series = CTL - ATL per day */
+export function calculateTSBSeries(workouts: Workout[]): DailyStressPoint[] {
+  const ctl = calculateCTLSeries(workouts)
+  const atl = calculateATLSeries(workouts)
+  const atlMap = new Map(atl.map((p) => [p.date, p.value]))
+  return ctl.map((p) => ({
+    date: p.date,
+    value: Math.round(p.value - (atlMap.get(p.date) || 0)),
+  }))
+}
+
+function calculateEWMASeries(workouts: Workout[], period: number): DailyStressPoint[] {
   const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date))
+  const dailyTSS = buildDailyTSS(sorted)
+  if (dailyTSS.size === 0) return []
 
-  // Build daily TSS map
-  const dailyTSS = new Map<string, number>()
-  sorted.forEach((w) => {
-    const existing = dailyTSS.get(w.date) || 0
-    dailyTSS.set(w.date, existing + estimateTSS(w))
-  })
-
-  if (dailyTSS.size === 0) return 0
-
-  // Fill in zeros for missing days
   const dates = Array.from(dailyTSS.keys()).sort()
   const startDate = new Date(dates[0])
   const endDate = new Date(dates[dates.length - 1])
 
   const alpha = 2 / (period + 1)
   let ewma = 0
+  const series: DailyStressPoint[] = []
 
   const current = new Date(startDate)
   while (current <= endDate) {
     const dateStr = current.toISOString().split('T')[0]
     const tss = dailyTSS.get(dateStr) || 0
     ewma = alpha * tss + (1 - alpha) * ewma
+    series.push({ date: dateStr, value: Math.round(ewma) })
     current.setDate(current.getDate() + 1)
   }
 
-  return Math.round(ewma)
+  return series
+}
+
+function buildDailyTSS(sorted: Workout[]): Map<string, number> {
+  const dailyTSS = new Map<string, number>()
+  sorted.forEach((w) => {
+    const existing = dailyTSS.get(w.date) || 0
+    dailyTSS.set(w.date, existing + estimateTSS(w))
+  })
+  return dailyTSS
+}
+
+function calculateEWMA(workouts: Workout[], period: number): number {
+  const series = calculateEWMASeries(workouts, period)
+  if (series.length === 0) return 0
+  return series[series.length - 1].value
 }
 
 /**

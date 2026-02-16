@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #FBFBFD;
   --foreground: #1d1d1f;
@@ -7,8 +9,37 @@
   --accent-hover: #0056CC;
   --glass-bg: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(255, 255, 255, 0.6);
+  --card-bg: white;
+  --card-border: rgba(0, 0, 0, 0.04);
+  --card-shadow: rgba(0, 0, 0, 0.04);
   --card-radius: 2.5rem;
   --sidebar-width: 280px;
+  --chart-gradient-from: #f8f9ff;
+  --chart-gradient-to: #f0f4ff;
+  --grid-stroke: rgba(0, 0, 0, 0.05);
+  --tooltip-bg: white;
+  --tooltip-border: #e5e7eb;
+  --scrollbar-thumb: rgba(0, 0, 0, 0.1);
+  --scrollbar-hover: rgba(0, 0, 0, 0.2);
+}
+
+.dark {
+  --background: #0f0f11;
+  --foreground: #e5e5e7;
+  --accent: #0A84FF;
+  --accent-hover: #3399FF;
+  --glass-bg: rgba(30, 30, 35, 0.85);
+  --glass-border: rgba(80, 80, 95, 0.4);
+  --card-bg: #1c1c1e;
+  --card-border: rgba(255, 255, 255, 0.06);
+  --card-shadow: rgba(0, 0, 0, 0.3);
+  --chart-gradient-from: #1a1a2e;
+  --chart-gradient-to: #16162a;
+  --grid-stroke: rgba(255, 255, 255, 0.06);
+  --tooltip-bg: #1c1c1e;
+  --tooltip-border: #2c2c2e;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+  --scrollbar-hover: rgba(255, 255, 255, 0.25);
 }
 
 @theme inline {
@@ -28,10 +59,10 @@ body {
 
 /* Squircle card base */
 .card-squircle {
-  background: white;
+  background: var(--card-bg);
   border-radius: var(--card-radius);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 2px 20px var(--card-shadow);
 }
 
 /* Glass effect */
@@ -44,7 +75,7 @@ body {
 
 /* Chart gradient background */
 .chart-gradient {
-  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  background: linear-gradient(135deg, var(--chart-gradient-from) 0%, var(--chart-gradient-to) 100%);
 }
 
 /* Custom scrollbar */
@@ -57,10 +88,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--scrollbar-hover);
 }
