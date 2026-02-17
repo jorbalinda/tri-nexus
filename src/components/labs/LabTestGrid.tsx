@@ -6,9 +6,10 @@ import LabTestCard from './LabTestCard'
 interface LabTestGridProps {
   tests: LabTest[]
   onSelectTest: (test: LabTest) => void
+  latestByTest?: Map<string, string>
 }
 
-export default function LabTestGrid({ tests, onSelectTest }: LabTestGridProps) {
+export default function LabTestGrid({ tests, onSelectTest, latestByTest }: LabTestGridProps) {
   if (tests.length === 0) {
     return (
       <div className="text-center py-16">
@@ -28,6 +29,7 @@ export default function LabTestGrid({ tests, onSelectTest }: LabTestGridProps) {
             key={test.id}
             test={test}
             onClick={() => onSelectTest(test)}
+            lastDate={latestByTest?.get(test.id)}
           />
         ))}
       </div>

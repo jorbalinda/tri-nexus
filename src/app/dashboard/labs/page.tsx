@@ -6,13 +6,26 @@ import LabTestGrid from '@/components/labs/LabTestGrid'
 import LabTestDetailModal from '@/components/labs/LabTestDetailModal'
 import { LAB_CATEGORY_META, getTestsByCategory } from '@/lib/data/lab-tests'
 import type { LabCategory, LabTest } from '@/lib/types/lab-tests'
+import { useLabResults } from '@/hooks/useLabResults'
 
 export default function LabsPage() {
   const [category, setCategory] = useState<LabCategory>('blood_work')
   const [selectedTest, setSelectedTest] = useState<LabTest | null>(null)
+  const { results } = useLabResults()
 
   const tests = useMemo(() => getTestsByCategory(category), [category])
   const meta = LAB_CATEGORY_META[category]
+
+  // Build map of testId → latest date
+  const latestByTest = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const r of results) {
+      if (!map.has(r.test_id)) {
+        map.set(r.test_id, r.date)
+      }
+    }
+    return map
+  }, [results])
 
   return (
     <div className="flex flex-col gap-6">
@@ -36,6 +49,7 @@ export default function LabsPage() {
       <LabTestGrid
         tests={tests}
         onSelectTest={setSelectedTest}
+        latestByTest={latestByTest}
       />
 
       <LabTestDetailModal

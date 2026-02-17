@@ -1,8 +1,11 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
-import { X } from 'lucide-react'
+import { useEffect, useCallback, useState } from 'react'
+import { X, Plus, ChevronUp } from 'lucide-react'
 import type { LabTest, LabCategory } from '@/lib/types/lab-tests'
+import { useLabResults } from '@/hooks/useLabResults'
+import LabResultLogForm from './LabResultLogForm'
+import LabResultHistory from './LabResultHistory'
 
 const categoryAccent: Record<LabCategory, string> = {
   blood_work: 'text-red-500',
@@ -30,6 +33,9 @@ interface LabTestDetailModalProps {
 }
 
 export default function LabTestDetailModal({ test, onClose }: LabTestDetailModalProps) {
+  const [showLogForm, setShowLogForm] = useState(false)
+  const { results, loading: resultsLoading, refetch } = useLabResults(test?.id)
+
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -47,6 +53,11 @@ export default function LabTestDetailModal({ test, onClose }: LabTestDetailModal
       document.body.style.overflow = ''
     }
   }, [test, handleEscape])
+
+  // Reset form visibility when test changes
+  useEffect(() => {
+    setShowLogForm(false)
+  }, [test?.id])
 
   if (!test) return null
 
@@ -158,7 +169,7 @@ export default function LabTestDetailModal({ test, onClose }: LabTestDetailModal
 
           {/* Tags */}
           {test.tags.length > 0 && (
-            <div>
+            <div className="mb-6">
               <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
                 Related Areas
               </p>
@@ -173,6 +184,28 @@ export default function LabTestDetailModal({ test, onClose }: LabTestDetailModal
                 ))}
               </div>
             </div>
+          )}
+
+          {/* Log Results button / form */}
+          <div className="mb-6">
+            <button
+              onClick={() => setShowLogForm(!showLogForm)}
+              className="flex items-center gap-2 w-full justify-center py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors cursor-pointer"
+            >
+              {showLogForm ? <ChevronUp size={16} /> : <Plus size={16} />}
+              {showLogForm ? 'Hide Form' : 'Log Results'}
+            </button>
+          </div>
+
+          {showLogForm && (
+            <div className="mb-6">
+              <LabResultLogForm test={test} onSaved={refetch} />
+            </div>
+          )}
+
+          {/* Result History */}
+          {!resultsLoading && results.length > 0 && (
+            <LabResultHistory results={results} test={test} />
           )}
         </div>
       </div>

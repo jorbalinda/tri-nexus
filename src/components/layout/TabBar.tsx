@@ -16,7 +16,7 @@ export default function TabBar() {
   const pathname = usePathname()
   const { distanceUnit, speedUnit, toggleDistance, toggleSpeed } = useUnits()
 
-  if (pathname.startsWith('/dashboard/plan') || pathname.startsWith('/dashboard/log') || pathname.startsWith('/dashboard/labs')) {
+  if (pathname === '/dashboard' || pathname.startsWith('/dashboard/plan') || pathname.startsWith('/dashboard/log') || pathname.startsWith('/dashboard/labs') || pathname.startsWith('/dashboard/race-day')) {
     return null
   }
 

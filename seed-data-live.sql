@@ -1,0 +1,167 @@
+-- TRI-NEXUS Seed Data for user 2968d8dd-4d9c-4f28-a3de-e435bf01cd28
+
+-- ========================================
+-- SWIM WORKOUTS
+-- ========================================
+INSERT INTO workouts (user_id, sport, title, date, duration_seconds, distance_meters, pool_length_meters, swolf, avg_hr, max_hr, calories, rpe, notes) VALUES
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Morning Drill Set', '2025-11-18', 3600, 3000, 25, 34, 138, 158, 480, 6, 'Focused on catch and pull drills'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Threshold Swim', '2025-11-21', 4200, 3800, 25, 32, 152, 172, 620, 7, 'Main set: 10x200 on 3:15'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Easy Swim', '2025-11-25', 2700, 2200, 25, 36, 128, 145, 350, 4, 'Recovery day, focus on technique'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Speed Work', '2025-11-28', 3600, 3200, 25, 31, 155, 178, 540, 8, '8x100 all out with 60s rest'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Endurance Swim', '2025-12-02', 4500, 4000, 25, 33, 142, 162, 680, 6, 'Steady state 4km continuous'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Drill + Pull', '2025-12-05', 3000, 2500, 25, 35, 132, 148, 400, 5, 'Paddles and pull buoy work'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Race Pace', '2025-12-09', 3600, 3400, 25, 30, 158, 180, 580, 8, '3x1000 at race pace'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Easy Recovery', '2025-12-12', 2400, 1800, 25, 37, 125, 140, 280, 3, 'Just loosening up'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Threshold Intervals', '2025-12-16', 4200, 3600, 25, 31, 150, 170, 600, 7, '12x150 threshold'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'OWS Simulation', '2025-12-19', 3600, 3000, 50, 33, 145, 168, 520, 7, 'Simulated open water sighting'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Technique Focus', '2025-12-23', 3000, 2400, 25, 34, 130, 148, 380, 5, 'Catch-up drill + fingertip drag'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'New Year Build', '2025-12-30', 4200, 3800, 25, 31, 148, 168, 610, 7, 'Building back after holidays'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Threshold Test', '2026-01-02', 3600, 3200, 25, 30, 155, 175, 560, 8, 'CSS test: new threshold 1:32/100m'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Aerobic Swim', '2026-01-06', 3600, 3000, 25, 33, 140, 155, 490, 6, 'Steady aerobic effort'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Sprint Set', '2026-01-09', 3000, 2800, 25, 29, 160, 182, 500, 9, '16x50 max effort'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Pull Set', '2026-01-13', 3600, 3200, 25, 32, 135, 152, 480, 5, 'All pull buoy, building feel'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Race Prep', '2026-01-16', 4200, 3800, 25, 30, 150, 172, 620, 7, 'Race simulation 3.8km'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Lactate Set', '2026-01-23', 3600, 3400, 25, 29, 162, 185, 580, 9, '5x200 above threshold'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Steady State', '2026-01-27', 4500, 4000, 25, 32, 142, 160, 680, 6, 'Continuous aerobic swim'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Intervals', '2026-01-30', 3600, 3200, 25, 31, 148, 168, 540, 7, '8x200 descending'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Build Set', '2026-02-06', 3600, 3400, 25, 30, 152, 174, 570, 8, '4x800 building each 200'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Easy Long', '2026-02-10', 4200, 3600, 25, 33, 138, 155, 580, 5, 'Easy distance work'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'swim', 'Speed Endurance', '2026-02-13', 3600, 3200, 25, 29, 158, 180, 550, 8, '6x300 at race pace');
+
+-- ========================================
+-- SESSION METRICS for most recent swim (Speed Endurance, Feb 13)
+-- Simulates 60 minutes of time-series data
+-- ========================================
+INSERT INTO session_metrics (workout_id, timestamp_offset_seconds, heart_rate, pace_sec_per_km, cadence, speed_mps)
+SELECT w.id, gs.t,
+  -- HR: warm up 120→145, main set oscillates 148-172, cool down back to 130
+  CASE
+    WHEN gs.t < 600 THEN 120 + (gs.t * 25 / 600)
+    WHEN gs.t > 3300 THEN 170 - ((gs.t - 3300) * 40 / 300)
+    ELSE 148 + (sin(gs.t::float / 120) * 12)::int + (random() * 6)::int
+  END,
+  -- Pace (sec/km): warm up slow ~700, main set 580-640, cool down 720
+  CASE
+    WHEN gs.t < 600 THEN 700 - (gs.t * 80 / 600)
+    WHEN gs.t > 3300 THEN 620 + ((gs.t - 3300) * 100 / 300)
+    ELSE 580 + (sin(gs.t::float / 150) * 30)::int + (random() * 20)::int
+  END,
+  -- Cadence (stroke rate SPM): 24-32
+  CASE
+    WHEN gs.t < 600 THEN 24 + (gs.t * 4 / 600)
+    WHEN gs.t > 3300 THEN 28 - ((gs.t - 3300) * 4 / 300)
+    ELSE 28 + (sin(gs.t::float / 100) * 3)::int + (random() * 2)::int
+  END,
+  -- Speed (m/s): derived from pace
+  CASE
+    WHEN gs.t < 600 THEN 1000.0 / (700 - (gs.t * 80 / 600))
+    WHEN gs.t > 3300 THEN 1000.0 / (620 + ((gs.t - 3300) * 100 / 300))
+    ELSE 1000.0 / (580 + (sin(gs.t::float / 150) * 30)::int + (random() * 20)::int)
+  END
+FROM workouts w, generate_series(0, 3600, 30) AS gs(t)
+WHERE w.title = 'Speed Endurance' AND w.date = '2026-02-13' AND w.user_id = '2968d8dd-4d9c-4f28-a3de-e435bf01cd28';
+
+-- ========================================
+-- SESSION METRICS for Build Set (Feb 6)
+-- ========================================
+INSERT INTO session_metrics (workout_id, timestamp_offset_seconds, heart_rate, pace_sec_per_km, cadence, speed_mps)
+SELECT w.id, gs.t,
+  CASE
+    WHEN gs.t < 600 THEN 118 + (gs.t * 22 / 600)
+    WHEN gs.t > 3300 THEN 165 - ((gs.t - 3300) * 35 / 300)
+    ELSE 140 + (gs.t::float / 3600 * 20)::int + (sin(gs.t::float / 100) * 8)::int + (random() * 5)::int
+  END,
+  CASE
+    WHEN gs.t < 600 THEN 720 - (gs.t * 100 / 600)
+    WHEN gs.t > 3300 THEN 600 + ((gs.t - 3300) * 120 / 300)
+    ELSE 620 - (gs.t::float / 3600 * 40)::int + (sin(gs.t::float / 120) * 25)::int
+  END,
+  CASE
+    WHEN gs.t < 600 THEN 24
+    WHEN gs.t > 3300 THEN 26
+    ELSE 26 + (gs.t::float / 3600 * 4)::int + (random() * 2)::int
+  END,
+  CASE
+    WHEN gs.t < 600 THEN 1000.0 / (720 - (gs.t * 100 / 600))
+    WHEN gs.t > 3300 THEN 1000.0 / (600 + ((gs.t - 3300) * 120 / 300))
+    ELSE 1000.0 / (620 - (gs.t::float / 3600 * 40)::int + (sin(gs.t::float / 120) * 25)::int)
+  END
+FROM workouts w, generate_series(0, 3600, 30) AS gs(t)
+WHERE w.title = 'Build Set' AND w.date = '2026-02-06' AND w.user_id = '2968d8dd-4d9c-4f28-a3de-e435bf01cd28';
+
+-- ========================================
+-- BIKE WORKOUTS
+-- ========================================
+INSERT INTO workouts (user_id, sport, title, date, duration_seconds, distance_meters, avg_power_watts, normalized_power, tss, avg_cadence_rpm, elevation_gain_meters, avg_hr, max_hr, calories, rpe, notes) VALUES
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Endurance Ride', '2025-11-17', 7200, 56000, 185, 195, 75, 85, 380, 135, 152, 980, 5, 'Zone 2 steady ride'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Sweet Spot', '2025-11-19', 5400, 42000, 215, 228, 85, 88, 290, 148, 168, 850, 7, '3x20min sweet spot'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'VO2 Intervals', '2025-11-24', 4800, 38000, 230, 255, 95, 92, 340, 158, 182, 780, 9, '5x4min VO2max'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Long Ride', '2025-11-26', 10800, 85000, 180, 192, 110, 84, 680, 138, 158, 1450, 6, '3hr endurance with hills'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Threshold', '2025-12-06', 5400, 43000, 220, 232, 88, 89, 310, 152, 172, 870, 7, '2x20min FTP intervals'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Long Endurance', '2025-12-13', 12600, 100000, 178, 190, 125, 85, 750, 140, 162, 1680, 6, '3.5hr long ride'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Threshold Test', '2025-12-31', 5400, 42000, 225, 238, 90, 90, 300, 155, 175, 880, 8, 'New Year FTP test: 238W'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Over Unders', '2026-01-05', 5400, 42000, 220, 235, 88, 88, 280, 152, 175, 860, 7, '4x12min over-under'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Long Ride', '2026-01-10', 10800, 86000, 182, 195, 112, 84, 700, 139, 160, 1460, 6, '3hr with tempo finish'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Hill Climbs', '2026-01-26', 4800, 33000, 228, 252, 85, 76, 650, 156, 180, 760, 8, '5x6min climbing'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'VO2 Work', '2026-02-01', 4800, 38000, 238, 265, 100, 94, 340, 162, 188, 810, 9, '5x5min VO2max'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Sweet Spot', '2026-02-07', 5400, 44000, 222, 234, 88, 89, 300, 150, 170, 860, 7, '3x20min sweet spot'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Long Ride', '2026-02-12', 12600, 102000, 180, 194, 128, 85, 780, 140, 164, 1720, 6, '3.5hr with climbing'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'bike', 'Threshold', '2026-02-14', 5400, 43000, 228, 240, 92, 90, 320, 155, 176, 890, 8, '2x20min at 240W');
+
+-- ========================================
+-- RUN WORKOUTS
+-- ========================================
+INSERT INTO workouts (user_id, sport, title, date, duration_seconds, distance_meters, avg_pace_sec_per_km, avg_cadence_spm, avg_hr, max_hr, calories, rpe, notes) VALUES
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Easy Run', '2025-11-18', 3600, 8500, 424, 172, 138, 152, 520, 5, 'Zone 2 easy running'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Tempo Run', '2025-11-20', 3000, 7800, 385, 178, 158, 175, 520, 7, '20min tempo in the middle'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Long Run', '2025-11-23', 5400, 13000, 415, 170, 142, 162, 850, 6, 'Long slow distance'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Intervals', '2025-11-27', 3600, 9200, 391, 182, 162, 185, 620, 8, '6x800m at 5K pace'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Threshold', '2025-12-02', 3600, 9000, 400, 176, 155, 172, 600, 7, '2x15min at threshold'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Long Run', '2025-12-04', 6000, 14200, 423, 170, 144, 165, 920, 6, 'Long run with strides'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Track Session', '2025-12-09', 3600, 9500, 379, 184, 165, 188, 650, 9, '5x1000m at race pace'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Tempo', '2025-12-14', 3600, 9200, 391, 178, 156, 172, 610, 7, '25min continuous tempo'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Long Run', '2025-12-16', 6600, 15500, 426, 171, 145, 168, 1020, 6, 'Progressive long run'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Fartlek', '2025-12-21', 3600, 9000, 400, 176, 152, 175, 580, 7, 'Fartlek: 1min hard / 2min easy'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Intervals', '2026-01-04', 3600, 9600, 375, 183, 164, 188, 660, 9, '8x600m at 3K pace'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Threshold', '2026-01-08', 3600, 9200, 391, 177, 156, 174, 610, 7, '20min threshold effort'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Long Run', '2026-01-11', 7200, 17000, 424, 170, 144, 166, 1100, 6, '2hr long run'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Track Workout', '2026-01-15', 3600, 9800, 367, 185, 166, 190, 680, 9, '4x1200m race pace'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Tempo', '2026-01-20', 3600, 9400, 383, 178, 157, 174, 620, 7, '30min continuous tempo'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Long Run', '2026-01-22', 6000, 14000, 429, 170, 143, 164, 900, 6, 'Long with negative split'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Brick Run', '2026-01-24', 2700, 6500, 415, 174, 158, 175, 440, 7, 'Off the bike — heavy legs'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Intervals', '2026-01-29', 3600, 9500, 379, 184, 165, 188, 650, 8, '6x1000m at 10K pace'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Threshold', '2026-02-03', 3600, 9200, 391, 178, 155, 172, 610, 7, '2x15min threshold'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Long Run', '2026-02-06', 7200, 17200, 419, 171, 145, 168, 1120, 6, '2hr progressive long run'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Track Session', '2026-02-11', 3600, 9800, 367, 186, 168, 192, 680, 9, '5x1000m PR attempt'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', 'run', 'Easy Run', '2026-02-13', 3600, 8600, 419, 173, 134, 148, 520, 4, 'Easy run, feeling good');
+
+-- ========================================
+-- MANUAL LOGS
+-- ========================================
+INSERT INTO manual_logs (user_id, date, category, log_type, value, unit) VALUES
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-11-26', 'metabolic', 'carbs_g_per_hr', 65, 'g/hr'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-12-04', 'metabolic', 'carbs_g_per_hr', 70, 'g/hr'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-12-13', 'metabolic', 'carbs_g_per_hr', 80, 'g/hr'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-01-10', 'metabolic', 'carbs_g_per_hr', 85, 'g/hr'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-01-22', 'metabolic', 'carbs_g_per_hr', 90, 'g/hr'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-06', 'metabolic', 'carbs_g_per_hr', 92, 'g/hr'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-12', 'metabolic', 'carbs_g_per_hr', 90, 'g/hr'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-11-18', 'physiological', 'morning_hrv', 48, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-11-22', 'physiological', 'morning_hrv', 52, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-12-02', 'physiological', 'morning_hrv', 50, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-12-13', 'physiological', 'morning_hrv', 38, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-01-06', 'physiological', 'morning_hrv', 55, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-01-20', 'physiological', 'morning_hrv', 56, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-03', 'physiological', 'morning_hrv', 53, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-14', 'physiological', 'morning_hrv', 55, 'ms'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-11-18', 'physiological', 'sleep_quality', 7, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-12-09', 'physiological', 'sleep_quality', 6, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-01-03', 'physiological', 'sleep_quality', 7, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-01-15', 'physiological', 'sleep_quality', 5, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-03', 'physiological', 'sleep_quality', 8, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-14', 'physiological', 'sleep_quality', 8, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-11-18', 'environmental', 'life_stress', 3, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2025-12-13', 'environmental', 'life_stress', 7, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-01-15', 'environmental', 'life_stress', 7, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-06', 'environmental', 'life_stress', 4, '1-10'),
+('2968d8dd-4d9c-4f28-a3de-e435bf01cd28', '2026-02-14', 'environmental', 'life_stress', 3, '1-10');

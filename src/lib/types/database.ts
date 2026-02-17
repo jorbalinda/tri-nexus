@@ -67,3 +67,25 @@ export interface UploadedFile {
   storage_path: string
   status: 'uploaded' | 'processing' | 'parsed' | 'error'
 }
+
+export interface LabResult {
+  id: string
+  user_id: string
+  test_id: string
+  date: string
+  notes: string | null
+  created_at: string
+}
+
+export interface LabResultMarker {
+  id: string
+  lab_result_id: string
+  marker_name: string
+  value: number
+  unit: string | null
+  created_at: string
+}
+
+export interface LabResultWithMarkers extends LabResult {
+  lab_result_markers: LabResultMarker[]
+}

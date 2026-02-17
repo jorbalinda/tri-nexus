@@ -18,9 +18,15 @@ const categoryBorderHover: Record<LabCategory, string> = {
 interface LabTestCardProps {
   test: LabTest
   onClick: () => void
+  lastDate?: string
 }
 
-export default function LabTestCard({ test, onClick }: LabTestCardProps) {
+function formatShortDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+export default function LabTestCard({ test, onClick, lastDate }: LabTestCardProps) {
   const p = priorityStyles[test.priority]
 
   return (
@@ -35,6 +41,11 @@ export default function LabTestCard({ test, onClick }: LabTestCardProps) {
         {test.optimalRange && (
           <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
             {test.optimalRange} {test.unit}
+          </span>
+        )}
+        {lastDate && (
+          <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 ml-auto">
+            Last: {formatShortDate(lastDate)}
           </span>
         )}
       </div>

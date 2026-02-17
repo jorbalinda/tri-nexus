@@ -2,17 +2,33 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, ClipboardList, FlaskConical, LogOut, Sun, Moon } from 'lucide-react'
+import { Home, LayoutDashboard, ClipboardList, FlaskConical, Flag, LogOut, Sun, Moon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { useReadiness } from '@/hooks/useReadiness'
 
 const navItems = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'Home', href: '/dashboard', icon: Home, exact: true },
+  { label: 'Dashboard', href: '/dashboard/swim', icon: LayoutDashboard },
   { label: 'Training Plan', href: '/dashboard/plan', icon: ClipboardList },
   { label: 'Lab Results', href: '/dashboard/labs', icon: FlaskConical },
+  { label: 'Race Day', href: '/dashboard/race-day', icon: Flag },
 ]
+
+function readinessBarColor(score: number): string {
+  if (score >= 80) return 'bg-green-500'
+  if (score >= 60) return 'bg-blue-500'
+  if (score >= 40) return 'bg-yellow-500'
+  return 'bg-red-500'
+}
+
+function cnsTextColor(status: string): string {
+  if (status === 'optimal') return 'text-green-600'
+  if (status === 'warning') return 'text-yellow-600'
+  return 'text-red-600'
+}
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -20,6 +36,7 @@ export default function Sidebar() {
   const supabase = createClient()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const { loading, score, cns } = useReadiness()
 
   useEffect(() => setMounted(true), [])
 
@@ -49,8 +66,10 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex flex-col gap-1">
-          {navItems.map(({ label, href, icon: Icon }) => {
-            const isActive = pathname === href || (href === '/dashboard' && pathname.startsWith('/dashboard/') && !navItems.slice(1).some(n => pathname.startsWith(n.href)))
+          {navItems.map(({ label, href, icon: Icon, exact }) => {
+            const isActive = exact
+              ? pathname === href
+              : pathname === href || pathname.startsWith(href + '/')
             return (
               <Link
                 key={href}
@@ -77,11 +96,16 @@ export default function Sidebar() {
             Daily Readiness
           </p>
           <div className="flex items-end gap-2 mb-3">
-            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">82</span>
+            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {loading ? '--' : score ?? '--'}
+            </span>
             <span className="text-sm text-gray-400 dark:text-gray-500 mb-1">/ 100</span>
           </div>
           <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-            <div className="h-full bg-green-500 rounded-full" style={{ width: '82%' }} />
+            <div
+              className={`h-full rounded-full transition-all ${score !== null ? readinessBarColor(score) : 'bg-gray-300'}`}
+              style={{ width: score !== null ? `${score}%` : '0%' }}
+            />
           </div>
         </div>
 
@@ -90,8 +114,12 @@ export default function Sidebar() {
           <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
             CNS Balance
           </p>
-          <p className="text-sm font-semibold text-green-600">Optimal</p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Recovery on track</p>
+          <p className={`text-sm font-semibold ${cns ? cnsTextColor(cns.status) : 'text-gray-400'}`}>
+            {loading ? '--' : cns?.label ?? '--'}
+          </p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+            {loading ? '' : cns?.description ?? ''}
+          </p>
         </div>
 
         {/* Theme toggle */}

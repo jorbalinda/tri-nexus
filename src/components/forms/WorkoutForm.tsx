@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 
 type Sport = 'swim' | 'bike' | 'run' | 'brick'
 
-export default function WorkoutForm() {
+export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
   const [sport, setSport] = useState<Sport>('swim')
   const [title, setTitle] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
@@ -80,8 +80,7 @@ export default function WorkoutForm() {
     'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
   const labelClass = 'block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5'
 
-  return (
-    <Card>
+  const content = (
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
           Log Workout
@@ -318,6 +317,8 @@ export default function WorkoutForm() {
           {saving ? 'Saving...' : saved ? 'Saved!' : 'Log Workout'}
         </button>
       </form>
-    </Card>
   )
+
+  if (bare) return content
+  return <Card>{content}</Card>
 }
