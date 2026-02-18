@@ -1,12 +1,15 @@
 'use client'
 
+import { useState, useCallback } from 'react'
 import TrainingCalendar from '@/components/dashboard/calendar/TrainingCalendar'
 import LTEstimatorCard from '@/components/dashboard/LTEstimatorCard'
 import LogWorkoutBar from '@/components/dashboard/LogWorkoutBar'
+import SampleDataBanner from '@/components/dashboard/SampleDataBanner'
 import { useWorkouts } from '@/hooks/useWorkouts'
 import { useManualLogs } from '@/hooks/useManualLogs'
 import { useReadiness } from '@/hooks/useReadiness'
 import { deriveMaxHR, deriveRestingHR } from '@/lib/analytics/lactate-threshold'
+import { generateSampleWorkouts } from '@/lib/data/sample-workouts'
 
 function readinessBarColor(score: number): string {
   if (score >= 80) return 'bg-green-500'
@@ -25,9 +28,17 @@ export default function DashboardPage() {
   const { workouts, loading: workoutsLoading } = useWorkouts()
   const { logs, loading: logsLoading } = useManualLogs('physiological')
   const { loading: readinessLoading, score, cns } = useReadiness()
+  const [sampleDataEnabled, setSampleDataEnabled] = useState(false)
+
+  const handleSampleToggle = useCallback((enabled: boolean) => {
+    setSampleDataEnabled(enabled)
+  }, [])
 
   const loading = workoutsLoading || logsLoading
-  const derivedMax = deriveMaxHR(workouts)
+
+  // Merge sample data with real workouts when enabled
+  const allWorkouts = sampleDataEnabled ? [...workouts, ...generateSampleWorkouts()] : workouts
+  const derivedMax = deriveMaxHR(allWorkouts)
   const derivedResting = deriveRestingHR(logs)
 
   return (
@@ -40,6 +51,8 @@ export default function DashboardPage() {
           Training Calendar
         </h1>
       </div>
+
+      <SampleDataBanner workoutCount={workouts.length} onToggle={handleSampleToggle} />
 
       <TrainingCalendar />
 

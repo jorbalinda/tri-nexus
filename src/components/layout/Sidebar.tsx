@@ -10,11 +10,11 @@ import { useEffect, useState } from 'react'
 import { useReadiness } from '@/hooks/useReadiness'
 
 const navItems = [
+  { label: 'Race Day', href: '/dashboard/race-day', icon: Flag },
   { label: 'Home', href: '/dashboard', icon: Home, exact: true },
   { label: 'Dashboard', href: '/dashboard/swim', icon: LayoutDashboard },
   { label: 'Training Plan', href: '/dashboard/plan', icon: ClipboardList },
   { label: 'Lab Results', href: '/dashboard/labs', icon: FlaskConical },
-  { label: 'Race Day', href: '/dashboard/race-day', icon: Flag },
 ]
 
 function readinessBarColor(score: number): string {

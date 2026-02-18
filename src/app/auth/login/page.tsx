@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Waves, Bike, Footprints } from 'lucide-react'
+import { Waves, Bike, Footprints, ArrowLeft, Trophy, Calculator } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -85,6 +85,14 @@ export default function LoginPage() {
       {/* Form Panel */}
       <div className="lg:w-1/2 flex items-center justify-center px-6 py-12 lg:py-0 bg-background">
         <div className="w-full max-w-sm">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mb-8"
+          >
+            <ArrowLeft size={14} />
+            Back to home
+          </Link>
+
           <div className="text-center mb-10">
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
               Welcome back
@@ -144,6 +152,33 @@ export default function LoginPage() {
               </Link>
             </p>
           </form>
+
+          {/* Free Tools */}
+          <div className="mt-8">
+            <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 text-center mb-3">
+              Free Tools — No Account Needed
+            </p>
+            <div className="flex gap-3">
+              <Link
+                href="/qualify"
+                className="flex-1 flex items-center gap-2 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-amber-300 dark:hover:border-amber-700 hover:bg-amber-50/50 dark:hover:bg-amber-950/20 transition-all group"
+              >
+                <Trophy size={16} className="text-amber-500 shrink-0" />
+                <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                  Qualification Checker
+                </span>
+              </Link>
+              <Link
+                href="/pace-calculator"
+                className="flex-1 flex items-center gap-2 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-all group"
+              >
+                <Calculator size={16} className="text-blue-500 shrink-0" />
+                <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  Pace Calculator
+                </span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
