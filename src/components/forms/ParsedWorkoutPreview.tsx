@@ -13,6 +13,13 @@ interface ParsedWorkoutPreviewProps {
   onDiscard: () => void
 }
 
+const sportLabel: Record<string, string> = {
+  swim: 'Swim',
+  bike: 'Bike',
+  run: 'Run',
+  brick: 'Brick',
+}
+
 const FORMAT_COLORS: Record<string, string> = {
   fit: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
   tcx: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
@@ -138,18 +145,44 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
           ))}
         </div>
 
+        {/* Title with quick-pick suggestions */}
+        <div>
+          <label className={labelClass}>Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className={inputClass}
+            placeholder="Name this workout..."
+          />
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {[
+              { label: sportLabel[sport], value: `${sportLabel[sport]} Workout` },
+              ...(workout.title && workout.title !== `${sportLabel[sport]} Workout`
+                ? [{ label: 'File name', value: workout.title }]
+                : []),
+              { label: workout.source_file.replace(/\.[^.]+$/, ''), value: workout.source_file.replace(/\.[^.]+$/, '') },
+            ]
+              .filter((s, i, arr) => arr.findIndex((x) => x.value === s.value) === i)
+              .map((suggestion) => (
+                <button
+                  key={suggestion.value}
+                  type="button"
+                  onClick={() => setTitle(suggestion.value)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+                    title === suggestion.value
+                      ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {suggestion.label}
+                </button>
+              ))}
+          </div>
+        </div>
+
         {/* Common fields */}
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className={inputClass}
-              placeholder="Morning workout"
-            />
-          </div>
           <div>
             <label className={labelClass}>Date</label>
             <input
