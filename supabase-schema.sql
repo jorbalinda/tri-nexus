@@ -68,6 +68,7 @@ CREATE TABLE workouts (
   calories integer,
   rpe numeric CHECK (rpe >= 1 AND rpe <= 10),
   notes text,
+  blocks jsonb,
   created_at timestamptz DEFAULT now()
 );
 

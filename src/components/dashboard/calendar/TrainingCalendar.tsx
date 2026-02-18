@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from 'react'
 import type { Workout } from '@/lib/types/database'
-import { getCalendarDays, toDateKey, isSameDay, isInMonth } from '@/lib/utils/calendar'
+import { getCalendarDays, toDateKey, isSameDay, isInMonth, computeRaceCalendarEvents } from '@/lib/utils/calendar'
 import { useCalendarWorkouts } from '@/hooks/useCalendarWorkouts'
+import { useRacePlans } from '@/hooks/useRacePlans'
 import CalendarHeader from './CalendarHeader'
 import CalendarDayCell from './CalendarDayCell'
 import WorkoutCalendarModal from './WorkoutCalendarModal'
@@ -23,6 +24,12 @@ export default function TrainingCalendar() {
   const endDate = toDateKey(days[days.length - 1])
 
   const { workouts, loading } = useCalendarWorkouts(startDate, endDate)
+  const { plans } = useRacePlans()
+
+  const raceEventsByDate = useMemo(
+    () => computeRaceCalendarEvents(plans, startDate, endDate),
+    [plans, startDate, endDate]
+  )
 
   const workoutsByDate = useMemo(() => {
     const map = new Map<string, Workout[]>()
@@ -79,7 +86,7 @@ export default function TrainingCalendar() {
           <p className="text-gray-400">Loading workouts...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-7 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800">
+        <div className="grid grid-cols-7 rounded-2xl border border-gray-100 dark:border-gray-800 [&>*:first-child]:rounded-tl-2xl [&>*:nth-child(7)]:rounded-tr-2xl [&>*:nth-last-child(7)]:rounded-bl-2xl [&>*:last-child]:rounded-br-2xl">
           {days.map((date) => {
             const key = toDateKey(date)
             return (
@@ -87,6 +94,7 @@ export default function TrainingCalendar() {
                 key={key}
                 date={date}
                 workouts={workoutsByDate.get(key) || []}
+                raceEvents={raceEventsByDate.get(key) || []}
                 isCurrentMonth={isInMonth(date, year, month)}
                 isToday={isSameDay(date, today)}
                 onWorkoutClick={setSelectedWorkout}

@@ -101,7 +101,7 @@ export default function TabBar() {
         className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all"
       >
         <Upload size={16} />
-        Upload .FIT
+        Upload
       </Link>
     </div>
   )

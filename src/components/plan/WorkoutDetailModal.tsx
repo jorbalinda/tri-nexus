@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
-import { X } from 'lucide-react'
+import { useEffect, useCallback, useState } from 'react'
+import { X, FileText, PenLine } from 'lucide-react'
 import type { LibraryWorkout, PlanSport, WorkoutInterval } from '@/lib/types/training-plan'
+import LibraryWorkoutLogForm from './LibraryWorkoutLogForm'
 
 const sportAccent: Record<PlanSport, string> = {
   swim: 'text-blue-600',
@@ -35,7 +36,7 @@ function formatDistance(meters: number): string {
   return `${meters}m`
 }
 
-function IntervalRow({ interval, index }: { interval: WorkoutInterval; index: number }) {
+function IntervalRow({ interval }: { interval: WorkoutInterval; index: number }) {
   const barColor = interval.zone ? zoneBarColors[String(interval.zone)] || 'bg-gray-300' : 'bg-gray-300'
 
   return (
@@ -76,6 +77,13 @@ function IntervalRow({ interval, index }: { interval: WorkoutInterval; index: nu
   )
 }
 
+type Tab = 'details' | 'log'
+
+const tabs: { key: Tab; label: string; icon: typeof FileText }[] = [
+  { key: 'details', label: 'Details', icon: FileText },
+  { key: 'log', label: 'Log Workout', icon: PenLine },
+]
+
 interface WorkoutDetailModalProps {
   workout: LibraryWorkout | null
   sport: PlanSport
@@ -83,6 +91,8 @@ interface WorkoutDetailModalProps {
 }
 
 export default function WorkoutDetailModal({ workout, sport, onClose }: WorkoutDetailModalProps) {
+  const [activeTab, setActiveTab] = useState<Tab>('details')
+
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -101,6 +111,11 @@ export default function WorkoutDetailModal({ workout, sport, onClose }: WorkoutD
     }
   }, [workout, handleEscape])
 
+  // Reset tab when workout changes
+  useEffect(() => {
+    setActiveTab('details')
+  }, [workout?.id])
+
   if (!workout) return null
 
   return (
@@ -116,7 +131,7 @@ export default function WorkoutDetailModal({ workout, sport, onClose }: WorkoutD
       >
         <div className="p-8">
           {/* Header */}
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex-1 min-w-0 pr-4">
               <p className={`text-[10px] font-bold uppercase tracking-[2px] ${sportAccent[sport]} mb-2`}>
                 {workout.category.replace('_', ' ')}
@@ -133,81 +148,118 @@ export default function WorkoutDetailModal({ workout, sport, onClose }: WorkoutD
             </button>
           </div>
 
-          {/* Description */}
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-            {workout.description}
-          </p>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
-                Zone
-              </p>
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {workout.zone === 'max' || workout.zone === 'mixed' ? workout.zone : `Z${workout.zone}`}
-              </span>
-            </div>
-            <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
-                Duration
-              </p>
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {formatDuration(workout.duration_minutes)}
-              </span>
-            </div>
-            {workout.distance_meters && (
-              <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
-                <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
-                  Distance
-                </p>
-                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                  {formatDistance(workout.distance_meters)}
-                </span>
-              </div>
-            )}
-            <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
-                RPE
-              </p>
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {workout.rpe_range[0]}–{workout.rpe_range[1]}
-              </span>
-            </div>
+          {/* Tab Bar */}
+          <div className="flex gap-1 mb-6 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+            {tabs.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeTab === key
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                <Icon size={14} />
+                {label}
+              </button>
+            ))}
           </div>
 
-          {/* Workout Structure */}
-          <div className="mb-6">
-            <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
-              Workout Structure
-            </p>
-            <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
-              {workout.structure.map((interval, i) => (
-                <IntervalRow key={i} interval={interval} index={i} />
-              ))}
-            </div>
-          </div>
+          {/* Tab Content */}
+          {activeTab === 'details' && (
+            <DetailsTab workout={workout} sport={sport} />
+          )}
 
-          {/* Tags */}
-          {workout.tags.length > 0 && (
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
-                Tags
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {workout.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+          {activeTab === 'log' && (
+            <LibraryWorkoutLogForm
+              workout={workout}
+              sport={sport}
+              onSaved={() => setActiveTab('details')}
+            />
           )}
         </div>
       </div>
     </div>
+  )
+}
+
+function DetailsTab({ workout, sport }: { workout: LibraryWorkout; sport: PlanSport }) {
+  return (
+    <>
+      {/* Description */}
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+        {workout.description}
+      </p>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
+            Zone
+          </p>
+          <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+            {workout.zone === 'max' || workout.zone === 'mixed' ? workout.zone : `Z${workout.zone}`}
+          </span>
+        </div>
+        <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
+            Duration
+          </p>
+          <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+            {formatDuration(workout.duration_minutes)}
+          </span>
+        </div>
+        {workout.distance_meters && (
+          <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+            <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
+              Distance
+            </p>
+            <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              {formatDistance(workout.distance_meters)}
+            </span>
+          </div>
+        )}
+        <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-1">
+            RPE
+          </p>
+          <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+            {workout.rpe_range[0]}–{workout.rpe_range[1]}
+          </span>
+        </div>
+      </div>
+
+      {/* Workout Structure */}
+      <div className="mb-6">
+        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+          Workout Structure
+        </p>
+        <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+          {workout.structure.map((interval, i) => (
+            <IntervalRow key={i} interval={interval} index={i} />
+          ))}
+        </div>
+      </div>
+
+      {/* Tags */}
+      {workout.tags.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+            Tags
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {workout.tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   )
 }

@@ -48,3 +48,57 @@ export function isSameDay(a: Date, b: Date): boolean {
 export function isInMonth(date: Date, year: number, month: number): boolean {
   return date.getFullYear() === year && date.getMonth() === month
 }
+
+// ---------------------------------------------------------------------------
+// Race calendar events
+// ---------------------------------------------------------------------------
+
+import type { RacePlan } from '@/lib/types/race-plan'
+import type { CalendarRaceEvent } from '@/lib/types/calendar'
+
+/**
+ * Compute race-day and prep events for a date range from race plans.
+ * For each plan that has a race_date and an equipment_plan.raceWeekTimeline,
+ * maps each timeline stage to a calendar date by subtracting daysOut.
+ */
+export function computeRaceCalendarEvents(
+  plans: RacePlan[],
+  startDate: string,
+  endDate: string
+): Map<string, CalendarRaceEvent[]> {
+  const map = new Map<string, CalendarRaceEvent[]>()
+
+  for (const plan of plans) {
+    if (!plan.race_date || !plan.equipment_plan?.raceWeekTimeline) continue
+
+    const raceDate = new Date(plan.race_date + 'T00:00:00')
+    const timeline = plan.equipment_plan.raceWeekTimeline
+
+    for (const stage of timeline) {
+      const eventDate = new Date(raceDate)
+      eventDate.setDate(eventDate.getDate() - stage.daysOut)
+
+      const key = toDateKey(eventDate)
+      if (key < startDate || key > endDate) continue
+
+      const event: CalendarRaceEvent = {
+        id: `${plan.id}-${stage.daysOut}`,
+        raceName: plan.race_name,
+        racePlanId: plan.id,
+        type: stage.daysOut === 0 ? 'race_day' : 'prep',
+        label: stage.label,
+        tasks: stage.tasks,
+        daysOut: stage.daysOut,
+      }
+
+      const list = map.get(key)
+      if (list) {
+        list.push(event)
+      } else {
+        map.set(key, [event])
+      }
+    }
+  }
+
+  return map
+}

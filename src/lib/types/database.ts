@@ -6,6 +6,15 @@ export interface Profile {
   created_at: string
 }
 
+export interface WorkoutBlock {
+  label: string
+  distance_meters: number | null
+  zone: number | string | null
+  rpe: number | null
+  duration_minutes: number | null
+  notes: string | null
+}
+
 export interface Workout {
   id: string
   user_id: string
@@ -33,6 +42,7 @@ export interface Workout {
   calories: number | null
   rpe: number | null
   notes: string | null
+  blocks: WorkoutBlock[] | null
   created_at: string
 }
 
@@ -62,7 +72,7 @@ export interface UploadedFile {
   id: string
   user_id: string
   file_name: string
-  file_type: 'fit' | 'csv' | 'pdf'
+  file_type: 'fit' | 'tcx' | 'gpx' | 'csv' | 'pdf'
   file_size_bytes: number
   storage_path: string
   status: 'uploaded' | 'processing' | 'parsed' | 'error'

@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback } from 'react'
 import { X } from 'lucide-react'
-import type { Workout } from '@/lib/types/database'
+import type { Workout, WorkoutBlock } from '@/lib/types/database'
 import { estimateTSS } from '@/lib/analytics/training-stress'
 
 const sportAccent: Record<string, string> = {
@@ -42,6 +42,76 @@ function formatDistance(meters: number): string {
     return km % 1 === 0 ? `${km} km` : `${km.toFixed(1)} km`
   }
   return `${meters}m`
+}
+
+const zoneBarColors: Record<string, string> = {
+  '1': 'bg-sky-400',
+  '2': 'bg-emerald-400',
+  '3': 'bg-amber-400',
+  '4': 'bg-orange-400',
+  '5': 'bg-red-500',
+  'max': 'bg-rose-500',
+  'mixed': 'bg-violet-400',
+}
+
+const zoneBadgeColors: Record<string, string> = {
+  '1': 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
+  '2': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+  '3': 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+  '4': 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+  '5': 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
+  'max': 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
+  'mixed': 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300',
+}
+
+function BlockBreakdown({ blocks }: { blocks: WorkoutBlock[] }) {
+  return (
+    <div className="mb-6">
+      <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+        Block Breakdown
+      </p>
+      <div className="space-y-2">
+        {blocks.map((block, i) => {
+          const barColor = block.zone ? zoneBarColors[String(block.zone)] || 'bg-gray-300' : 'bg-gray-300'
+          const badgeColor = block.zone ? zoneBadgeColors[String(block.zone)] || '' : ''
+
+          return (
+            <div
+              key={i}
+              className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/80 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"
+            >
+              <div className={`w-1 rounded-full self-stretch shrink-0 ${barColor}`} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {block.label}
+                  </span>
+                  {block.distance_meters && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {formatDistance(block.distance_meters)}
+                    </span>
+                  )}
+                  {block.zone && (
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeColor}`}>
+                      Z{block.zone}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                  {block.duration_minutes != null && (
+                    <span>{block.duration_minutes} min</span>
+                  )}
+                  {block.rpe != null && (
+                    <span className="font-semibold">RPE {block.rpe}/10</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 function formatPace(secPerKm: number): string {
@@ -186,6 +256,11 @@ export default function WorkoutCalendarModal({ workout, onClose }: WorkoutCalend
               <StatCell label="Calories" value={`${workout.calories} kcal`} />
             )}
           </div>
+
+          {/* Block Breakdown */}
+          {workout.blocks && workout.blocks.length > 0 && (
+            <BlockBreakdown blocks={workout.blocks} />
+          )}
 
           {/* Notes */}
           {workout.notes && (

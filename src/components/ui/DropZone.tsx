@@ -10,7 +10,7 @@ interface DropZoneProps {
 
 export default function DropZone({
   onFilesSelected,
-  acceptedTypes = ['.fit', '.csv', '.pdf'],
+  acceptedTypes = ['.fit', '.tcx', '.gpx', '.csv'],
 }: DropZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [files, setFiles] = useState<File[]>([])
