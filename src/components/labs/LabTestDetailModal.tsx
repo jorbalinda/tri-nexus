@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useCallback, useState } from 'react'
-import { X, Plus, ChevronUp } from 'lucide-react'
+import { X, FileText, PenLine, History } from 'lucide-react'
 import type { LabTest, LabCategory } from '@/lib/types/lab-tests'
 import { useLabResults } from '@/hooks/useLabResults'
 import LabResultLogForm from './LabResultLogForm'
@@ -27,13 +27,21 @@ const priorityStyles: Record<string, { label: string; style: string }> = {
   optional: { label: 'Optional', style: 'bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-400' },
 }
 
+type Tab = 'details' | 'log' | 'history'
+
+const tabs: { key: Tab; label: string; icon: typeof FileText }[] = [
+  { key: 'details', label: 'Details', icon: FileText },
+  { key: 'log', label: 'Log Results', icon: PenLine },
+  { key: 'history', label: 'History', icon: History },
+]
+
 interface LabTestDetailModalProps {
   test: LabTest | null
   onClose: () => void
 }
 
 export default function LabTestDetailModal({ test, onClose }: LabTestDetailModalProps) {
-  const [showLogForm, setShowLogForm] = useState(false)
+  const [activeTab, setActiveTab] = useState<Tab>('details')
   const { results, loading: resultsLoading, refetch } = useLabResults(test?.id)
 
   const handleEscape = useCallback(
@@ -54,9 +62,9 @@ export default function LabTestDetailModal({ test, onClose }: LabTestDetailModal
     }
   }, [test, handleEscape])
 
-  // Reset form visibility when test changes
+  // Reset tab when test changes
   useEffect(() => {
-    setShowLogForm(false)
+    setActiveTab('details')
   }, [test?.id])
 
   if (!test) return null
@@ -73,7 +81,7 @@ export default function LabTestDetailModal({ test, onClose }: LabTestDetailModal
       >
         <div className="p-8">
           {/* Header */}
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex-1 min-w-0 pr-4">
               <p className={`text-[10px] font-bold uppercase tracking-[2px] ${categoryAccent[test.category]} mb-2`}>
                 {categoryLabel[test.category]}
@@ -90,125 +98,158 @@ export default function LabTestDetailModal({ test, onClose }: LabTestDetailModal
             </button>
           </div>
 
-          {/* Priority & Frequency */}
-          <div className="flex items-center gap-2 mb-6">
-            <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${p.style}`}>
-              {p.label}
-            </span>
-            <span className="px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-              {test.frequency}
-            </span>
+          {/* Tab Bar */}
+          <div className="flex gap-1 mb-6 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+            {tabs.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeTab === key
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                <Icon size={14} />
+                {label}
+              </button>
+            ))}
           </div>
 
-          {/* Description */}
-          <div className="mb-6">
-            <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
-              What It Measures
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              {test.description}
-            </p>
-          </div>
+          {/* Tab Content */}
+          {activeTab === 'details' && (
+            <DetailsTab test={test} priorityStyle={p} />
+          )}
 
-          {/* Why It Matters */}
-          <div className="mb-6">
-            <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
-              Why It Matters for Triathletes
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              {test.whyItMatters}
-            </p>
-          </div>
-
-          {/* Optimal Range (if no submarkers) */}
-          {test.optimalRange && !test.submarkers && (
-            <div className="mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
-                Optimal Range
-              </p>
-              <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
-                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                  {test.optimalRange}
-                </span>
-                {test.unit && (
-                  <span className="text-sm text-gray-400 dark:text-gray-500 ml-2">{test.unit}</span>
-                )}
-              </div>
+          {activeTab === 'log' && (
+            <div>
+              <LabResultLogForm test={test} onSaved={() => { refetch(); setActiveTab('history') }} />
             </div>
           )}
 
-          {/* Submarkers */}
-          {test.submarkers && test.submarkers.length > 0 && (
-            <div className="mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
-                Markers & Reference Ranges
-              </p>
-              <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700/50">
-                {test.submarkers.map((s) => (
-                  <div key={s.name} className="p-4">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {s.name}
-                      </span>
-                      {s.optimalRange && (
-                        <span className="text-sm font-mono text-gray-600 dark:text-gray-300">
-                          {s.optimalRange} {s.unit}
-                        </span>
-                      )}
-                    </div>
-                    {s.notes && (
-                      <p className="text-[11px] text-gray-400 dark:text-gray-500 italic">
-                        {s.notes}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Tags */}
-          {test.tags.length > 0 && (
-            <div className="mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
-                Related Areas
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {test.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+          {activeTab === 'history' && (
+            <div>
+              {resultsLoading ? (
+                <p className="text-sm text-gray-400 py-8 text-center">Loading...</p>
+              ) : results.length > 0 ? (
+                <LabResultHistory results={results} test={test} />
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mb-3">No results logged yet.</p>
+                  <button
+                    onClick={() => setActiveTab('log')}
+                    className="text-sm font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
                   >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+                    Log your first result
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-
-          {/* Log Results button / form */}
-          <div className="mb-6">
-            <button
-              onClick={() => setShowLogForm(!showLogForm)}
-              className="flex items-center gap-2 w-full justify-center py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors cursor-pointer"
-            >
-              {showLogForm ? <ChevronUp size={16} /> : <Plus size={16} />}
-              {showLogForm ? 'Hide Form' : 'Log Results'}
-            </button>
-          </div>
-
-          {showLogForm && (
-            <div className="mb-6">
-              <LabResultLogForm test={test} onSaved={refetch} />
-            </div>
-          )}
-
-          {/* Result History */}
-          {!resultsLoading && results.length > 0 && (
-            <LabResultHistory results={results} test={test} />
           )}
         </div>
       </div>
     </div>
+  )
+}
+
+function DetailsTab({ test, priorityStyle }: { test: LabTest; priorityStyle: { label: string; style: string } }) {
+  return (
+    <>
+      {/* Priority & Frequency */}
+      <div className="flex items-center gap-2 mb-6">
+        <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${priorityStyle.style}`}>
+          {priorityStyle.label}
+        </span>
+        <span className="px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+          {test.frequency}
+        </span>
+      </div>
+
+      {/* Description */}
+      <div className="mb-6">
+        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
+          What It Measures
+        </p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          {test.description}
+        </p>
+      </div>
+
+      {/* Why It Matters */}
+      <div className="mb-6">
+        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
+          Why It Matters for Triathletes
+        </p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          {test.whyItMatters}
+        </p>
+      </div>
+
+      {/* Optimal Range (if no submarkers) */}
+      {test.optimalRange && !test.submarkers && (
+        <div className="mb-6">
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+            Optimal Range
+          </p>
+          <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+            <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              {test.optimalRange}
+            </span>
+            {test.unit && (
+              <span className="text-sm text-gray-400 dark:text-gray-500 ml-2">{test.unit}</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Submarkers */}
+      {test.submarkers && test.submarkers.length > 0 && (
+        <div className="mb-6">
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+            Markers & Reference Ranges
+          </p>
+          <div className="bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700/50">
+            {test.submarkers.map((s) => (
+              <div key={s.name} className="p-4">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    {s.name}
+                  </span>
+                  {s.optimalRange && (
+                    <span className="text-sm font-mono text-gray-600 dark:text-gray-300">
+                      {s.optimalRange} {s.unit}
+                    </span>
+                  )}
+                </div>
+                {s.notes && (
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500 italic">
+                    {s.notes}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tags */}
+      {test.tags.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+            Related Areas
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {test.tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   )
 }

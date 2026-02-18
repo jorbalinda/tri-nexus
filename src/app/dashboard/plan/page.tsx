@@ -16,10 +16,11 @@ export default function PlanPage() {
   const sportWorkouts = useMemo(() => getWorkoutsBySport(sport), [sport])
   const categories = useMemo(() => getCategoriesForSport(sport), [sport])
 
-  const filteredWorkouts = useMemo(
-    () => (category ? sportWorkouts.filter((w) => w.category === category) : sportWorkouts),
-    [sportWorkouts, category]
-  )
+  const filteredWorkouts = useMemo(() => {
+    const list = category ? sportWorkouts.filter((w) => w.category === category) : sportWorkouts
+    const zoneOrder: Record<string, number> = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, 'max': 6, 'mixed': 7 }
+    return [...list].sort((a, b) => (zoneOrder[String(a.zone)] ?? 99) - (zoneOrder[String(b.zone)] ?? 99))
+  }, [sportWorkouts, category])
 
   return (
     <div className="flex flex-col gap-6">
