@@ -20,6 +20,7 @@ interface CalendarDayCellProps {
   isCurrentMonth: boolean
   isToday: boolean
   onWorkoutClick: (workout: Workout) => void
+  onDayClick: (dateKey: string, workouts: Workout[]) => void
 }
 
 export default function CalendarDayCell({
@@ -29,9 +30,11 @@ export default function CalendarDayCell({
   isCurrentMonth,
   isToday,
   onWorkoutClick,
+  onDayClick,
 }: CalendarDayCellProps) {
   const dayNum = date.getDate()
   const hasRaceDay = raceEvents.some((e) => e.type === 'race_day')
+  const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 
   // Reduce workout slots when race events are present
   const maxWorkouts = raceEvents.length > 0 ? 2 : 3
@@ -53,8 +56,9 @@ export default function CalendarDayCell({
     >
       {/* Day number */}
       <div className="flex items-center justify-between mb-1">
-        <span
-          className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full ${
+        <button
+          onClick={() => onDayClick(dateKey, workouts)}
+          className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full cursor-pointer transition-all hover:ring-2 hover:ring-blue-500/30 ${
             isToday
               ? 'bg-blue-600 text-white'
               : !isCurrentMonth
@@ -63,7 +67,7 @@ export default function CalendarDayCell({
           }`}
         >
           {dayNum}
-        </span>
+        </button>
       </div>
 
       {/* Race event pills — always shown above workouts */}
@@ -99,9 +103,12 @@ export default function CalendarDayCell({
         })}
 
         {overflow > 0 && (
-          <span className="text-[10px] text-gray-400 dark:text-gray-500 px-1.5">
+          <button
+            onClick={() => onDayClick(dateKey, workouts)}
+            className="text-[10px] text-blue-500 dark:text-blue-400 px-1.5 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer text-left transition-colors"
+          >
             +{overflow} more
-          </span>
+          </button>
         )}
       </div>
 

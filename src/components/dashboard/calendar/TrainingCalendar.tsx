@@ -7,6 +7,7 @@ import { useCalendarWorkouts } from '@/hooks/useCalendarWorkouts'
 import { useRacePlans } from '@/hooks/useRacePlans'
 import CalendarHeader from './CalendarHeader'
 import CalendarDayCell from './CalendarDayCell'
+import CalendarDayModal from './CalendarDayModal'
 import WorkoutCalendarModal from './WorkoutCalendarModal'
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -14,6 +15,7 @@ const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 export default function TrainingCalendar() {
   const [viewDate, setViewDate] = useState(() => new Date())
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
+  const [selectedDay, setSelectedDay] = useState<{ date: string; workouts: Workout[] } | null>(null)
 
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
@@ -98,11 +100,22 @@ export default function TrainingCalendar() {
                 isCurrentMonth={isInMonth(date, year, month)}
                 isToday={isSameDay(date, today)}
                 onWorkoutClick={setSelectedWorkout}
+                onDayClick={(dateKey, dayWorkouts) => setSelectedDay({ date: dateKey, workouts: dayWorkouts })}
               />
             )
           })}
         </div>
       )}
+
+      <CalendarDayModal
+        date={selectedDay?.date ?? null}
+        workouts={selectedDay?.workouts ?? []}
+        onClose={() => setSelectedDay(null)}
+        onWorkoutClick={(w) => {
+          setSelectedDay(null)
+          setSelectedWorkout(w)
+        }}
+      />
 
       <WorkoutCalendarModal
         workout={selectedWorkout}
