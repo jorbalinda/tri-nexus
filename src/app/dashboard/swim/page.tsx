@@ -46,7 +46,7 @@ export default function SwimPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {workouts.length > 1 && (
+      {workouts.length >= 1 && (
         <WorkoutSelector
           workouts={workouts}
           selectedIndex={selectedWorkoutIdx}

@@ -1,17 +1,17 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Workout } from '@/lib/types/database'
 
 export function useWorkouts(sport?: string) {
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
 
-  const fetch = useCallback(async () => {
+  const fetchWorkouts = useCallback(async () => {
     setLoading(true)
-    let query = supabase
+    let query = supabaseRef.current
       .from('workouts')
       .select('*')
       .order('date', { ascending: false })
@@ -24,11 +24,18 @@ export function useWorkouts(sport?: string) {
     const { data } = await query
     setWorkouts((data as Workout[]) || [])
     setLoading(false)
-  }, [supabase, sport])
+  }, [sport])
 
   useEffect(() => {
-    fetch()
-  }, [fetch])
+    fetchWorkouts()
+  }, [fetchWorkouts])
 
-  return { workouts, loading, refetch: fetch }
+  // Refetch when window regains focus (e.g. after uploading workouts)
+  useEffect(() => {
+    const handleFocus = () => fetchWorkouts()
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [fetchWorkouts])
+
+  return { workouts, loading, refetch: fetchWorkouts }
 }

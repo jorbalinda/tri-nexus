@@ -1,17 +1,17 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Workout } from '@/lib/types/database'
 
 export function useCalendarWorkouts(startDate: string, endDate: string) {
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
 
-  const fetch = useCallback(async () => {
+  const fetchWorkouts = useCallback(async () => {
     setLoading(true)
-    const { data } = await supabase
+    const { data } = await supabaseRef.current
       .from('workouts')
       .select('*')
       .gte('date', startDate)
@@ -20,11 +20,18 @@ export function useCalendarWorkouts(startDate: string, endDate: string) {
 
     setWorkouts((data as Workout[]) || [])
     setLoading(false)
-  }, [supabase, startDate, endDate])
+  }, [startDate, endDate])
 
   useEffect(() => {
-    fetch()
-  }, [fetch])
+    fetchWorkouts()
+  }, [fetchWorkouts])
 
-  return { workouts, loading, refetch: fetch }
+  // Refetch when window regains focus (e.g. after saving on log page)
+  useEffect(() => {
+    const handleFocus = () => fetchWorkouts()
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [fetchWorkouts])
+
+  return { workouts, loading, refetch: fetchWorkouts }
 }

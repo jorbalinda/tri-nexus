@@ -52,6 +52,7 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
 
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const supabase = createClient()
 
@@ -59,6 +60,7 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
     e.preventDefault()
     setSaving(true)
     setSaved(false)
+    setSaveError(null)
 
     const { error } = await supabase.from('workouts').insert({
       sport,
@@ -83,7 +85,9 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
     })
 
     setSaving(false)
-    if (!error) {
+    if (error) {
+      setSaveError(error.message)
+    } else {
       setSaved(true)
       setTimeout(() => onSaved(), 1000)
     }
@@ -338,6 +342,13 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
             placeholder="How did the session feel?"
           />
         </div>
+
+        {/* Save error */}
+        {saveError && (
+          <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl px-4 py-2">
+            Save failed: {saveError}
+          </p>
+        )}
 
         {/* Actions */}
         <div className="flex gap-3">
