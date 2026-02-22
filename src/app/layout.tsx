@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TRI-NEXUS | Triathlete Intelligence",
-  description: "Multi-sport performance analytics platform",
+  title: "Race Day | Know Your Finish Line",
+  description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
 };
 
 export default function RootLayout({

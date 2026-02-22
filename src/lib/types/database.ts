@@ -3,6 +3,14 @@ export interface Profile {
   email: string
   display_name: string | null
   unit_system: 'imperial' | 'metric'
+  weight_kg: number | null
+  date_of_birth: string | null
+  gender: 'male' | 'female' | 'non_binary' | null
+  timezone: string
+  onboarding_completed: boolean
+  subscription_tier: 'free' | 'pro'
+  subscription_expires_at: string | null
+  equipment_details: Record<string, unknown> | null
   created_at: string
 }
 
