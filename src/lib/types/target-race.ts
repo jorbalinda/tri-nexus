@@ -18,6 +18,11 @@ export interface TargetRace {
   actual_run_seconds: number | null
   actual_t1_seconds: number | null
   actual_t2_seconds: number | null
+  race_type: 'triathlon' | 'duathlon' | 'aquabike'
+  water_type: 'open_water' | 'pool' | null
+  wetsuit: boolean
+  expected_temp_f: number | null
+  gun_start_time: string | null
   status: 'upcoming' | 'race_week' | 'completed' | 'dns' | 'dnf'
   created_at: string
   updated_at: string

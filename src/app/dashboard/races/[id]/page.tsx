@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Calendar, Flag, Clock, Target, Trophy, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Calendar, Flag, Clock, Target, Trophy, ChevronRight, Package, Utensils, Bike, ListChecks, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { TargetRace } from '@/lib/types/target-race'
@@ -181,6 +181,39 @@ export default function RaceDetailPage() {
           <ChevronRight size={16} className="text-gray-400" />
         </Link>
       )}
+
+      {/* Race Prep Modules */}
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+          Race Preparation
+        </p>
+        <div className="flex flex-col gap-2">
+          {[
+            { href: `/dashboard/races/${race.id}/gear`, icon: Package, label: 'Packing List', desc: 'Smart gear checklist', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/30' },
+            { href: `/dashboard/races/${race.id}/timeline`, icon: ListChecks, label: 'Race Week Timeline', desc: 'Logistics & schedule', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-950/30' },
+            { href: `/dashboard/races/${race.id}/nutrition`, icon: Utensils, label: 'Nutrition Plan', desc: 'Fueling strategy & timeline', color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/30' },
+            { href: `/dashboard/races/${race.id}/equipment`, icon: Bike, label: 'Equipment Profile', desc: 'Bike setup & CdA', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950/30' },
+            ...(days <= 1 ? [{ href: `/dashboard/races/${race.id}/race-day`, icon: Zap, label: 'Race Day Mode', desc: 'Distraction-free race morning', color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-950/30' }] : []),
+          ].map(({ href, icon: Icon, label, desc, color, bg }) => (
+            <Link
+              key={href}
+              href={href}
+              className="card-squircle p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center`}>
+                  <Icon size={20} className={color} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{desc}</p>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-gray-400" />
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* Notes */}
       {race.notes && (

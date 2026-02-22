@@ -11,6 +11,8 @@ export interface Profile {
   subscription_tier: 'free' | 'pro'
   subscription_expires_at: string | null
   equipment_details: Record<string, unknown> | null
+  sweat_rate_lph: number | null
+  profile_public: boolean
   created_at: string
 }
 
@@ -87,6 +89,85 @@ export interface UploadedFile {
   file_size_bytes: number
   storage_path: string
   status: 'uploaded' | 'processing' | 'parsed' | 'error'
+}
+
+export interface EquipmentProfile {
+  id: string
+  race_id: string
+  bike_weight_kg: number | null
+  bottle_weight_kg: number | null
+  race_nutrition_weight_kg: number | null
+  tire_pressure_front: number | null
+  tire_pressure_rear: number | null
+  cda: number | null
+  cda_source: 'wind_tunnel' | 'estimated' | null
+  created_at: string
+}
+
+export interface SleepLog {
+  id: string
+  user_id: string
+  log_date: string
+  sleep_score: number | null
+  duration_hours: number | null
+  source: string | null
+  created_at: string
+}
+
+export interface GearItem {
+  id: string
+  race_id: string
+  item_name: string
+  category: 'swim' | 'bike' | 'run' | 'transition' | 'post_race'
+  is_packed: boolean
+  is_required: boolean
+  is_custom: boolean
+  created_at: string
+}
+
+export interface NutritionPlan {
+  id: string
+  race_id: string
+  segment: 'bike' | 'run'
+  carbs_per_hour_g: number | null
+  sodium_per_hour_mg: number | null
+  fluid_per_hour_oz: number | null
+  created_at: string
+}
+
+export interface FuelingTimelineEntry {
+  id: string
+  nutrition_plan_id: string
+  time_offset_minutes: number
+  instruction: string
+  created_at: string
+}
+
+export interface TimelineEvent {
+  id: string
+  race_id: string
+  event_name: string
+  scheduled_time: string
+  event_type: 'logistics' | 'nutrition' | 'action' | null
+  is_custom: boolean
+  is_completed: boolean
+  created_at: string
+}
+
+export interface RaceResult {
+  id: string
+  race_id: string
+  actual_swim_seconds: number | null
+  actual_t1_seconds: number | null
+  actual_bike_seconds: number | null
+  actual_t2_seconds: number | null
+  actual_run_seconds: number | null
+  actual_total_seconds: number | null
+  weather_notes: string | null
+  mechanical_notes: string | null
+  nutrition_notes: string | null
+  overall_notes: string | null
+  created_at: string
 }
 
 export interface DeviceConnection {

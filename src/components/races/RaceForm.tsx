@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRaceCourses } from '@/hooks/useRaceCourses'
 import type { TargetRace } from '@/lib/types/target-race'
 
@@ -56,14 +56,14 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
     : []
 
   // Initialize goal time from initialData
-  useState(() => {
+  useEffect(() => {
     if (initialData?.goal_time_seconds) {
       const h = Math.floor(initialData.goal_time_seconds / 3600)
       const m = Math.floor((initialData.goal_time_seconds % 3600) / 60)
       setGoalHours(h.toString())
       setGoalMinutes(m.toString())
     }
-  })
+  }, [initialData?.goal_time_seconds])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -94,6 +94,11 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
         actual_run_seconds: initialData?.actual_run_seconds || null,
         actual_t1_seconds: initialData?.actual_t1_seconds || null,
         actual_t2_seconds: initialData?.actual_t2_seconds || null,
+        race_type: initialData?.race_type || 'triathlon',
+        water_type: initialData?.water_type || null,
+        wetsuit: initialData?.wetsuit || false,
+        expected_temp_f: initialData?.expected_temp_f || null,
+        gun_start_time: initialData?.gun_start_time || null,
         status: initialData?.status || 'upcoming',
       })
     } catch (err: unknown) {
