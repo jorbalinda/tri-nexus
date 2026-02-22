@@ -51,6 +51,9 @@ export interface Workout {
   rpe: number | null
   notes: string | null
   blocks: WorkoutBlock[] | null
+  source: 'manual' | 'garmin' | 'file_upload' | 'strava'
+  external_id: string | null
+  external_url: string | null
   created_at: string
 }
 
@@ -86,24 +89,16 @@ export interface UploadedFile {
   status: 'uploaded' | 'processing' | 'parsed' | 'error'
 }
 
-export interface LabResult {
+export interface DeviceConnection {
   id: string
   user_id: string
-  test_id: string
-  date: string
-  notes: string | null
+  provider: 'garmin' | 'strava' | 'wahoo' | 'coros'
+  access_token: string
+  token_secret: string | null
+  refresh_token: string | null
+  token_expires_at: string | null
+  external_user_id: string | null
+  last_sync_at: string | null
+  sync_status: 'active' | 'paused' | 'error' | 'disconnected'
   created_at: string
-}
-
-export interface LabResultMarker {
-  id: string
-  lab_result_id: string
-  marker_name: string
-  value: number
-  unit: string | null
-  created_at: string
-}
-
-export interface LabResultWithMarkers extends LabResult {
-  lab_result_markers: LabResultMarker[]
 }
