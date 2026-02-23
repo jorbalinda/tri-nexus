@@ -5,11 +5,12 @@
 
 import type { RaceConditions } from '@/lib/types/race-plan'
 
-interface WeatherForecast {
+export interface WeatherForecast {
   temp_low_f: number
   temp_high_f: number
   humidity_pct: number
   wind_speed_mph: number
+  wind_direction_deg: number
   description: string
 }
 
@@ -27,7 +28,7 @@ export async function fetchRaceWeather(
   try {
     const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(location)}/${raceDate}?unitGroup=us&key=${apiKey}&include=days`
 
-    const response = await fetch(url, { next: { revalidate: 3600 } })
+    const response = await fetch(url, { cache: 'no-store' })
     if (!response.ok) return null
 
     const data = await response.json()
@@ -39,6 +40,7 @@ export async function fetchRaceWeather(
       temp_high_f: day.tempmax,
       humidity_pct: day.humidity,
       wind_speed_mph: day.windspeed,
+      wind_direction_deg: day.winddir,
       description: day.conditions || '',
     }
   } catch {

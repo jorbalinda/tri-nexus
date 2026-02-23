@@ -54,7 +54,7 @@ export default function LandingPage() {
               <span className="text-blue-600">Before the Race Starts.</span>
             </h1>
             <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mb-8">
-              Connect your devices, train, and watch your projected finish time sharpen. Race week: your full race day plan is revealed. Post-race: see how close we got.
+              Connect your devices, train, and watch your projected finish time sharpen. Race week: your full race day plan is revealed.
             </p>
 
             <Link
@@ -133,8 +133,8 @@ export default function LandingPage() {
               },
               {
                 icon: Waves,
-                title: 'Garmin Sync',
-                desc: 'Connect your Garmin account for automatic daily workout sync. 90-day historical backfill on connect.',
+                title: 'Device Sync',
+                desc: 'Garmin, Wahoo, Apple Watch, COROS, Suunto, Polar, Hammerhead, Zwift, TrainerRoad, Peloton — connect your devices for automatic workout sync.',
                 color: 'text-purple-500',
                 bg: 'bg-purple-50 dark:bg-purple-950/30',
               },

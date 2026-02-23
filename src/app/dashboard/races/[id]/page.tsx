@@ -8,7 +8,9 @@ import { createClient } from '@/lib/supabase/client'
 import type { TargetRace } from '@/lib/types/target-race'
 import { useProjection } from '@/hooks/useProjection'
 import { useWorkouts } from '@/hooks/useWorkouts'
+import { useCourseConditions } from '@/hooks/useCourseConditions'
 import ProgressIndicator from '@/components/races/ProgressIndicator'
+import CourseConditions from '@/components/races/CourseConditions'
 
 function daysUntil(dateStr: string): number {
   const now = new Date()
@@ -40,6 +42,12 @@ export default function RaceDetailPage() {
   const [race, setRace] = useState<TargetRace | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+
+  // All hooks must be called unconditionally (Rules of Hooks)
+  const raceId = (race?.id ?? '') as string
+  const { projection, loading: projLoading } = useProjection(raceId)
+  const { workouts } = useWorkouts()
+  const { course, weather, loading: conditionsLoading } = useCourseConditions(race?.race_course_id ?? null, raceId)
 
   useEffect(() => {
     async function fetchRace() {
@@ -76,8 +84,6 @@ export default function RaceDetailPage() {
   }
 
   const days = daysUntil(race.race_date)
-  const { projection, loading: projLoading } = useProjection(race.id)
-  const { workouts } = useWorkouts()
 
   return (
     <div className="flex flex-col gap-6">
@@ -140,6 +146,14 @@ export default function RaceDetailPage() {
         loading={projLoading}
         daysUntilRace={days}
         workoutCount={workouts.length}
+      />
+
+      {/* Course & Conditions */}
+      <CourseConditions
+        course={course}
+        weather={weather}
+        loading={conditionsLoading}
+        daysUntilRace={days}
       />
 
       {/* Post-Race Prompt */}

@@ -101,6 +101,7 @@ export interface EquipmentProfile {
   tire_pressure_rear: number | null
   cda: number | null
   cda_source: 'wind_tunnel' | 'estimated' | null
+  weight_unit: 'kg' | 'lbs'
   created_at: string
 }
 

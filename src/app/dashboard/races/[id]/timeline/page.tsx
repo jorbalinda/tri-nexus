@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Clock, CheckCircle2, Circle, Plus, Trash2 } from 'lucide-react'
+import { ArrowLeft, Clock, CheckCircle2, Circle, Trash2, MapPin, CalendarDays } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useTimelineEvents } from '@/hooks/useTimelineEvents'
 import type { TargetRace } from '@/lib/types/target-race'
+import type { RaceCourse } from '@/lib/types/race-plan'
 
 const INPUT_CLASS = 'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
 
@@ -42,6 +43,11 @@ function formatDay(dateStr: string, raceDateStr: string): string {
   return `${Math.round(diff)} Days Before`
 }
 
+function formatRaceDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+}
+
 export default function TimelinePage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
@@ -49,8 +55,10 @@ export default function TimelinePage() {
   const [race, setRace] = useState<TargetRace | null>(null)
   const { events, loading, generate, toggleCompleted, removeEvent } = useTimelineEvents(id)
 
-  const [gunTime, setGunTime] = useState('')
+  const [gunTimeOnly, setGunTimeOnly] = useState('')
   const [settingGunTime, setSettingGunTime] = useState(false)
+  const [course, setCourse] = useState<RaceCourse | null>(null)
+  const [suggestedFromCourse, setSuggestedFromCourse] = useState(false)
 
   useEffect(() => {
     async function loadRace() {
@@ -61,21 +69,40 @@ export default function TimelinePage() {
         .single()
       const r = data as TargetRace | null
       setRace(r)
+
       if (r?.gun_start_time) {
         const d = new Date(r.gun_start_time)
-        // Format for datetime-local input
-        const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
-        setGunTime(local)
+        const hours = d.getHours().toString().padStart(2, '0')
+        const mins = d.getMinutes().toString().padStart(2, '0')
+        setGunTimeOnly(`${hours}:${mins}`)
+      }
+
+      // Fetch linked course for start time suggestion
+      if (r?.race_course_id) {
+        const { data: courseData } = await supabaseRef.current
+          .from('race_courses')
+          .select('*')
+          .eq('id', r.race_course_id)
+          .single()
+        const c = courseData as RaceCourse | null
+        setCourse(c)
+
+        // Auto-suggest gun time from course if user hasn't set one yet
+        if (!r.gun_start_time && c?.typical_start_time) {
+          setGunTimeOnly(c.typical_start_time)
+          setSuggestedFromCourse(true)
+        }
       }
     }
     loadRace()
   }, [id])
 
   const handleSetGunTime = async () => {
-    if (!gunTime) return
+    if (!gunTimeOnly || !race?.race_date) return
     setSettingGunTime(true)
 
-    const gunDate = new Date(gunTime)
+    // Combine the fixed race date with the user-selected time
+    const gunDate = new Date(`${race.race_date}T${gunTimeOnly}:00`)
 
     await supabaseRef.current
       .from('target_races')
@@ -83,6 +110,7 @@ export default function TimelinePage() {
       .eq('id', id)
 
     setRace((prev) => prev ? { ...prev, gun_start_time: gunDate.toISOString() } : null)
+    setSuggestedFromCourse(false)
 
     // Generate timeline
     await generate(gunDate, race?.race_distance || 'olympic')
@@ -126,21 +154,49 @@ export default function TimelinePage() {
           <Clock size={18} className="text-blue-600" />
           <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Gun Start Time</h2>
         </div>
+
+        {/* Race date — read-only */}
+        {race?.race_date && (
+          <div className="flex items-center gap-2 mb-3">
+            <CalendarDays size={14} className="text-gray-400" />
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {formatRaceDate(race.race_date)}
+            </p>
+            {course?.timezone && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
+                {course.timezone}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Time-only input */}
         <div className="flex items-center gap-3">
           <input
-            type="datetime-local"
-            value={gunTime}
-            onChange={(e) => setGunTime(e.target.value)}
+            type="time"
+            value={gunTimeOnly}
+            onChange={(e) => {
+              setGunTimeOnly(e.target.value)
+              setSuggestedFromCourse(false)
+            }}
             className={INPUT_CLASS}
           />
           <button
             onClick={handleSetGunTime}
-            disabled={settingGunTime || !gunTime}
+            disabled={settingGunTime || !gunTimeOnly}
             className="px-5 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
           >
             {settingGunTime ? 'Generating...' : events.length > 0 ? 'Regenerate' : 'Generate Timeline'}
           </button>
         </div>
+        {suggestedFromCourse && course?.typical_start_time && (
+          <div className="flex items-center gap-2 mt-2">
+            <MapPin size={12} className="text-blue-500 shrink-0" />
+            <p className="text-[11px] text-blue-600 dark:text-blue-400">
+              Pre-filled from {course.name} typical start ({course.typical_start_time} {course.timezone ?? 'local'})
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Timeline */}

@@ -49,10 +49,14 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-blue-400 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-all cursor-pointer"
+        className="card-squircle px-6 py-4 flex items-center gap-3 w-full cursor-pointer group hover:shadow-md transition-all"
       >
-        <Plus size={16} />
-        Add Workout
+        <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center">
+          <Plus size={16} className="text-white" />
+        </div>
+        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          Add Workout
+        </span>
       </button>
     )
   }

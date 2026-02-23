@@ -91,7 +91,7 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
       <div className="grid grid-cols-7 gap-2">
         {/* Day headers */}
         {DAY_LABELS.map((label) => (
-          <div key={label} className="text-center text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 pb-2">
+          <div key={label} className="text-center text-[11px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-300 pb-2">
             {label}
           </div>
         ))}
@@ -104,8 +104,8 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
               key={date}
               className={`min-h-[80px] rounded-xl p-2 border transition-all ${
                 isToday
-                  ? 'border-blue-300 dark:border-blue-700 bg-blue-50/30 dark:bg-blue-950/10'
-                  : 'border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-800/20'
+                  ? 'border-blue-500 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/10'
+                  : 'border-gray-300 dark:border-gray-600 bg-gray-50/30 dark:bg-gray-800/20'
               }`}
             >
               <p className={`text-xs font-medium mb-1.5 ${isToday ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'}`}>

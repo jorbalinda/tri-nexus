@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { ChevronDown, CalendarCheck } from 'lucide-react'
 import { useRaceCourses } from '@/hooks/useRaceCourses'
 import type { TargetRace } from '@/lib/types/target-race'
 
@@ -40,20 +41,49 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
   const [customSwim, setCustomSwim] = useState(initialData?.custom_swim_distance_m?.toString() || '')
   const [customBike, setCustomBike] = useState(initialData?.custom_bike_distance_km?.toString() || '')
   const [customRun, setCustomRun] = useState(initialData?.custom_run_distance_km?.toString() || '')
+  const [gunStartTime, setGunStartTime] = useState(initialData?.gun_start_time || '')
+  const [dateFromCourse, setDateFromCourse] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
-  const [showDropdown, setShowDropdown] = useState(false)
+  const [customName, setCustomName] = useState(false)
+  const [courseDropdownOpen, setCourseDropdownOpen] = useState(false)
+  const [distanceDropdownOpen, setDistanceDropdownOpen] = useState(false)
+  const [courseSearch, setCourseSearch] = useState('')
 
-  const inputRef = useRef<HTMLInputElement>(null)
+  const courseDropdownRef = useRef<HTMLDivElement>(null)
+  const distanceDropdownRef = useRef<HTMLDivElement>(null)
+
   const { courses } = useRaceCourses()
 
-  // Filter courses based on race name input
-  const filteredCourses = raceName.length >= 2
+  // Check if initialData race name matches a course
+  useEffect(() => {
+    if (initialData?.race_name && courses.length > 0) {
+      const match = courses.find((c) => c.name === initialData.race_name)
+      if (!match) setCustomName(true)
+    }
+  }, [initialData?.race_name, courses])
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (courseDropdownRef.current && !courseDropdownRef.current.contains(e.target as Node)) {
+        setCourseDropdownOpen(false)
+        setCourseSearch('')
+      }
+      if (distanceDropdownRef.current && !distanceDropdownRef.current.contains(e.target as Node)) {
+        setDistanceDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  const filteredCourses = courseSearch
     ? courses.filter((c) =>
-        c.name.toLowerCase().includes(raceName.toLowerCase()) ||
-        c.location_city.toLowerCase().includes(raceName.toLowerCase())
-      ).slice(0, 8)
-    : []
+        c.name.toLowerCase().includes(courseSearch.toLowerCase()) ||
+        c.location_city.toLowerCase().includes(courseSearch.toLowerCase())
+      )
+    : courses
 
   // Initialize goal time from initialData
   useEffect(() => {
@@ -98,7 +128,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
         water_type: initialData?.water_type || null,
         wetsuit: initialData?.wetsuit || false,
         expected_temp_f: initialData?.expected_temp_f || null,
-        gun_start_time: initialData?.gun_start_time || null,
+        gun_start_time: gunStartTime || initialData?.gun_start_time || null,
         status: initialData?.status || 'upcoming',
       })
     } catch (err: unknown) {
@@ -113,11 +143,36 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
     }
   }
 
-  function selectCourse(course: typeof courses[number]) {
-    setRaceCourseId(course.id)
-    setRaceName(course.name)
-    setRaceDistance(course.race_distance as TargetRace['race_distance'])
-    setShowDropdown(false)
+  function handleCourseSelect(value: string) {
+    if (value === '__custom__') {
+      setCustomName(true)
+      setRaceName('')
+      setRaceCourseId('')
+      setDateFromCourse(false)
+      setRaceDate('')
+      setGunStartTime('')
+      return
+    }
+    const course = courses.find((c) => c.id === value)
+    if (course) {
+      setRaceCourseId(course.id)
+      setRaceName(course.name)
+      setRaceDistance(course.race_distance as TargetRace['race_distance'])
+      if (course.next_race_date) {
+        setRaceDate(course.next_race_date)
+        setDateFromCourse(true)
+      } else {
+        setRaceDate('')
+        setDateFromCourse(false)
+      }
+      if (course.next_race_date && course.typical_start_time) {
+        const gunDate = new Date(`${course.next_race_date}T${course.typical_start_time}:00`)
+        setGunStartTime(gunDate.toISOString())
+      } else {
+        setGunStartTime('')
+      }
+      setCustomName(false)
+    }
   }
 
   return (
@@ -129,43 +184,100 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
         </div>
       )}
 
-      {/* Race Name / Course Search (combined) */}
-      <div className="relative">
+      {/* Race Name */}
+      <div>
         <label className={LABEL_CLASS}>Race Name</label>
-        <input
-          ref={inputRef}
-          type="text"
-          value={raceName}
-          onChange={(e) => {
-            setRaceName(e.target.value)
-            setShowDropdown(true)
-            if (e.target.value === '') setRaceCourseId('')
-          }}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => {
-            // Delay hiding so mousedown on dropdown items fires first
-            setTimeout(() => setShowDropdown(false), 200)
-          }}
-          className={INPUT_CLASS}
-          placeholder="Search courses or type a race name..."
-          required
-        />
-        {showDropdown && filteredCourses.length > 0 && (
-          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[var(--card-bg)] border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-            {filteredCourses.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  selectCourse(c)
-                }}
-                className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-              >
-                <span className="font-medium text-gray-900 dark:text-gray-100">{c.name}</span>
-                <span className="text-xs text-gray-400 dark:text-gray-500 ml-2">{c.location_city} | {c.race_distance}</span>
-              </button>
-            ))}
+        {!customName ? (
+          <div ref={courseDropdownRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setCourseDropdownOpen(!courseDropdownOpen)}
+              className={`${INPUT_CLASS} flex items-center justify-between text-left cursor-pointer`}
+            >
+              <span className={raceName ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'}>
+                {raceName || 'Select a race course...'}
+              </span>
+              <ChevronDown size={16} className={`text-gray-400 transition-transform ${courseDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {courseDropdownOpen && (
+              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
+                <div className="p-2 border-b border-gray-100 dark:border-gray-800">
+                  <input
+                    type="text"
+                    value={courseSearch}
+                    onChange={(e) => setCourseSearch(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all"
+                    placeholder="Search courses..."
+                    autoFocus
+                  />
+                </div>
+                <div className="max-h-52 overflow-y-auto">
+                  {filteredCourses.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => {
+                        handleCourseSelect(c.id)
+                        setCourseDropdownOpen(false)
+                        setCourseSearch('')
+                      }}
+                      className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer ${
+                        raceCourseId === c.id ? 'bg-blue-50 dark:bg-blue-950/30' : ''
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="font-medium text-gray-900 dark:text-gray-100">{c.name}</span>
+                          <span className="text-xs text-gray-400 dark:text-gray-500 ml-2">{c.location_city}, {c.location_country} ({c.race_distance})</span>
+                        </div>
+                        {c.next_race_date && (
+                          <span className="flex items-center gap-1 shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400">
+                            <CalendarCheck size={10} />
+                            {new Date(c.next_race_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleCourseSelect('__custom__')
+                      setCourseDropdownOpen(false)
+                      setCourseSearch('')
+                    }}
+                    className="w-full px-4 py-2.5 text-left text-sm text-blue-600 dark:text-blue-400 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer border-t border-gray-100 dark:border-gray-800"
+                  >
+                    Other / Custom Race...
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={raceName}
+              onChange={(e) => {
+                setRaceName(e.target.value)
+                if (e.target.value === '') setRaceCourseId('')
+              }}
+              className={INPUT_CLASS}
+              placeholder="Enter race name..."
+              required
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setCustomName(false)
+                setRaceName('')
+                setRaceCourseId('')
+              }}
+              className="px-3 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all cursor-pointer whitespace-nowrap"
+            >
+              Browse
+            </button>
           </div>
         )}
       </div>
@@ -174,25 +286,54 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className={LABEL_CLASS}>Race Date</label>
-          <input
-            type="date"
-            value={raceDate}
-            onChange={(e) => setRaceDate(e.target.value)}
-            className={INPUT_CLASS}
-            required
-          />
+          {dateFromCourse && raceDate ? (
+            <div className={`${INPUT_CLASS} flex items-center gap-2 bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-800`}>
+              <CalendarCheck size={14} className="text-green-500 shrink-0" />
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {new Date(raceDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            </div>
+          ) : (
+            <input
+              type="date"
+              value={raceDate}
+              onChange={(e) => setRaceDate(e.target.value)}
+              className={INPUT_CLASS}
+              required
+            />
+          )}
         </div>
-        <div>
+        <div ref={distanceDropdownRef} className="relative">
           <label className={LABEL_CLASS}>Distance</label>
-          <select
-            value={raceDistance}
-            onChange={(e) => setRaceDistance(e.target.value as TargetRace['race_distance'])}
-            className={INPUT_CLASS}
+          <button
+            type="button"
+            onClick={() => setDistanceDropdownOpen(!distanceDropdownOpen)}
+            className={`${INPUT_CLASS} flex items-center justify-between text-left cursor-pointer`}
           >
-            {DISTANCES.map((d) => (
-              <option key={d.value} value={d.value}>{d.label}</option>
-            ))}
-          </select>
+            <span className="text-gray-900 dark:text-gray-100">
+              {DISTANCES.find((d) => d.value === raceDistance)?.label || raceDistance}
+            </span>
+            <ChevronDown size={16} className={`text-gray-400 transition-transform ${distanceDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {distanceDropdownOpen && (
+            <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
+              {DISTANCES.map((d) => (
+                <button
+                  key={d.value}
+                  type="button"
+                  onClick={() => {
+                    setRaceDistance(d.value as TargetRace['race_distance'])
+                    setDistanceDropdownOpen(false)
+                  }}
+                  className={`w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer ${
+                    raceDistance === d.value ? 'bg-blue-50 dark:bg-blue-950/30 font-medium text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-gray-100'
+                  }`}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

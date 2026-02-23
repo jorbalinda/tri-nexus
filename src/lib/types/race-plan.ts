@@ -349,6 +349,8 @@ export interface FitnessSnapshot {
 // Race Course (pre-populated course database)
 // ---------------------------------------------------------------------------
 
+export type RoadQuality = 'excellent' | 'good' | 'fair' | 'poor'
+
 export interface RaceCourse {
   id: string
   user_id: string | null
@@ -374,8 +376,26 @@ export interface RaceCourse {
   notable_features: string | null
   is_kona_qualifier: boolean
   is_703_worlds_qualifier: boolean
+  elevation_gain_m: number | null
+  road_quality: RoadQuality
+  typical_start_time: string | null
+  timezone: string | null
+  next_race_date: string | null
   created_at: string
   updated_at: string
+}
+
+export interface RaceWeather {
+  id: string
+  target_race_id: string
+  temp_low_f: number | null
+  temp_high_f: number | null
+  humidity_pct: number | null
+  wind_speed_mph: number | null
+  wind_direction_deg: number | null
+  water_temp_f: number | null
+  description: string | null
+  fetched_at: string
 }
 
 // ---------------------------------------------------------------------------

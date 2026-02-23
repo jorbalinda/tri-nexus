@@ -161,6 +161,11 @@ export default function RaceDetailsForm({
         notable_features: null,
         is_kona_qualifier: false,
         is_703_worlds_qualifier: false,
+        elevation_gain_m: null,
+        road_quality: 'good',
+        typical_start_time: null,
+        timezone: null,
+        next_race_date: null,
       })
     } catch (err) {
       console.error('Failed to save course:', err)

@@ -79,9 +79,23 @@ export default function FitnessTrends() {
       {/* CTL/ATL/TSB Chart */}
       {stressData.length > 0 && (
         <div className="card-squircle p-6">
-          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-4">
+          <p className="text-[11px] font-black uppercase tracking-[2px] text-gray-600 dark:text-gray-300 mb-2">
             Fitness / Fatigue / Form
           </p>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-0.5 rounded-full bg-blue-500 inline-block" />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Fitness (CTL)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-0.5 rounded-full bg-orange-500 inline-block" />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Fatigue (ATL)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-0.5 rounded-full bg-green-500 inline-block border-dashed" style={{ borderTop: '2px dashed #22c55e', height: 0, background: 'none' }} />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Form (TSB)</span>
+            </div>
+          </div>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={stressData}>
@@ -113,9 +127,23 @@ export default function FitnessTrends() {
       {/* Weekly Volume by Discipline */}
       {volumeData.length > 0 && (
         <div className="card-squircle p-6">
-          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-4">
+          <p className="text-[11px] font-black uppercase tracking-[2px] text-gray-600 dark:text-gray-300 mb-2">
             Weekly Volume (hours) — Last 12 Weeks
           </p>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block" />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Swim</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm bg-orange-500 inline-block" />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Bike</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm bg-green-500 inline-block" />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Run</span>
+            </div>
+          </div>
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={volumeData}>
