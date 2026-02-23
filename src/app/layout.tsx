@@ -19,6 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+      // Adding comment to trigger security scan - this is a test comment and does not affect the code
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`}>
         <Providers>
