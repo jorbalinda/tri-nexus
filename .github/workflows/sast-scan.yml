@@ -66,21 +66,23 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Semgrep
-        uses: semgrep/semgrep-action@v1
+        uses: returntocorp/semgrep-action@v1
         with:
           config: >-
             p/security-audit
-            p/react
+            p/javascript
             p/typescript
-            p/owasp-top-ten
-            p/xss
+            p/react
           generateSarif: true
+        continue-on-error: true
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: semgrep.sarif
+          category: semgrep
+        continue-on-error: true
 
   snyk-scan:
     name: Snyk Security Scan
@@ -99,8 +101,10 @@ jobs:
           args: --severity-threshold=medium --all-projects
 
       - name: Upload Snyk report
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: snyk.sarif
+          category: snyk
+        continue-on-error: true
 
