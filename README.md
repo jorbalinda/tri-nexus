@@ -1,5 +1,16 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Security
+
+This project includes automated security scanning via GitHub Actions. Security checks run automatically on every push to main and on pull requests.
+
+- **Dependency Scanning**: npm audit checks for vulnerable dependencies
+- **Code Analysis**: CodeQL and Semgrep scan for security issues
+- **Secret Detection**: TruffleHog prevents accidental secret commits
+- **SAST**: Static application security testing with multiple tools
+
+See [.github/workflows/README.md](.github/workflows/README.md) for detailed documentation.
+
 ## Getting Started
 
 First, run the development server:
