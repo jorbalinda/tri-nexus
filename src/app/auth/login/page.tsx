@@ -33,7 +33,7 @@ export default function LoginPage() {
     }
   }
 
-  const handleOAuth = async (provider: 'google' | 'apple') => {
+  const handleOAuth = async (provider: 'google') => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -101,16 +101,6 @@ export default function LoginPage() {
                 <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" fill="#EA4335"/>
               </svg>
               Continue with Google
-            </button>
-            <button
-              type="button"
-              onClick={() => handleOAuth('apple')}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all cursor-pointer"
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
-                <path d="M14.94 9.88c-.02-2.08 1.7-3.08 1.78-3.13-0.97-1.42-2.48-1.61-3.01-1.63-1.28-0.13-2.5 0.75-3.15 0.75-0.65 0-1.65-0.73-2.72-0.71-1.4 0.02-2.69 0.81-3.41 2.06-1.45 2.52-0.37 6.26 1.04 8.31 0.69 1 1.51 2.13 2.59 2.09 1.04-0.04 1.43-0.67 2.69-0.67 1.25 0 1.61 0.67 2.71 0.65 1.12-0.02 1.83-1.02 2.51-2.03 0.79-1.16 1.12-2.28 1.14-2.34-0.02-0.01-2.18-0.84-2.2-3.32ZM12.88 3.4c0.57-0.69 0.96-1.65 0.85-2.61-0.82 0.03-1.82 0.55-2.41 1.24-0.53 0.61-0.99 1.58-0.87 2.52 0.92 0.07 1.85-0.46 2.42-1.14Z"/>
-              </svg>
-              Continue with Apple
             </button>
           </div>
 
