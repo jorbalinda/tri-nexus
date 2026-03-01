@@ -1,4 +1,5 @@
 import type { FitnessSnapshot } from '@/lib/types/race-plan'
+import type { HRAdjustmentResult } from '@/lib/analytics/hr-adjustment'
 
 export interface RaceProjection {
   id: string
@@ -17,6 +18,7 @@ export interface RaceProjection {
   data_points_used: number
   fitness_snapshot: FitnessSnapshot | null
   weather_adjustment: Record<string, unknown> | null
+  hr_adjustment: HRAdjustmentResult | null
   is_revealed: boolean
   created_at: string
 }

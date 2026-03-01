@@ -50,7 +50,7 @@ export default function CourseConditions({
 }: CourseConditionsProps) {
   if (loading) {
     return (
-      <div className="card-squircle p-6">
+      <div className="card-squircle p-4 sm:p-6">
         <div className="h-48 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
       </div>
     )
@@ -62,13 +62,13 @@ export default function CourseConditions({
   const quality = QUALITY_LABELS[course.road_quality] ?? QUALITY_LABELS.good
 
   return (
-    <div className="card-squircle p-6">
+    <div className="card-squircle p-4 sm:p-6">
       <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-4">
         Course & Conditions
       </p>
 
       {/* Static course data — always shown */}
-      <div className="grid grid-cols-3 gap-3 mb-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
         <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center gap-2 mb-1">
             <Waves size={12} className="text-blue-500" />
@@ -98,7 +98,7 @@ export default function CourseConditions({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
         <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center gap-2 mb-1">
             <Mountain size={12} className="text-amber-500" />

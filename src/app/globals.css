@@ -12,7 +12,7 @@
   --card-bg: white;
   --card-border: rgba(0, 0, 0, 0.04);
   --card-shadow: rgba(0, 0, 0, 0.04);
-  --card-radius: 2.5rem;
+  --card-radius: 1.25rem;
   --sidebar-width: 280px;
   --chart-gradient-from: #f8f9ff;
   --chart-gradient-to: #f0f4ff;
@@ -21,6 +21,8 @@
   --tooltip-border: #e5e7eb;
   --scrollbar-thumb: rgba(0, 0, 0, 0.1);
   --scrollbar-hover: rgba(0, 0, 0, 0.2);
+  --bottom-nav-height: 4rem;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .dark {
@@ -57,12 +59,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Squircle card base */
+/* Card base */
 .card-squircle {
   background: var(--card-bg);
   border-radius: var(--card-radius);
   border: 1px solid var(--card-border);
-  box-shadow: 0 2px 20px var(--card-shadow);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 4px 16px var(--card-shadow);
+  transition: box-shadow 0.2s ease;
 }
 
 /* Glass effect */
@@ -94,4 +97,25 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-hover);
+}
+
+/* Hide number input spinners globally */
+.pb-safe-nav {
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + 1rem);
+}
+@media (min-width: 1024px) {
+  .pb-safe-nav { padding-bottom: 2rem; }
+}
+
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  margin: 0;
+  display: none;
 }

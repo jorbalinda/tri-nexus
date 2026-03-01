@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { TimelineEvent } from '@/lib/types/database'
-import { generateTimeline } from '@/lib/timeline/generator'
+import { generateTimeline, generateTimelineFromSelections } from '@/lib/timeline/generator'
 
 export function useTimelineEvents(raceId: string) {
   const [events, setEvents] = useState<TimelineEvent[]>([])
@@ -98,5 +98,33 @@ export function useTimelineEvents(raceId: string) {
     }
   }, [])
 
-  return { events, loading, generate, toggleCompleted, addCustomEvent, removeEvent, refetch: fetch }
+  const generateFromSelections = useCallback(async (
+    gunStartTime: Date,
+    selections: { event_name: string; scheduled_time: string; event_type: 'logistics' | 'nutrition' | 'action' }[]
+  ) => {
+    // Clear existing non-custom events
+    await supabaseRef.current
+      .from('timeline_events')
+      .delete()
+      .eq('race_id', raceId)
+      .eq('is_custom', false)
+
+    const generated = generateTimelineFromSelections(gunStartTime, selections)
+    const rows = generated.map((e) => ({
+      race_id: raceId,
+      event_name: e.event_name,
+      scheduled_time: e.scheduled_time.toISOString(),
+      event_type: e.event_type,
+      is_custom: false,
+      is_completed: false,
+    }))
+
+    await supabaseRef.current
+      .from('timeline_events')
+      .insert(rows)
+
+    return fetch()
+  }, [raceId, fetch])
+
+  return { events, loading, generate, generateFromSelections, toggleCompleted, addCustomEvent, removeEvent, refetch: fetch }
 }

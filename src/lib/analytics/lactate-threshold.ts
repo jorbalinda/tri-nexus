@@ -105,10 +105,18 @@ export function deriveRestingHR(logs: ManualLog[]): number | null {
 }
 
 /**
- * Estimate max HR by age using the classic formula
+ * Estimate max HR by age using the classic formula (220 - age)
  */
 export function estimateMaxHRByAge(age: number): number {
   return 220 - age
+}
+
+/**
+ * Estimate max HR using the Tanaka formula (208 - 0.7 × age)
+ * Generally considered more accurate than 220-age for trained athletes
+ */
+export function estimateMaxHRTanaka(age: number): number {
+  return Math.round(208 - 0.7 * age)
 }
 
 /**

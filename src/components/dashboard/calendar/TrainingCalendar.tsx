@@ -62,7 +62,7 @@ export default function TrainingCalendar() {
   }
 
   return (
-    <div className="card-squircle p-6">
+    <div className="card-squircle p-4 sm:p-6">
       <CalendarHeader
         month={viewDate}
         onPrev={handlePrev}
@@ -70,42 +70,46 @@ export default function TrainingCalendar() {
         onToday={handleToday}
       />
 
-      {/* Day-of-week labels */}
-      <div className="grid grid-cols-7 mb-1">
-        {DAY_LABELS.map((d) => (
-          <div
-            key={d}
-            className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 text-center py-2"
-          >
-            {d}
+      {/* Day-of-week labels + Calendar grid — horizontal scroll on mobile */}
+      <div className="overflow-x-auto -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:overflow-visible">
+        <div className="min-w-[500px] lg:min-w-0">
+          <div className="grid grid-cols-7 mb-1">
+            {DAY_LABELS.map((d) => (
+              <div
+                key={d}
+                className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 text-center py-2"
+              >
+                {d}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Calendar grid */}
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-gray-400">Loading workouts...</p>
+          {/* Calendar grid */}
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <p className="text-gray-400">Loading workouts...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-7 rounded-2xl border border-gray-100 dark:border-gray-800 [&>*:first-child]:rounded-tl-2xl [&>*:nth-child(7)]:rounded-tr-2xl [&>*:nth-last-child(7)]:rounded-bl-2xl [&>*:last-child]:rounded-br-2xl">
+              {days.map((date) => {
+                const key = toDateKey(date)
+                return (
+                  <CalendarDayCell
+                    key={key}
+                    date={date}
+                    workouts={workoutsByDate.get(key) || []}
+                    raceEvents={raceEventsByDate.get(key) || []}
+                    isCurrentMonth={isInMonth(date, year, month)}
+                    isToday={isSameDay(date, today)}
+                    onWorkoutClick={setSelectedWorkout}
+                    onDayClick={(dateKey, dayWorkouts) => setSelectedDay({ date: dateKey, workouts: dayWorkouts })}
+                  />
+                )
+              })}
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="grid grid-cols-7 rounded-2xl border border-gray-100 dark:border-gray-800 [&>*:first-child]:rounded-tl-2xl [&>*:nth-child(7)]:rounded-tr-2xl [&>*:nth-last-child(7)]:rounded-bl-2xl [&>*:last-child]:rounded-br-2xl">
-          {days.map((date) => {
-            const key = toDateKey(date)
-            return (
-              <CalendarDayCell
-                key={key}
-                date={date}
-                workouts={workoutsByDate.get(key) || []}
-                raceEvents={raceEventsByDate.get(key) || []}
-                isCurrentMonth={isInMonth(date, year, month)}
-                isToday={isSameDay(date, today)}
-                onWorkoutClick={setSelectedWorkout}
-                onDayClick={(dateKey, dayWorkouts) => setSelectedDay({ date: dateKey, workouts: dayWorkouts })}
-              />
-            )
-          })}
-        </div>
-      )}
+      </div>
 
       <CalendarDayModal
         date={selectedDay?.date ?? null}

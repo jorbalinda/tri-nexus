@@ -1,0 +1,13 @@
+Sport	Title	Date	Duration (s)	Distance (m)	Avg HR	Max HR	Calories	RPE	Pool Length (m)	SWOLF	Avg Power	Normalized Power	Elevation Gain	Notes
+swim	Race Pace Continuous	2026-02-23	2400	4200	136	158	440	7	25	31				Continuous race pace effort no breaks
+bike	Race Simulation Ride	2026-02-23	5400	58000	138	162	920	7			185	192	280	Full race effort simulation long day
+run	Long Run with Surges	2026-02-24	4800	16000	142	168	820	7						4x5min surge at half marathon pace
+swim	Descending 200s Set	2026-02-24	1800	3000	134	156	360	6	25	32				5x200m descending times
+bike	Threshold Power Blocks	2026-02-25	3600	37000	150	174	680	8			208	215	200	5x6min at threshold power
+run	Race Pace Tempo 6K	2026-02-25	3000	11000	152	176	580	8						6km at target race pace effort
+swim	Easy Recovery Laps	2026-02-26	1200	2000	118	136	220	3	25	37				Slow easy laps with stretching
+bike	Endurance Tempo Mix	2026-02-26	4200	44000	136	160	720	6			180	186	220	3x10min tempo in long ride
+run	Progressive Long Run	2026-02-27	3600	13000	140	166	640	6						Last 5km getting faster each km
+swim	Mixed Medley Set	2026-02-27	2100	3800	130	152	380	6	25	33				IM drills and freestyle mix
+bike	Pre Race Easy Spin	2026-02-28	2400	26000	126	146	380	4			168	172	80	Taper ride legs feeling fresh
+run	Race Week Shakeout	2026-02-28	1500	5000	132	152	280	4						Short and snappy shakeout run

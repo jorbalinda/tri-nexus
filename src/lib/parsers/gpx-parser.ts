@@ -1,3 +1,4 @@
+import { DOMParser } from '@xmldom/xmldom'
 import { ParsedWorkout } from './types'
 
 function haversineDistance(
@@ -33,23 +34,19 @@ function getExtensionValue(trkpt: Element, tagNames: string[]): number | null {
   return null
 }
 
-export function parseGpxFile(file: File): Promise<ParsedWorkout[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      try {
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(reader.result as string, 'text/xml')
-        const tracks = doc.getElementsByTagName('trk')
+export async function parseGpxFile(file: File): Promise<ParsedWorkout[]> {
+  const text = await file.text()
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(text, 'text/xml')
+  const tracks = doc.getElementsByTagName('trk')
 
-        if (tracks.length === 0) {
-          reject(new Error('No tracks found in GPX file'))
-          return
-        }
+  if (tracks.length === 0) {
+    throw new Error('No tracks found in GPX file')
+  }
 
-        const workouts: ParsedWorkout[] = []
+  const workouts: ParsedWorkout[] = []
 
-        for (let t = 0; t < tracks.length; t++) {
+  for (let t = 0; t < tracks.length; t++) {
           const track = tracks[t]
           const nameEl = track.getElementsByTagName('name')[0]
           const title = nameEl?.textContent || null
@@ -180,17 +177,9 @@ export function parseGpxFile(file: File): Promise<ParsedWorkout[]> {
           })
         }
 
-        if (workouts.length === 0) {
-          reject(new Error('No valid tracks found in GPX file'))
-          return
-        }
+  if (workouts.length === 0) {
+    throw new Error('No valid tracks found in GPX file')
+  }
 
-        resolve(workouts)
-      } catch (err) {
-        reject(new Error(`Failed to parse GPX file: ${err instanceof Error ? err.message : err}`))
-      }
-    }
-    reader.onerror = () => reject(new Error('Failed to read GPX file'))
-    reader.readAsText(file)
-  })
+  return workouts
 }

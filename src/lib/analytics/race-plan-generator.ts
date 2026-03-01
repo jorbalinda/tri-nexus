@@ -5,7 +5,6 @@ import type {
   RaceConditions,
   PacingPlan,
   NutritionPlan,
-  EquipmentPlan,
   MindsetPlan,
   FitnessSnapshot,
   AthleteClassification,
@@ -21,7 +20,6 @@ import {
   generatePacingPlan,
 } from './race-pacing'
 import { generateNutritionPlan } from './race-nutrition'
-import { generateEquipmentPlan } from './race-equipment'
 import { generateMindsetPlan } from './race-mindset'
 import { deriveMaxHR, deriveRestingHR } from './lactate-threshold'
 import { weeklyVolume } from './training-stress'
@@ -85,7 +83,6 @@ export function buildFitnessSnapshot(
 export interface GeneratedPlan {
   pacing_plan: PacingPlan
   nutrition_plan: NutritionPlan
-  equipment_plan: EquipmentPlan
   mindset_plan: MindsetPlan
   fitness_snapshot: FitnessSnapshot
   estimated_finish_seconds: number
@@ -178,16 +175,12 @@ export function generateFullRacePlan(
     customDistances
   )
 
-  // Equipment
-  const equipment = generateEquipmentPlan(raceDistance, conditions)
-
   // Mindset
   const mindset = generateMindsetPlan(goalType, raceDistance, raceName, classification)
 
   return {
     pacing_plan: pacing,
     nutrition_plan: nutrition,
-    equipment_plan: equipment,
     mindset_plan: mindset,
     fitness_snapshot: snapshot,
     estimated_finish_seconds: pacing.totalEstimate.realisticSeconds,

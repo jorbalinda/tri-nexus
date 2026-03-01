@@ -95,3 +95,106 @@ export async function parseFitFile(file: File): Promise<ParsedWorkout[]> {
 
   return (sessions as FitSession[]).map((s) => sessionToWorkout(s, file.name))
 }
+
+interface FitRecord {
+  timestamp?: string
+  heart_rate?: number
+  power?: number
+  speed?: number
+  cadence?: number
+  position_lat?: number
+  position_long?: number
+  altitude?: number
+  temperature?: number
+}
+
+interface FitLap {
+  start_time?: string
+  total_elapsed_time?: number
+  total_timer_time?: number
+  total_distance?: number
+  avg_heart_rate?: number
+  max_heart_rate?: number
+  avg_power?: number
+  avg_speed?: number
+  avg_cadence?: number
+  total_ascent?: number
+}
+
+export interface DetailedFitData {
+  workouts: ParsedWorkout[]
+  records: {
+    timestamp_offset_seconds: number
+    heart_rate: number | null
+    power_watts: number | null
+    speed_mps: number | null
+    cadence: number | null
+    latitude: number | null
+    longitude: number | null
+    altitude_meters: number | null
+    temperature_c: number | null
+  }[]
+  laps: {
+    lap_number: number
+    start_offset_seconds: number | null
+    duration_seconds: number | null
+    distance_meters: number | null
+    avg_hr: number | null
+    max_hr: number | null
+    avg_power_watts: number | null
+    avg_pace_sec_per_km: number | null
+    avg_cadence: number | null
+    elevation_gain_meters: number | null
+  }[]
+}
+
+export async function parseFitFileDetailed(file: File): Promise<DetailedFitData> {
+  const { default: FitParser } = await import('fit-file-parser')
+  const parser = new FitParser({ force: true, mode: 'list' })
+
+  const buffer = await file.arrayBuffer()
+  const data = await parser.parseAsync(buffer)
+
+  const sessions = data.sessions || data.activity?.sessions || []
+  if (sessions.length === 0) {
+    throw new Error('No workout sessions found in FIT file')
+  }
+
+  const workouts = (sessions as FitSession[]).map((s) => sessionToWorkout(s, file.name))
+
+  // Extract records (time-series)
+  const rawRecords = (data.records || []) as FitRecord[]
+  const startTime = rawRecords[0]?.timestamp ? new Date(rawRecords[0].timestamp).getTime() : 0
+  const records = rawRecords.map((r) => ({
+    timestamp_offset_seconds: r.timestamp ? Math.round((new Date(r.timestamp).getTime() - startTime) / 1000) : 0,
+    heart_rate: r.heart_rate ?? null,
+    power_watts: r.power ?? null,
+    speed_mps: r.speed ?? null,
+    cadence: r.cadence ?? null,
+    latitude: r.position_lat ?? null,
+    longitude: r.position_long ?? null,
+    altitude_meters: r.altitude ?? null,
+    temperature_c: r.temperature ?? null,
+  }))
+
+  // Extract laps
+  const rawLaps = (data.laps || []) as FitLap[]
+  const lapStartTime = rawLaps[0]?.start_time ? new Date(rawLaps[0].start_time).getTime() : startTime
+  const laps = rawLaps.map((l, i) => {
+    const avgSpeed = l.avg_speed && l.avg_speed > 0 ? l.avg_speed : null
+    return {
+      lap_number: i + 1,
+      start_offset_seconds: l.start_time ? Math.round((new Date(l.start_time).getTime() - lapStartTime) / 1000) : null,
+      duration_seconds: l.total_timer_time ? Math.round(l.total_timer_time) : l.total_elapsed_time ? Math.round(l.total_elapsed_time) : null,
+      distance_meters: l.total_distance ? Math.round(l.total_distance) : null,
+      avg_hr: l.avg_heart_rate ?? null,
+      max_hr: l.max_heart_rate ?? null,
+      avg_power_watts: l.avg_power ?? null,
+      avg_pace_sec_per_km: avgSpeed ? Math.round(1000 / avgSpeed) : null,
+      avg_cadence: l.avg_cadence ?? null,
+      elevation_gain_meters: l.total_ascent ?? null,
+    }
+  })
+
+  return { workouts, records, laps }
+}

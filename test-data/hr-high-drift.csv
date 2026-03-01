@@ -1,0 +1,9 @@
+Sport	Title	Date	Duration (s)	Distance (m)	Avg HR	Max HR	Calories	RPE	Pool Length (m)	SWOLF	Avg Power	Normalized Power	Elevation Gain	Notes
+bike	Hot Day Long Ride	2026-02-10	5400	50000	148	178	960	8			175	182	200	Started at 135 ended at 162 bpm dehydrated
+run	Marathon Pace Blowup	2026-02-12	5400	18000	152	180	880	8						HR drifted badly last 30 minutes
+bike	Solo Century Attempt	2026-02-17	7200	72000	144	176	1200	8			172	180	350	Cardiac drift kicked in hard after 2 hours
+run	Humid Evening Slog	2026-02-19	3600	11500	150	178	620	7						Humidity crushed me HR kept climbing
+swim	Long Open Water Swim	2026-02-22	3000	4500	138	158	480	7	50	36				2.5km continuous nonstop effort
+bike	Hilly Grind Ride	2026-02-24	4800	46000	142	170	840	7			178	186	450	HR crept up on every single climb
+run	Progressive Fatigue Run	2026-02-26	4200	14000	146	174	680	7						Deliberately pushed second half hard
+swim	Continuous Distance Swim	2026-02-28	2700	4000	134	154	420	6	25	34				Nonstop distance no rest session

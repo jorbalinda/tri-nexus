@@ -31,7 +31,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="fixed left-0 top-0 h-screen flex flex-col justify-between py-10 px-6 glass"
+      className="fixed left-0 top-0 h-screen hidden lg:flex flex-col justify-between py-10 px-6 glass"
       style={{
         width: 'var(--sidebar-width)',
         borderRight: '1px solid var(--glass-border)',
@@ -57,7 +57,7 @@ export default function Sidebar() {
               <Link
                 key={href}
                 href={href}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   isActive
                     ? 'text-blue-600 bg-blue-50/80 dark:bg-blue-950/40 dark:text-blue-400'
                     : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100/50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800/50'
@@ -77,7 +77,7 @@ export default function Sidebar() {
         {mounted && (
           <button
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors cursor-pointer"
           >
             {resolvedTheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             {resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
@@ -87,7 +87,7 @@ export default function Sidebar() {
         {/* Sign out */}
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-4 py-3 text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors cursor-pointer"
         >
           <LogOut size={16} />
           Sign out

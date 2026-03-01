@@ -54,7 +54,6 @@ export type WaterType = 'pool' | 'lake' | 'ocean' | 'river'
 export type WindCondition = 'calm' | 'light' | 'moderate' | 'strong'
 export type CourseType = 'point_to_point' | 'out_and_back' | 'loop' | 'multi_loop'
 export type Gender = 'male' | 'female' | 'non_binary'
-export type ChecklistCategory = 'swim' | 'bike' | 'run' | 'transition' | 'nutrition' | 'special_needs'
 
 export const AGE_GROUPS = [
   '18-24', '25-29', '30-34', '35-39', '40-44', '45-49',
@@ -296,26 +295,6 @@ export interface NutritionPlan {
 }
 
 // ---------------------------------------------------------------------------
-// Equipment plan
-// ---------------------------------------------------------------------------
-
-export interface EquipmentItem {
-  name: string
-  category: ChecklistCategory
-}
-
-export interface RaceWeekTimeline {
-  daysOut: number
-  label: string
-  tasks: string[]
-}
-
-export interface EquipmentPlan {
-  checklist: EquipmentItem[]
-  raceWeekTimeline: RaceWeekTimeline[]
-}
-
-// ---------------------------------------------------------------------------
 // Mindset plan
 // ---------------------------------------------------------------------------
 
@@ -421,7 +400,6 @@ export interface RacePlan {
   conditions: RaceConditions | null
   pacing_plan: PacingPlan | null
   nutrition_plan: NutritionPlan | null
-  equipment_plan: EquipmentPlan | null
   mindset_plan: MindsetPlan | null
   fitness_snapshot: FitnessSnapshot | null
   estimated_finish_seconds: number | null
@@ -432,15 +410,6 @@ export interface RacePlan {
   updated_at: string
 }
 
-export interface RacePlanChecklist {
-  id: string
-  race_plan_id: string
-  item_name: string
-  category: ChecklistCategory
-  is_checked: boolean
-  notes: string | null
-  created_at: string
-}
 
 // ---------------------------------------------------------------------------
 // Form input type (before generation)

@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { ParsedWorkout } from '@/lib/parsers'
 import { FileText } from 'lucide-react'
+import { useUnits } from '@/hooks/useUnits'
+import { metersToMiles, metersToYards, metersToFeet, feetToMeters, KM_TO_MILES } from '@/lib/units'
 
 type Sport = 'swim' | 'bike' | 'run' | 'brick'
 
@@ -27,15 +29,41 @@ const FORMAT_COLORS: Record<string, string> = {
   csv: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
 }
 
+/** Convert meters to the user's distance display value */
+function metersToDisplay(meters: number, sport: string, imperial: boolean): string {
+  if (sport === 'swim') {
+    return imperial ? Math.round(metersToYards(meters)).toString() : Math.round(meters).toString()
+  }
+  return imperial ? metersToMiles(meters).toFixed(2) : (meters / 1000).toFixed(2)
+}
+
+/** Convert sec/km to display pace in decimal minutes */
+function paceToDisplay(secPerKm: number, imperial: boolean): string {
+  const secInUnits = imperial ? Math.round(secPerKm / KM_TO_MILES) : secPerKm
+  return (secInUnits / 60).toFixed(2)
+}
+
+/** Convert elevation meters to display */
+function elevToDisplay(meters: number, imperial: boolean): string {
+  return imperial ? Math.round(metersToFeet(meters)).toString() : meters.toString()
+}
+
+/** Convert pool length meters to display */
+function poolToDisplay(meters: number, imperial: boolean): string {
+  return imperial ? Math.round(meters * 1.09361).toString() : meters.toString()
+}
+
 export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: ParsedWorkoutPreviewProps) {
+  const { isImperial, distInputLabel, distToMeters, elevLabel, paceLabel: pLabel } = useUnits()
+
   const [sport, setSport] = useState<Sport>(workout.sport || 'run')
   const [title, setTitle] = useState(workout.title || '')
   const [date, setDate] = useState(workout.date || new Date().toISOString().split('T')[0])
   const [durationMin, setDurationMin] = useState(
     workout.duration_seconds ? (workout.duration_seconds / 60).toFixed(1) : ''
   )
-  const [distanceKm, setDistanceKm] = useState(
-    workout.distance_meters ? (workout.distance_meters / 1000).toFixed(2) : ''
+  const [distance, setDistance] = useState(
+    workout.distance_meters ? metersToDisplay(workout.distance_meters, workout.sport || 'run', isImperial) : ''
   )
   const [avgHr, setAvgHr] = useState(workout.avg_hr?.toString() || '')
   const [maxHr, setMaxHr] = useState(workout.max_hr?.toString() || '')
@@ -43,17 +71,21 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
   const [calories, setCalories] = useState(workout.calories?.toString() || '')
   const [notes, setNotes] = useState(workout.notes || '')
   // Swim
-  const [poolLength, setPoolLength] = useState(workout.pool_length_meters?.toString() || '')
+  const [poolLength, setPoolLength] = useState(
+    workout.pool_length_meters ? poolToDisplay(workout.pool_length_meters, isImperial) : ''
+  )
   const [swolf, setSwolf] = useState(workout.swolf?.toString() || '')
   // Bike
   const [avgPower, setAvgPower] = useState(workout.avg_power_watts?.toString() || '')
   const [normalizedPower, setNormalizedPower] = useState(workout.normalized_power?.toString() || '')
   const [tss, setTss] = useState(workout.tss?.toString() || '')
   const [cadenceRpm, setCadenceRpm] = useState(workout.avg_cadence_rpm?.toString() || '')
-  const [elevation, setElevation] = useState(workout.elevation_gain_meters?.toString() || '')
+  const [elevation, setElevation] = useState(
+    workout.elevation_gain_meters ? elevToDisplay(workout.elevation_gain_meters, isImperial) : ''
+  )
   // Run
   const [paceMin, setPaceMin] = useState(
-    workout.avg_pace_sec_per_km ? (workout.avg_pace_sec_per_km / 60).toFixed(2) : ''
+    workout.avg_pace_sec_per_km ? paceToDisplay(workout.avg_pace_sec_per_km, isImperial) : ''
   )
   const [cadenceSpm, setCadenceSpm] = useState(workout.avg_cadence_spm?.toString() || '')
 
@@ -69,25 +101,48 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
     setSaved(false)
     setSaveError(null)
 
+    // Convert distance from user's units to meters
+    const distanceMeters = distance
+      ? distToMeters(parseFloat(distance), sport)
+      : null
+
+    // Convert elevation from user's units to meters
+    const elevationMeters = elevation
+      ? (isImperial ? feetToMeters(parseFloat(elevation)) : parseFloat(elevation))
+      : null
+
+    // Convert pace from user's units to sec/km
+    const paceSecPerKm = paceMin
+      ? (() => {
+          const secInUserUnits = Number(paceMin) * 60
+          return isImperial ? Math.round(secInUserUnits * 0.621371) : secInUserUnits
+        })()
+      : null
+
+    // Convert pool length from user's units to meters
+    const poolLengthMeters = poolLength
+      ? (isImperial ? Math.round(parseFloat(poolLength) / 1.09361) : parseFloat(poolLength))
+      : null
+
     const { error } = await supabase.from('workouts').insert({
       sport,
       title: title || `${sport} workout`,
       date,
       duration_seconds: durationMin ? Number(durationMin) * 60 : null,
-      distance_meters: distanceKm ? Number(distanceKm) * 1000 : null,
+      distance_meters: distanceMeters,
       avg_hr: avgHr ? Number(avgHr) : null,
       max_hr: maxHr ? Number(maxHr) : null,
       rpe: rpe ? Number(rpe) : null,
       calories: calories ? Number(calories) : null,
       notes: notes || null,
-      pool_length_meters: poolLength ? Number(poolLength) : null,
+      pool_length_meters: poolLengthMeters,
       swolf: swolf ? Number(swolf) : null,
       avg_power_watts: avgPower ? Number(avgPower) : null,
       normalized_power: normalizedPower ? Number(normalizedPower) : null,
       tss: tss ? Number(tss) : null,
       avg_cadence_rpm: cadenceRpm ? Number(cadenceRpm) : null,
-      elevation_gain_meters: elevation ? Number(elevation) : null,
-      avg_pace_sec_per_km: paceMin ? Number(paceMin) * 60 : null,
+      elevation_gain_meters: elevationMeters,
+      avg_pace_sec_per_km: paceSecPerKm,
       avg_cadence_spm: cadenceSpm ? Number(cadenceSpm) : null,
     })
 
@@ -110,6 +165,11 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
   const inputClass =
     'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
   const labelClass = 'block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5'
+
+  const distLabel = distInputLabel(sport)
+  const distPlaceholder = sport === 'swim'
+    ? (isImperial ? '2200' : '2000')
+    : (isImperial ? '6' : '10')
 
   return (
     <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-[var(--card-bg)] p-6">
@@ -204,14 +264,14 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
             />
           </div>
           <div>
-            <label className={labelClass}>Distance (km)</label>
+            <label className={labelClass}>Distance ({distLabel})</label>
             <input
               type="number"
               step="0.01"
-              value={distanceKm}
-              onChange={(e) => setDistanceKm(e.target.value)}
+              value={distance}
+              onChange={(e) => setDistance(e.target.value)}
               className={inputClass}
-              placeholder="3.8"
+              placeholder={distPlaceholder}
             />
           </div>
           <div>
@@ -262,7 +322,7 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
         {sport === 'swim' && (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Pool Length (m)</label>
+              <label className={labelClass}>Pool Length ({isImperial ? 'yd' : 'm'})</label>
               <input
                 type="number"
                 value={poolLength}
@@ -327,13 +387,13 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
               />
             </div>
             <div>
-              <label className={labelClass}>Elevation (m)</label>
+              <label className={labelClass}>Elevation ({elevLabel})</label>
               <input
                 type="number"
                 value={elevation}
                 onChange={(e) => setElevation(e.target.value)}
                 className={inputClass}
-                placeholder="450"
+                placeholder={isImperial ? '1500' : '450'}
               />
             </div>
           </div>
@@ -342,14 +402,14 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
         {(sport === 'run' || sport === 'brick') && (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Avg Pace (min/km)</label>
+              <label className={labelClass}>Avg Pace (min{pLabel})</label>
               <input
                 type="number"
                 step="0.01"
                 value={paceMin}
                 onChange={(e) => setPaceMin(e.target.value)}
                 className={inputClass}
-                placeholder="5.15"
+                placeholder={isImperial ? '8.00' : '5.15'}
               />
             </div>
             <div>

@@ -4,6 +4,7 @@ import { useEffect, useCallback } from 'react'
 import { X, ChevronRight, Clock, Ruler, Heart, Flame, Zap } from 'lucide-react'
 import type { Workout } from '@/lib/types/database'
 import { estimateTSS } from '@/lib/analytics/training-stress'
+import { useUnits } from '@/hooks/useUnits'
 
 const sportDotColor: Record<string, string> = {
   swim: 'bg-blue-500',
@@ -33,19 +34,6 @@ function formatDuration(seconds: number): string {
   return m > 0 ? `${h}h ${m}m` : `${h}h`
 }
 
-function formatDistance(meters: number): string {
-  if (meters >= 1000) {
-    const km = meters / 1000
-    return km % 1 === 0 ? `${km} km` : `${km.toFixed(1)} km`
-  }
-  return `${meters}m`
-}
-
-function formatPace(secPerKm: number): string {
-  const min = Math.floor(secPerKm / 60)
-  const sec = Math.round(secPerKm % 60)
-  return `${min}:${String(sec).padStart(2, '0')} /km`
-}
 
 function formatFullDate(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00')
@@ -65,6 +53,7 @@ interface CalendarDayModalProps {
 }
 
 export default function CalendarDayModal({ date, workouts, onClose, onWorkoutClick }: CalendarDayModalProps) {
+  const { fmtDistance, fmtPace } = useUnits()
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -91,15 +80,20 @@ export default function CalendarDayModal({ date, workouts, onClose, onWorkoutCli
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-end sm:items-center"
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
       <div
-        className="relative w-full max-w-xl max-h-[85vh] overflow-y-auto card-squircle m-4"
+        className="relative w-full sm:max-w-xl max-h-[85dvh] overflow-y-auto card-squircle sm:m-4 rounded-b-none sm:rounded-b-[var(--card-radius)]"
         onClick={(e) => e.stopPropagation()}
+        style={{ paddingBottom: 'var(--safe-area-bottom)' }}
       >
-        <div className="p-8">
+        {/* Drag handle — mobile only */}
+        <div className="sm:hidden flex justify-center pt-3">
+          <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+        </div>
+        <div className="p-6 sm:p-8">
           {/* Header */}
           <div className="flex items-start justify-between mb-2">
             <div>
@@ -168,6 +162,7 @@ export default function CalendarDayModal({ date, workouts, onClose, onWorkoutCli
 }
 
 function WorkoutCard({ workout, onClick }: { workout: Workout; onClick: () => void }) {
+  const { fmtDistance, fmtPace } = useUnits()
   const tss = estimateTSS(workout)
 
   return (
@@ -201,7 +196,7 @@ function WorkoutCard({ workout, onClick }: { workout: Workout; onClick: () => vo
         {workout.distance_meters && (
           <span className="flex items-center gap-1">
             <Ruler size={11} className="text-gray-400 dark:text-gray-500" />
-            {formatDistance(workout.distance_meters)}
+            {fmtDistance(workout.distance_meters, workout.sport)}
           </span>
         )}
         {workout.avg_hr && (
@@ -217,7 +212,7 @@ function WorkoutCard({ workout, onClick }: { workout: Workout; onClick: () => vo
           </span>
         )}
         {workout.sport === 'run' && workout.avg_pace_sec_per_km && (
-          <span>{formatPace(workout.avg_pace_sec_per_km)}</span>
+          <span>{fmtPace(workout.avg_pace_sec_per_km)}</span>
         )}
         {workout.calories && (
           <span className="flex items-center gap-1">

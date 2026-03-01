@@ -136,17 +136,13 @@ function parsePace(value: string): number | null {
   return isNaN(n) ? null : Math.round(n * 60)
 }
 
-export function parseCsvFile(file: File): Promise<ParsedWorkout[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      try {
-        const text = (reader.result as string).trim()
-        const lines = text.split(/\r?\n/)
-        if (lines.length < 2) {
-          reject(new Error('CSV file must have a header row and at least one data row'))
-          return
-        }
+export async function parseCsvFile(file: File): Promise<ParsedWorkout[]> {
+  const rawText = await file.text()
+  const text = rawText.trim()
+  const lines = text.split(/\r?\n/)
+  if (lines.length < 2) {
+    throw new Error('CSV file must have a header row and at least one data row')
+  }
 
         const delimiter = detectDelimiter(lines[0])
         const rawHeaders = lines[0].split(delimiter).map((h) => h.trim().replace(/^["']|["']$/g, ''))
@@ -162,12 +158,9 @@ export function parseCsvFile(file: File): Promise<ParsedWorkout[]> {
         }
 
         if (columnMap.length === 0) {
-          reject(
-            new Error(
-              'No recognized columns found in CSV. Expected headers like: Sport, Date, Duration, Distance, Avg HR, etc.'
-            )
+          throw new Error(
+            'No recognized columns found in CSV. Expected headers like: Sport, Date, Duration, Distance, Avg HR, etc.'
           )
-          return
         }
 
         const workouts: ParsedWorkout[] = []
@@ -255,17 +248,9 @@ export function parseCsvFile(file: File): Promise<ParsedWorkout[]> {
           workouts.push(workout)
         }
 
-        if (workouts.length === 0) {
-          reject(new Error('No data rows found in CSV file'))
-          return
-        }
+  if (workouts.length === 0) {
+    throw new Error('No data rows found in CSV file')
+  }
 
-        resolve(workouts)
-      } catch (err) {
-        reject(new Error(`Failed to parse CSV file: ${err instanceof Error ? err.message : err}`))
-      }
-    }
-    reader.onerror = () => reject(new Error('Failed to read CSV file'))
-    reader.readAsText(file)
-  })
+  return workouts
 }

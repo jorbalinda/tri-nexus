@@ -14,12 +14,23 @@ interface TargetRace {
   status: string
 }
 
+interface ProjectionRow {
+  target_race_id: string
+  realistic_seconds: number
+}
+
 function daysUntil(dateStr: string): number {
   const now = new Date()
   now.setHours(0, 0, 0, 0)
   const race = new Date(dateStr)
   race.setHours(0, 0, 0, 0)
   return Math.ceil((race.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+}
+
+function formatTimeShort(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  return `${h}:${m.toString().padStart(2, '0')}`
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -30,6 +41,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 export default function UpcomingRaceCards() {
   const [races, setRaces] = useState<TargetRace[]>([])
+  const [projections, setProjections] = useState<Map<string, number>>(new Map())
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
@@ -42,7 +54,30 @@ export default function UpcomingRaceCards() {
         .order('race_date', { ascending: true })
         .limit(3)
 
-      setRaces((data as TargetRace[]) || [])
+      const raceList = (data as TargetRace[]) || []
+      setRaces(raceList)
+
+      // Fetch latest projection per race
+      if (raceList.length > 0) {
+        const raceIds = raceList.map((r) => r.id)
+        const { data: projData } = await supabase
+          .from('projections')
+          .select('target_race_id, realistic_seconds')
+          .in('target_race_id', raceIds)
+          .order('projected_at', { ascending: false })
+
+        if (projData && projData.length > 0) {
+          const projMap = new Map<string, number>()
+          for (const row of projData as ProjectionRow[]) {
+            // First occurrence per race is the latest (ordered desc)
+            if (!projMap.has(row.target_race_id)) {
+              projMap.set(row.target_race_id, row.realistic_seconds)
+            }
+          }
+          setProjections(projMap)
+        }
+      }
+
       setLoading(false)
     }
     fetchRaces()
@@ -50,7 +85,7 @@ export default function UpcomingRaceCards() {
 
   if (loading) {
     return (
-      <div className="card-squircle p-6">
+      <div className="card-squircle p-5">
         <div className="h-16 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
       </div>
     )
@@ -77,9 +112,10 @@ export default function UpcomingRaceCards() {
       <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
         Upcoming Races
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="flex flex-col gap-3">
         {races.map((race) => {
           const days = daysUntil(race.race_date)
+          const realisticSeconds = projections.get(race.id)
           return (
             <Link
               key={race.id}
@@ -92,7 +128,7 @@ export default function UpcomingRaceCards() {
                 </span>
                 <ChevronRight size={14} className="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors" />
               </div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1.5 group-hover:text-blue-600 transition-colors">
                 {race.race_name}
               </h3>
               <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
@@ -103,7 +139,12 @@ export default function UpcomingRaceCards() {
                   {days > 0 ? `${days}d away` : days === 0 ? 'Today!' : 'Completed'}
                 </span>
               </div>
-              <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1 uppercase">{race.race_distance}</p>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1.5 uppercase tracking-wide">{race.race_distance}</p>
+              {realisticSeconds && (
+                <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-1">
+                  Projected: {formatTimeShort(realisticSeconds)}
+                </p>
+              )}
             </Link>
           )
         })}

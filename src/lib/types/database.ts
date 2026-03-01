@@ -13,6 +13,16 @@ export interface Profile {
   equipment_details: Record<string, unknown> | null
   sweat_rate_lph: number | null
   profile_public: boolean
+  resting_heart_rate: number | null
+  max_heart_rate: number | null
+  ftp_watts: number | null
+  threshold_pace_swim: number | null
+  threshold_pace_run: number | null
+  height_cm: number | null
+  max_hr_source: 'none' | 'manual' | 'age_formula' | 'workout_derived'
+  lthr_swim: number | null
+  lthr_bike: number | null
+  lthr_run: number | null
   created_at: string
 }
 
@@ -35,7 +45,6 @@ export interface Workout {
   distance_meters: number | null
   // Swim
   pool_length_meters: number | null
-  stroke_type: string | null
   swolf: number | null
   // Bike
   avg_power_watts: number | null
@@ -56,6 +65,20 @@ export interface Workout {
   source: 'manual' | 'garmin' | 'file_upload' | 'strava'
   external_id: string | null
   external_url: string | null
+  started_at: string | null
+  moving_time_seconds: number | null
+  is_indoor: boolean | null
+  gear_id: string | null
+  weather_temp_c: number | null
+  weather_conditions: string | null
+  deleted_at: string | null
+  max_power_watts: number | null
+  intensity_factor: number | null
+  avg_speed_mps: number | null
+  max_speed_mps: number | null
+  max_cadence: number | null
+  total_descent_meters: number | null
+  tss_source: 'device' | 'power' | 'pace' | 'hr' | 'rpe' | null
   created_at: string
 }
 
@@ -68,6 +91,10 @@ export interface SessionMetric {
   pace_sec_per_km: number | null
   cadence: number | null
   speed_mps: number | null
+  latitude: number | null
+  longitude: number | null
+  altitude_meters: number | null
+  temperature_c: number | null
 }
 
 export interface ManualLog {
@@ -91,19 +118,6 @@ export interface UploadedFile {
   status: 'uploaded' | 'processing' | 'parsed' | 'error'
 }
 
-export interface EquipmentProfile {
-  id: string
-  race_id: string
-  bike_weight_kg: number | null
-  bottle_weight_kg: number | null
-  race_nutrition_weight_kg: number | null
-  tire_pressure_front: number | null
-  tire_pressure_rear: number | null
-  cda: number | null
-  cda_source: 'wind_tunnel' | 'estimated' | null
-  weight_unit: 'kg' | 'lbs'
-  created_at: string
-}
 
 export interface SleepLog {
   id: string
@@ -112,17 +126,6 @@ export interface SleepLog {
   sleep_score: number | null
   duration_hours: number | null
   source: string | null
-  created_at: string
-}
-
-export interface GearItem {
-  id: string
-  race_id: string
-  item_name: string
-  category: 'swim' | 'bike' | 'run' | 'transition' | 'post_race'
-  is_packed: boolean
-  is_required: boolean
-  is_custom: boolean
   created_at: string
 }
 
@@ -183,4 +186,39 @@ export interface DeviceConnection {
   last_sync_at: string | null
   sync_status: 'active' | 'paused' | 'error' | 'disconnected'
   created_at: string
+}
+
+export interface WorkoutHRZone {
+  id: string
+  workout_id: string
+  zone_number: number
+  min_hr: number
+  max_hr: number
+  time_in_zone_seconds: number
+  percent_of_total: number
+}
+
+export interface WorkoutPowerZone {
+  id: string
+  workout_id: string
+  zone_number: number
+  min_watts: number
+  max_watts: number
+  time_in_zone_seconds: number
+  percent_of_total: number
+}
+
+export interface WorkoutLap {
+  id: string
+  workout_id: string
+  lap_number: number
+  start_offset_seconds: number | null
+  duration_seconds: number | null
+  distance_meters: number | null
+  avg_hr: number | null
+  max_hr: number | null
+  avg_power_watts: number | null
+  avg_pace_sec_per_km: number | null
+  avg_cadence: number | null
+  elevation_gain_meters: number | null
 }

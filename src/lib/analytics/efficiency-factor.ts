@@ -81,3 +81,47 @@ export function efTrend(workouts: Workout[]): number | null {
   if (previousAvg === 0) return null
   return Number((((recentAvg - previousAvg) / previousAvg) * 100).toFixed(1))
 }
+
+/**
+ * EF trend for a specific sport.
+ * Filters workouts by sport, then applies the same 30d vs prior 30d logic.
+ */
+export function efTrendBySport(
+  workouts: Workout[],
+  sport: 'swim' | 'bike' | 'run'
+): { trendPct: number | null; rating: 'improving' | 'stable' | 'declining' | 'insufficient' } {
+  const sportWorkouts = workouts.filter((w) => w.sport === sport)
+
+  const sorted = [...sportWorkouts].sort((a, b) => b.date.localeCompare(a.date))
+  const now = new Date()
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+  const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
+
+  const recent = sorted.filter((w) => new Date(w.date) >= thirtyDaysAgo)
+  const previous = sorted.filter(
+    (w) => new Date(w.date) >= sixtyDaysAgo && new Date(w.date) < thirtyDaysAgo
+  )
+
+  const recentEFs = recent.map(getEF).filter((ef): ef is number => ef !== null)
+  const previousEFs = previous.map(getEF).filter((ef): ef is number => ef !== null)
+
+  if (recentEFs.length < 2 || previousEFs.length < 2) {
+    return { trendPct: null, rating: 'insufficient' }
+  }
+
+  const recentAvg = recentEFs.reduce((a, b) => a + b, 0) / recentEFs.length
+  const previousAvg = previousEFs.reduce((a, b) => a + b, 0) / previousEFs.length
+
+  if (previousAvg === 0) {
+    return { trendPct: null, rating: 'insufficient' }
+  }
+
+  const trendPct = Number((((recentAvg - previousAvg) / previousAvg) * 100).toFixed(1))
+
+  let rating: 'improving' | 'stable' | 'declining'
+  if (trendPct > 3) rating = 'improving'
+  else if (trendPct < -3) rating = 'declining'
+  else rating = 'stable'
+
+  return { trendPct, rating }
+}

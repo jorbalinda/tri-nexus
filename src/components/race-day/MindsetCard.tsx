@@ -13,7 +13,7 @@ export default function MindsetCard({ mindset }: MindsetCardProps) {
   const [showVisualization, setShowVisualization] = useState(false)
 
   return (
-    <div className="card-squircle p-8">
+    <div className="card-squircle p-4 sm:p-6">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between cursor-pointer"
@@ -23,7 +23,7 @@ export default function MindsetCard({ mindset }: MindsetCardProps) {
             Mindset & Mental Prep
           </p>
           <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-            {mindset.mantras.length} mantras &middot; {mindset.processGoals.length} process goals
+            Mindset & Mental Prep
           </p>
         </div>
         {expanded ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
@@ -31,42 +31,6 @@ export default function MindsetCard({ mindset }: MindsetCardProps) {
 
       {expanded && (
         <div className="mt-6 flex flex-col gap-6">
-          {/* Mantras */}
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-purple-500 mb-3">
-              Your Mantras
-            </p>
-            <div className="flex flex-col gap-2">
-              {mindset.mantras.map((mantra, i) => (
-                <div
-                  key={i}
-                  className="rounded-xl p-4 bg-purple-50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/30"
-                >
-                  <p className="text-sm font-semibold text-purple-700 dark:text-purple-300 italic">
-                    &ldquo;{mantra}&rdquo;
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Process Goals */}
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-500 mb-3">
-              Process Goals
-            </p>
-            <ul className="space-y-2">
-              {mindset.processGoals.map((goal, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                    {i + 1}
-                  </span>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{goal}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Visualization */}
           <div>
             <button

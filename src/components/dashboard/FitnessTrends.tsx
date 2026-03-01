@@ -1,15 +1,36 @@
 'use client'
 
-import { useMemo } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
+import { useMemo, useState } from 'react'
+import {
+  ComposedChart,
+  Line,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+} from 'recharts'
 import { useWorkouts } from '@/hooks/useWorkouts'
+import { useProfile } from '@/hooks/useProfile'
 import {
   calculateCTLSeries,
   calculateATLSeries,
   calculateTSBSeries,
-  weeklyVolume,
+  calculateDisciplineSeries,
+  estimateTSS,
 } from '@/lib/analytics/training-stress'
 import type { Workout } from '@/lib/types/database'
+
+type SportFilter = 'all' | 'swim' | 'bike' | 'run'
+
+const FILTER_OPTIONS: { value: SportFilter; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'swim', label: 'Swim' },
+  { value: 'bike', label: 'Bike' },
+  { value: 'run', label: 'Run' },
+]
 
 function weeklyVolumeByDiscipline(workouts: Workout[]): { week: string; swim: number; bike: number; run: number }[] {
   const weekMap = new Map<string, { swim: number; bike: number; run: number }>()
@@ -42,30 +63,60 @@ function weeklyVolumeByDiscipline(workouts: Workout[]): { week: string; swim: nu
 
 export default function FitnessTrends() {
   const { workouts, loading } = useWorkouts()
+  const { profile } = useProfile()
+  const [sportFilter, setSportFilter] = useState<SportFilter>('all')
 
   const stressData = useMemo(() => {
     if (workouts.length === 0) return []
-    const ctl = calculateCTLSeries(workouts)
-    const atl = calculateATLSeries(workouts)
-    const tsb = calculateTSBSeries(workouts)
+
+    let ctl, atl, tsb
+
+    if (sportFilter === 'all') {
+      ctl = calculateCTLSeries(workouts, profile)
+      atl = calculateATLSeries(workouts, profile)
+      tsb = calculateTSBSeries(workouts, profile)
+    } else {
+      const series = calculateDisciplineSeries(workouts, profile)
+      const discipline = series[sportFilter]
+      ctl = discipline.ctl
+      atl = discipline.atl
+      tsb = discipline.tsb
+    }
+
+    // Build daily TSS map for bars
+    const filteredWorkouts = sportFilter === 'all'
+      ? workouts
+      : workouts.filter((w) => w.sport === sportFilter)
+
+    const dailyTSSMap = new Map<string, number>()
+    filteredWorkouts.forEach((w) => {
+      const existing = dailyTSSMap.get(w.date) || 0
+      dailyTSSMap.set(w.date, existing + estimateTSS(w, profile))
+    })
 
     const atlMap = new Map(atl.map((p) => [p.date, p.value]))
     const tsbMap = new Map(tsb.map((p) => [p.date, p.value]))
 
-    return ctl.slice(-60).map((p) => ({
+    return ctl.slice(-90).map((p) => ({
       date: p.date,
       CTL: p.value,
       ATL: atlMap.get(p.date) || 0,
       TSB: tsbMap.get(p.date) || 0,
+      TSS: dailyTSSMap.get(p.date) || 0,
     }))
-  }, [workouts])
+  }, [workouts, profile, sportFilter])
 
   const volumeData = useMemo(() => weeklyVolumeByDiscipline(workouts), [workouts])
 
   if (loading) {
     return (
-      <div className="card-squircle p-6">
-        <div className="h-48 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card-squircle p-5">
+          <div className="h-56 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
+        </div>
+        <div className="card-squircle p-5">
+          <div className="h-56 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
+        </div>
       </div>
     )
   }
@@ -75,30 +126,54 @@ export default function FitnessTrends() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* CTL/ATL/TSB Chart */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* CTL/ATL/TSB Chart with daily TSS bars */}
       {stressData.length > 0 && (
-        <div className="card-squircle p-6">
-          <p className="text-[11px] font-black uppercase tracking-[2px] text-gray-600 dark:text-gray-300 mb-2">
+        <div className="card-squircle p-5">
+          <p className="text-[11px] font-black uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
             Fitness / Fatigue / Form
           </p>
+
+          {/* Sport filter pills */}
+          <div className="flex items-center gap-1.5 mb-3">
+            {FILTER_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setSportFilter(opt.value)}
+                className={`px-2.5 py-1 rounded-full text-[10px] font-semibold transition-colors ${
+                  sportFilter === opt.value
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Legend */}
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm inline-block bg-blue-200 dark:bg-blue-900" />
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">TSS</span>
+            </div>
+            <div className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 rounded-full bg-blue-500 inline-block" />
-              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Fitness (CTL)</span>
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">CTL</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 rounded-full bg-orange-500 inline-block" />
-              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Fatigue (ATL)</span>
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">ATL</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 rounded-full bg-green-500 inline-block border-dashed" style={{ borderTop: '2px dashed #22c55e', height: 0, background: 'none' }} />
-              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Form (TSB)</span>
+              <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">TSB</span>
             </div>
           </div>
-          <div className="h-48">
+
+          <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={stressData}>
+              <ComposedChart data={stressData}>
                 <CartesianGrid stroke="var(--grid-stroke)" strokeDasharray="3 3" />
                 <XAxis
                   dataKey="date"
@@ -106,7 +181,17 @@ export default function FitnessTrends() {
                   tickFormatter={(d: string) => d.slice(5)}
                   interval="preserveStartEnd"
                 />
-                <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} width={30} />
+                <YAxis
+                  yAxisId="left"
+                  tick={{ fontSize: 10, fill: '#9ca3af' }}
+                  width={30}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  tick={{ fontSize: 10, fill: '#9ca3af' }}
+                  width={30}
+                />
                 <Tooltip
                   contentStyle={{
                     background: 'var(--tooltip-bg)',
@@ -115,10 +200,11 @@ export default function FitnessTrends() {
                     fontSize: '12px',
                   }}
                 />
-                <Line type="monotone" dataKey="CTL" stroke="#3b82f6" strokeWidth={2} dot={false} name="Fitness (CTL)" />
-                <Line type="monotone" dataKey="ATL" stroke="#f97316" strokeWidth={2} dot={false} name="Fatigue (ATL)" />
-                <Line type="monotone" dataKey="TSB" stroke="#22c55e" strokeWidth={1.5} dot={false} name="Form (TSB)" strokeDasharray="4 2" />
-              </LineChart>
+                <Bar yAxisId="right" dataKey="TSS" fill="#93c5fd" opacity={0.35} name="Daily TSS" className="dark:fill-blue-800" />
+                <Line yAxisId="left" type="monotone" dataKey="CTL" stroke="#3b82f6" strokeWidth={2} dot={false} name="Fitness (CTL)" />
+                <Line yAxisId="left" type="monotone" dataKey="ATL" stroke="#f97316" strokeWidth={2} dot={false} name="Fatigue (ATL)" />
+                <Line yAxisId="left" type="monotone" dataKey="TSB" stroke="#22c55e" strokeWidth={1.5} dot={false} name="Form (TSB)" strokeDasharray="4 2" />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -126,9 +212,9 @@ export default function FitnessTrends() {
 
       {/* Weekly Volume by Discipline */}
       {volumeData.length > 0 && (
-        <div className="card-squircle p-6">
-          <p className="text-[11px] font-black uppercase tracking-[2px] text-gray-600 dark:text-gray-300 mb-2">
-            Weekly Volume (hours) — Last 12 Weeks
+        <div className="card-squircle p-5">
+          <p className="text-[11px] font-black uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
+            Weekly Volume (hours)
           </p>
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-1.5">
@@ -144,7 +230,7 @@ export default function FitnessTrends() {
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Run</span>
             </div>
           </div>
-          <div className="h-40">
+          <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={volumeData}>
                 <CartesianGrid stroke="var(--grid-stroke)" strokeDasharray="3 3" />

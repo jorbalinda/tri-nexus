@@ -223,7 +223,7 @@ export function generateRunPacing(
   const bucket = pacingBucket(raceDistance)
 
   const recentRuns = workouts
-    .filter((w) => w.sport === 'run' && w.avg_pace_sec_per_km && (w.duration_seconds || 0) >= 1200)
+    .filter((w) => w.sport === 'run' && w.avg_pace_sec_per_km && ((w.moving_time_seconds || w.duration_seconds || 0) >= 1200))
     .sort((a, b) => b.date.localeCompare(a.date))
 
   let basePace: number | null = null

@@ -1,3 +1,4 @@
+import { DOMParser } from '@xmldom/xmldom'
 import { ParsedWorkout } from './types'
 
 function mapSport(tcxSport: string): ParsedWorkout['sport'] {
@@ -21,17 +22,14 @@ function getNumber(el: Element, tag: string): number | null {
   return isNaN(n) ? null : n
 }
 
-export function parseTcxFile(file: File): Promise<ParsedWorkout[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      try {
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(reader.result as string, 'text/xml')
-        const activities = doc.getElementsByTagName('Activity')
-        const workouts: ParsedWorkout[] = []
+export async function parseTcxFile(file: File): Promise<ParsedWorkout[]> {
+  const text = await file.text()
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(text, 'text/xml')
+  const activities = doc.getElementsByTagName('Activity')
+  const workouts: ParsedWorkout[] = []
 
-        for (let a = 0; a < activities.length; a++) {
+  for (let a = 0; a < activities.length; a++) {
           const activity = activities[a]
           const sportAttr = activity.getAttribute('Sport') || ''
           const sport = mapSport(sportAttr)
@@ -143,17 +141,9 @@ export function parseTcxFile(file: File): Promise<ParsedWorkout[]> {
           })
         }
 
-        if (workouts.length === 0) {
-          reject(new Error('No activities found in TCX file'))
-          return
-        }
+  if (workouts.length === 0) {
+    throw new Error('No activities found in TCX file')
+  }
 
-        resolve(workouts)
-      } catch (err) {
-        reject(new Error(`Failed to parse TCX file: ${err instanceof Error ? err.message : err}`))
-      }
-    }
-    reader.onerror = () => reject(new Error('Failed to read TCX file'))
-    reader.readAsText(file)
-  })
+  return workouts
 }

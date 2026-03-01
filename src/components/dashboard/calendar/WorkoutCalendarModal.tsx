@@ -4,6 +4,7 @@ import { useEffect, useCallback } from 'react'
 import { X } from 'lucide-react'
 import type { Workout, WorkoutBlock } from '@/lib/types/database'
 import { estimateTSS } from '@/lib/analytics/training-stress'
+import { useUnits } from '@/hooks/useUnits'
 
 const sportAccent: Record<string, string> = {
   swim: 'text-blue-600',
@@ -36,13 +37,6 @@ function formatDate(dateStr: string): string {
   })
 }
 
-function formatDistance(meters: number): string {
-  if (meters >= 1000) {
-    const km = meters / 1000
-    return km % 1 === 0 ? `${km} km` : `${km.toFixed(1)} km`
-  }
-  return `${meters}m`
-}
 
 const zoneBarColors: Record<string, string> = {
   '1': 'bg-sky-400',
@@ -65,6 +59,7 @@ const zoneBadgeColors: Record<string, string> = {
 }
 
 function BlockBreakdown({ blocks }: { blocks: WorkoutBlock[] }) {
+  const { fmtDistance } = useUnits()
   return (
     <div className="mb-6">
       <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
@@ -88,7 +83,7 @@ function BlockBreakdown({ blocks }: { blocks: WorkoutBlock[] }) {
                   </span>
                   {block.distance_meters && (
                     <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatDistance(block.distance_meters)}
+                      {fmtDistance(block.distance_meters, 'run')}
                     </span>
                   )}
                   {block.zone && (
@@ -114,11 +109,6 @@ function BlockBreakdown({ blocks }: { blocks: WorkoutBlock[] }) {
   )
 }
 
-function formatPace(secPerKm: number): string {
-  const min = Math.floor(secPerKm / 60)
-  const sec = Math.round(secPerKm % 60)
-  return `${min}:${String(sec).padStart(2, '0')} /km`
-}
 
 interface StatCellProps {
   label: string
@@ -144,6 +134,7 @@ interface WorkoutCalendarModalProps {
 }
 
 export default function WorkoutCalendarModal({ workout, onClose }: WorkoutCalendarModalProps) {
+  const { fmtDistance, fmtPace, fmtElevation } = useUnits()
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -212,7 +203,7 @@ export default function WorkoutCalendarModal({ workout, onClose }: WorkoutCalend
             <StatCell label="TSS" value={tss} />
 
             {workout.distance_meters && (
-              <StatCell label="Distance" value={formatDistance(workout.distance_meters)} />
+              <StatCell label="Distance" value={fmtDistance(workout.distance_meters, workout.sport)} />
             )}
 
             {workout.avg_hr && (
@@ -233,7 +224,7 @@ export default function WorkoutCalendarModal({ workout, onClose }: WorkoutCalend
             )}
 
             {workout.sport === 'run' && workout.avg_pace_sec_per_km && (
-              <StatCell label="Avg Pace" value={formatPace(workout.avg_pace_sec_per_km)} />
+              <StatCell label="Avg Pace" value={fmtPace(workout.avg_pace_sec_per_km)} />
             )}
 
             {workout.sport === 'swim' && workout.swolf && (
@@ -241,7 +232,7 @@ export default function WorkoutCalendarModal({ workout, onClose }: WorkoutCalend
             )}
 
             {workout.elevation_gain_meters && (
-              <StatCell label="Elevation" value={`${workout.elevation_gain_meters}m`} />
+              <StatCell label="Elevation" value={fmtElevation(workout.elevation_gain_meters)} />
             )}
 
             {workout.avg_cadence_rpm && (

@@ -2,13 +2,16 @@ import type { RaceProjection } from '@/lib/types/projection'
 
 /**
  * Check if a projection is stale and needs recalculation.
- * Stale if: >24h old, or >6h old during race week.
+ * Stale if: >24h old, >6h old during race week, or missing hr_adjustment.
  */
 export function isProjectionStale(
   projection: RaceProjection | null,
   raceDate: string
 ): boolean {
   if (!projection) return true
+
+  // If HR adjustment hasn't been computed yet, recalculate
+  if (!projection.hr_adjustment) return true
 
   const projectedAt = new Date(projection.projected_at)
   const now = new Date()

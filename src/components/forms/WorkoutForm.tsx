@@ -1,17 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Card from '@/components/ui/Card'
 import { createClient } from '@/lib/supabase/client'
+import { useUnits } from '@/hooks/useUnits'
+import { inputDistanceToMeters, feetToMeters, distanceInputLabel, elevationLabel, paceLabel as getPaceLabel } from '@/lib/units'
+import type { UnitSystem } from '@/lib/units'
 
 type Sport = 'swim' | 'bike' | 'run' | 'brick'
 
 export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
+  const { isImperial } = useUnits()
+  // Local unit toggle — defaults from profile, can be switched per-workout
+  const [localUnits, setLocalUnits] = useState<UnitSystem>(isImperial ? 'imperial' : 'metric')
+  const localImperial = localUnits === 'imperial'
+
   const [sport, setSport] = useState<Sport>('swim')
   const [title, setTitle] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [durationMin, setDurationMin] = useState('')
-  const [distanceKm, setDistanceKm] = useState('')
+  const [distance, setDistance] = useState('')
   const [avgHr, setAvgHr] = useState('')
   const [maxHr, setMaxHr] = useState('')
   const [rpe, setRpe] = useState('')
@@ -35,30 +43,54 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
 
   const supabase = createClient()
 
+  // Sync local units when profile preference changes
+  useEffect(() => {
+    setLocalUnits(isImperial ? 'imperial' : 'metric')
+  }, [isImperial])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
     setSaved(false)
+
+    const distanceMeters = distance
+      ? inputDistanceToMeters(parseFloat(distance), sport, localUnits)
+      : null
+
+    const elevationMeters = elevation
+      ? (localImperial ? feetToMeters(parseFloat(elevation)) : parseFloat(elevation))
+      : null
+
+    const paceSecPerKm = paceMin
+      ? (() => {
+          const secInUserUnits = Number(paceMin) * 60
+          return localImperial ? Math.round(secInUserUnits * 0.621371) : secInUserUnits
+        })()
+      : null
+
+    const poolLengthMeters = poolLength
+      ? (localImperial ? Math.round(parseFloat(poolLength) / 1.09361) : parseFloat(poolLength))
+      : null
 
     const { error } = await supabase.from('workouts').insert({
       sport,
       title: title || `${sport} workout`,
       date,
       duration_seconds: durationMin ? Number(durationMin) * 60 : null,
-      distance_meters: distanceKm ? Number(distanceKm) * 1000 : null,
+      distance_meters: distanceMeters,
       avg_hr: avgHr ? Number(avgHr) : null,
       max_hr: maxHr ? Number(maxHr) : null,
       rpe: rpe ? Number(rpe) : null,
       calories: calories ? Number(calories) : null,
       notes: notes || null,
-      pool_length_meters: poolLength ? Number(poolLength) : null,
+      pool_length_meters: poolLengthMeters,
       swolf: swolf ? Number(swolf) : null,
       avg_power_watts: avgPower ? Number(avgPower) : null,
       normalized_power: normalizedPower ? Number(normalizedPower) : null,
       tss: tss ? Number(tss) : null,
       avg_cadence_rpm: cadenceRpm ? Number(cadenceRpm) : null,
-      elevation_gain_meters: elevation ? Number(elevation) : null,
-      avg_pace_sec_per_km: paceMin ? Number(paceMin) * 60 : null,
+      elevation_gain_meters: elevationMeters,
+      avg_pace_sec_per_km: paceSecPerKm,
       avg_cadence_spm: cadenceSpm ? Number(cadenceSpm) : null,
     })
 
@@ -80,11 +112,48 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
     'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
   const labelClass = 'block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5'
 
+  const distLabel = distanceInputLabel(sport, localUnits)
+  const elevLabel = elevationLabel(localUnits)
+  const pLabel = getPaceLabel(localUnits)
+  const distPlaceholder = sport === 'swim'
+    ? (localImperial ? '2200' : '2000')
+    : (localImperial ? '6' : '10')
+
+  const unitToggle = (
+    <div className="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-0.5">
+      <button
+        type="button"
+        onClick={() => setLocalUnits('metric')}
+        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+          !localImperial
+            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+            : 'text-gray-400 dark:text-gray-500'
+        }`}
+      >
+        Metric
+      </button>
+      <button
+        type="button"
+        onClick={() => setLocalUnits('imperial')}
+        className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+          localImperial
+            ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+            : 'text-gray-400 dark:text-gray-500'
+        }`}
+      >
+        Imperial
+      </button>
+    </div>
+  )
+
   const content = (
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
-          Log Workout
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
+            Log Workout
+          </p>
+          {unitToggle}
+        </div>
 
         {/* Sport selector */}
         <div className="flex gap-2">
@@ -136,14 +205,14 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
             />
           </div>
           <div>
-            <label className={labelClass}>Distance (km)</label>
+            <label className={labelClass}>Distance ({distLabel})</label>
             <input
               type="number"
               step="0.01"
-              value={distanceKm}
-              onChange={(e) => setDistanceKm(e.target.value)}
+              value={distance}
+              onChange={(e) => setDistance(e.target.value)}
               className={inputClass}
-              placeholder="3.8"
+              placeholder={distPlaceholder}
             />
           </div>
           <div>
@@ -194,7 +263,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
         {sport === 'swim' && (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Pool Length (m)</label>
+              <label className={labelClass}>Pool Length ({localImperial ? 'yd' : 'm'})</label>
               <input
                 type="number"
                 value={poolLength}
@@ -259,13 +328,13 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
               />
             </div>
             <div>
-              <label className={labelClass}>Elevation (m)</label>
+              <label className={labelClass}>Elevation ({elevLabel})</label>
               <input
                 type="number"
                 value={elevation}
                 onChange={(e) => setElevation(e.target.value)}
                 className={inputClass}
-                placeholder="450"
+                placeholder={localImperial ? '1500' : '450'}
               />
             </div>
           </div>
@@ -274,14 +343,14 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
         {(sport === 'run' || sport === 'brick') && (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Avg Pace (min/km)</label>
+              <label className={labelClass}>Avg Pace (min{pLabel})</label>
               <input
                 type="number"
                 step="0.01"
                 value={paceMin}
                 onChange={(e) => setPaceMin(e.target.value)}
                 className={inputClass}
-                placeholder="5.15"
+                placeholder={localImperial ? '8.00' : '5.15'}
               />
             </div>
             <div>

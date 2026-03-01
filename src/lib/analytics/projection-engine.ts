@@ -1,124 +1,58 @@
-import type { Workout, ManualLog } from '@/lib/types/database'
+/*
+=== PROJECTION ENGINE V2 ===
+Delegates to modular projection files in ./projections/
+Kept as the single entry point consumed by useProjection hook.
+
+=== CONFIDENCE SCORE V2 (0–100) ===
+Volume & Recency (0–20):   min(20, workouts_12wk × 0.7 + workouts_14d × 1.0)
+Discipline Balance (0–20):  4/discipline (≥3 workouts) + 8 × (1 - imbalance × 1.5)
+Threshold Quality (0–20):   FTP(0–8) + CSS(0–7) + RunPace(0–5) w/ recency decay
+Training Load (0–20):       CTL(0–10) + TSB(0–6) + Consistency(0–4)
+Completeness (0–20):        Sum of binary checks for HR, weight, power, brick, conditions
+
+=== SWIM PACE ===
+pace/100m = CSS + degradation[distance] + openWaterPenalty(+3) - wetsuitBonus(−2)
+
+=== BIKE SPEED ===
+targetPower = FTP × IF[distance]
+speed: prefer empirical (flat rides, power-adjusted) → fallback: v ≈ 2.4 × P^0.36
+adjust: courseProfile, heat(+3%/5°F>75), altitude(+2%/1000ft>3000)
+
+=== RUN PACE ===
+basePace = recency-weighted average (half-life 21d) of runs ≥20min, RPE≥4
+racePace = basePace × fatigue[distance] × noBrickPenalty(+4%) × env
+env: heat(+4.5%/5°F>75), altitude(+3%/1000ft>3000), hilly(+5%)
+band: widen to ±7–10% if pace CV > 0.15
+
+=== TRAINING STRESS ===
+TSS: use intensity_factor directly if available, else RPE→IF mapping
+CTL: 42-day EWMA of daily TSS
+ATL: 7-day EWMA of daily TSS
+TSB: CTL − ATL (race-ready: +10 to +25)
+*/
+
+import type { Workout, ManualLog, SessionMetric } from '@/lib/types/database'
 import type { TargetRace } from '@/lib/types/target-race'
 import type { RaceProjection } from '@/lib/types/projection'
-import type { RaceDistance, FitnessSnapshot } from '@/lib/types/race-plan'
-import { STANDARD_DISTANCES } from '@/lib/types/race-plan'
-import {
-  estimateCSSFromWorkouts,
-  estimateFTPFromWorkouts,
-  estimateLTHR,
-  generatePacingPlan,
-} from './race-pacing'
-import { deriveMaxHR, deriveRestingHR } from './lactate-threshold'
-import { weeklyVolume } from './training-stress'
+import { generateProjectionV2 } from './projections/assembler'
 
 /**
- * Generate a race projection from training data.
- * Reuses the existing race-pacing engine and wraps results into a RaceProjection shape.
+ * Generate a race projection from training data (V2).
+ * Uses modular per-discipline projections with environmental adjustments,
+ * recency-weighted pacing, and the 5-dimension confidence score.
+ *
+ * @param bandProfile Optional tier-based band multipliers. When provided,
+ *   overrides the per-discipline hardcoded optimistic/conservative bands.
+ * @param sessionMetrics Optional per-workout HR time-series for cardiac drift analysis
+ * @param profileLTHR Optional per-sport LTHR from user profile
  */
 export function generateProjection(
   race: TargetRace,
   workouts: Workout[],
-  logs: ManualLog[]
+  logs: ManualLog[],
+  bandProfile?: { low: number; high: number },
+  sessionMetrics?: Map<string, SessionMetric[]>,
+  profileLTHR?: { swim: number | null; bike: number | null; run: number | null }
 ): Omit<RaceProjection, 'id' | 'user_id' | 'created_at' | 'projected_at'> {
-  const maxHR = deriveMaxHR(workouts)
-  const restingHR = deriveRestingHR(logs)
-  const ftp = estimateFTPFromWorkouts(workouts)
-  const css = estimateCSSFromWorkouts(workouts, maxHR)
-  const lthrBike = estimateLTHR(workouts, 'bike')
-  const lthrRun = estimateLTHR(workouts, 'run')
-
-  const volumes = weeklyVolume(workouts)
-  const recent8 = volumes.slice(-8)
-  const avgHours = recent8.length > 0
-    ? Number((recent8.reduce((s, v) => s + v.hours, 0) / recent8.length).toFixed(1))
-    : null
-
-  const weightLog = logs
-    .filter((l) => l.log_type === 'body_weight_kg')
-    .sort((a, b) => b.date.localeCompare(a.date))
-  const weight = weightLog.length > 0 ? weightLog[0].value : null
-
-  const fitnessSnapshot: FitnessSnapshot = {
-    estimatedFTP: ftp,
-    estimatedCSS: css ? Math.round(css) : null,
-    estimatedLTHR: { swim: null, bike: lthrBike, run: lthrRun },
-    maxHR,
-    restingHR,
-    weeklyVolumeHours: avgHours,
-    recentRacePace: { swim: null, bike: null, run: null },
-    weight_kg: weight,
-    konaStandardMultiplier: null,
-    ageGradedEstimate: null,
-  }
-
-  // Map target race distance to RaceDistance type
-  const raceDistance = race.race_distance as RaceDistance
-
-  // Generate pacing plan using existing engine
-  const pacingPlan = generatePacingPlan(
-    raceDistance,
-    null, // conditions - will be added in Phase 6
-    workouts,
-    { css, ftp, lthrBike, lthrRun },
-    'age_grouper',
-    null,
-    fitnessSnapshot,
-    {
-      swim: race.custom_swim_distance_m,
-      bike: race.custom_bike_distance_km,
-      run: race.custom_run_distance_km,
-    }
-  )
-
-  // Calculate confidence score based on data volume
-  const dataPoints = workouts.length
-  const confidence = calculateConfidence(workouts, ftp, css)
-
-  return {
-    target_race_id: race.id,
-    swim_seconds: pacingPlan.swim.estimatedSplitSeconds,
-    t1_seconds: pacingPlan.transitions.t1Seconds,
-    bike_seconds: pacingPlan.bike.estimatedSplitSeconds,
-    t2_seconds: pacingPlan.transitions.t2Seconds,
-    run_seconds: pacingPlan.run.estimatedSplitSeconds,
-    optimistic_seconds: pacingPlan.totalEstimate.optimisticSeconds,
-    realistic_seconds: pacingPlan.totalEstimate.realisticSeconds,
-    conservative_seconds: pacingPlan.totalEstimate.conservativeSeconds,
-    confidence_score: confidence,
-    data_points_used: dataPoints,
-    fitness_snapshot: fitnessSnapshot,
-    weather_adjustment: null,
-    is_revealed: false,
-  }
-}
-
-/**
- * Calculate confidence score (0-100) based on data completeness.
- * Higher confidence = more data + key metrics available.
- */
-function calculateConfidence(
-  workouts: Workout[],
-  ftp: number | null,
-  css: number | null
-): number {
-  let score = 0
-
-  // Workout volume (max 40 points)
-  const count = workouts.length
-  score += Math.min(40, count * 2)
-
-  // FTP available (20 points)
-  if (ftp) score += 20
-
-  // CSS available (20 points)
-  if (css) score += 20
-
-  // Discipline coverage (max 20 points)
-  const sports = new Set(workouts.map((w) => w.sport))
-  if (sports.has('swim')) score += 7
-  if (sports.has('bike')) score += 7
-  if (sports.has('run')) score += 6
-
-  return Math.min(100, score)
+  return generateProjectionV2(race, workouts, logs, bandProfile, sessionMetrics, profileLTHR)
 }

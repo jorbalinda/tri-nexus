@@ -59,81 +59,85 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
   })()
 
   return (
-    <div className="card-squircle p-6">
+    <div className="card-squircle p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{weekLabel}</h2>
         <div className="flex items-center gap-1">
           <button
             onClick={() => onWeekChange(weekOffset - 1)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
             <ChevronLeft size={16} className="text-gray-500" />
           </button>
           {weekOffset !== 0 && (
             <button
               onClick={() => onWeekChange(0)}
-              className="px-2 py-1 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors cursor-pointer"
+              className="px-2.5 py-1 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors cursor-pointer"
             >
               Today
             </button>
           )}
           <button
             onClick={() => onWeekChange(weekOffset + 1)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
             <ChevronRight size={16} className="text-gray-500" />
           </button>
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-7 gap-2">
-        {/* Day headers */}
-        {DAY_LABELS.map((label) => (
-          <div key={label} className="text-center text-[11px] font-black uppercase tracking-wider text-gray-600 dark:text-gray-300 pb-2">
-            {label}
-          </div>
-        ))}
-
-        {/* Day cells */}
-        {days.map(({ date, label, isToday }) => {
-          const dayWorkouts = workoutsByDay.get(date) || []
-          return (
-            <div
-              key={date}
-              className={`min-h-[80px] rounded-xl p-2 border transition-all ${
-                isToday
-                  ? 'border-blue-500 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-950/10'
-                  : 'border-gray-300 dark:border-gray-600 bg-gray-50/30 dark:bg-gray-800/20'
-              }`}
-            >
-              <p className={`text-xs font-medium mb-1.5 ${isToday ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'}`}>
+      {/* Grid — horizontal scroll on small mobile, natural fit at sm+ */}
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
+        <div className="min-w-[400px] sm:min-w-0">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
+            {/* Day headers */}
+            {DAY_LABELS.map((label) => (
+              <div key={label} className="text-center text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-gray-500 pb-1 sm:pb-2">
                 {label}
-              </p>
-              {loading ? (
-                <div className="h-6 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
-              ) : (
-                <div className="flex flex-col gap-1">
-                  {dayWorkouts.map((w) => {
-                    const sport = SPORT_COLORS[w.sport] || SPORT_COLORS.run
-                    const Icon = sport.icon
-                    return (
-                      <button
-                        key={w.id}
-                        onClick={() => setSelectedWorkout(w)}
-                        className={`flex items-center gap-1 px-1.5 py-1 rounded-lg ${sport.bg} ${sport.text} text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity truncate`}
-                      >
-                        <Icon size={10} className="shrink-0" />
-                        <span className="truncate">{formatDuration(w.duration_seconds)}</span>
-                      </button>
-                    )
-                  })}
+              </div>
+            ))}
+
+            {/* Day cells */}
+            {days.map(({ date, label, isToday }) => {
+              const dayWorkouts = workoutsByDay.get(date) || []
+              return (
+                <div
+                  key={date}
+                  className={`min-h-[56px] sm:aspect-square sm:min-h-0 rounded-xl p-1.5 sm:p-2.5 border transition-all flex flex-col ${
+                    isToday
+                      ? 'border-blue-500 dark:border-blue-500 bg-blue-50/40 dark:bg-blue-950/15 shadow-sm shadow-blue-500/10'
+                      : 'border-gray-200 dark:border-gray-700/60 bg-gray-50/40 dark:bg-gray-800/20'
+                  }`}
+                >
+                  <p className={`text-xs font-semibold mb-1 sm:mb-2 ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}`}>
+                    {label}
+                  </p>
+                  {loading ? (
+                    <div className="h-5 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
+                  ) : (
+                    <div className="flex flex-col gap-0.5 sm:gap-1 flex-1 justify-start">
+                      {dayWorkouts.map((w) => {
+                        const sport = SPORT_COLORS[w.sport] || SPORT_COLORS.run
+                        const Icon = sport.icon
+                        return (
+                          <button
+                            key={w.id}
+                            onClick={() => setSelectedWorkout(w)}
+                            className={`flex items-center gap-1 px-1 sm:px-1.5 py-0.5 sm:py-1 rounded-lg ${sport.bg} ${sport.text} text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity truncate`}
+                          >
+                            <Icon size={10} className="shrink-0" />
+                            <span className="truncate">{formatDuration(w.duration_seconds)}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          )
-        })}
+              )
+            })}
+          </div>
+        </div>
       </div>
 
       {selectedWorkout && (

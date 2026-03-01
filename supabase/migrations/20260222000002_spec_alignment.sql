@@ -1,5 +1,5 @@
 -- Align database with full Race Day spec
--- Adds: equipment_profiles, sleep_logs, gear_items, nutrition_plans,
+-- Adds: sleep_logs, nutrition_plans,
 --        fueling_timeline, timeline_events, race_results
 -- Updates: target_races (race_type, water_type, wetsuit, gun_start_time),
 --          profiles (sweat_rate_lph, profile_public)
@@ -20,37 +20,7 @@ ALTER TABLE target_races ADD COLUMN IF NOT EXISTS expected_temp_f integer;
 ALTER TABLE target_races ADD COLUMN IF NOT EXISTS gun_start_time timestamptz;
 
 -- ============================================================
--- 3. Equipment profiles (per race)
--- ============================================================
-CREATE TABLE IF NOT EXISTS equipment_profiles (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  race_id uuid REFERENCES target_races(id) ON DELETE CASCADE,
-  bike_weight_kg numeric,
-  bottle_weight_kg numeric,
-  race_nutrition_weight_kg numeric,
-  tire_pressure_front numeric,
-  tire_pressure_rear numeric,
-  cda numeric,
-  cda_source text CHECK (cda_source IN ('wind_tunnel', 'estimated')),
-  created_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE equipment_profiles ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view own equipment profiles" ON equipment_profiles
-  FOR SELECT USING (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
-CREATE POLICY "Users can insert own equipment profiles" ON equipment_profiles
-  FOR INSERT WITH CHECK (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
-CREATE POLICY "Users can update own equipment profiles" ON equipment_profiles
-  FOR UPDATE USING (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
-CREATE POLICY "Users can delete own equipment profiles" ON equipment_profiles
-  FOR DELETE USING (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
--- ============================================================
--- 4. Sleep logs
+-- 3. Sleep logs
 -- ============================================================
 CREATE TABLE IF NOT EXISTS sleep_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -79,37 +49,7 @@ CREATE POLICY "Users can delete own sleep logs" ON sleep_logs
 CREATE INDEX IF NOT EXISTS idx_sleep_logs_user_date ON sleep_logs(user_id, log_date DESC);
 
 -- ============================================================
--- 5. Gear items (per race)
--- ============================================================
-CREATE TABLE IF NOT EXISTS gear_items (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  race_id uuid REFERENCES target_races(id) ON DELETE CASCADE,
-  item_name text NOT NULL,
-  category text NOT NULL CHECK (category IN ('swim', 'bike', 'run', 'transition', 'post_race')),
-  is_packed boolean DEFAULT false,
-  is_required boolean DEFAULT true,
-  is_custom boolean DEFAULT false,
-  created_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE gear_items ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can view own gear items" ON gear_items
-  FOR SELECT USING (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
-CREATE POLICY "Users can insert own gear items" ON gear_items
-  FOR INSERT WITH CHECK (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
-CREATE POLICY "Users can update own gear items" ON gear_items
-  FOR UPDATE USING (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
-CREATE POLICY "Users can delete own gear items" ON gear_items
-  FOR DELETE USING (race_id IN (SELECT id FROM target_races WHERE user_id = auth.uid()));
-
-CREATE INDEX IF NOT EXISTS idx_gear_items_race ON gear_items(race_id);
-
--- ============================================================
--- 6. Nutrition plans (per race, per segment)
+-- 5. Nutrition plans (per race, per segment)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS nutrition_plans (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

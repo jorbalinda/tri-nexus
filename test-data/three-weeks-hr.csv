@@ -1,0 +1,44 @@
+Sport	Title	Date	Duration (s)	Distance (m)	Avg HR	Max HR	Calories	RPE	Pool Length (m)	SWOLF	Avg Power	Normalized Power	Elevation Gain	Notes
+swim	Monday Morning Laps	2026-02-09	2400	4000	125	145	420	5	25	33				Technique focus with pull buoy sets
+bike	Zone 2 Base Ride	2026-02-09	4200	42000	134	156	680	6			175	180	200	Steady zone 2 endurance building
+run	Easy Recovery Jog	2026-02-10	1800	5500	130	148	340	4						Easy shakeout around the neighborhood
+swim	Threshold Swim Repeats	2026-02-11	1800	3200	140	158	380	7	25	32				4x400m at threshold pace
+bike	Sweet Spot Intervals	2026-02-11	3600	34000	142	164	620	7			195	200	180	3x12min sweet spot efforts
+run	Tempo Progression Run	2026-02-12	2700	9500	150	172	520	7						Last 2km building to tempo
+bike	Hot Day Long Ride	2026-02-12	5400	50000	148	178	960	8			175	182	200	Started at 135 ended at 162 bpm
+swim	Open Water Sim	2026-02-13	2100	3500	132	152	400	6	50	35				Sighting practice in the pool
+bike	Long Aerobic Ride	2026-02-13	5400	56000	132	154	880	6			170	176	250	Group cafe ride steady effort
+run	Saturday Long Run	2026-02-14	4200	14000	138	160	720	6						Negative split long run
+swim	Speed Set 8x100	2026-02-14	1500	2800	138	160	320	7	25	31				Fast 100s on 1:45 interval
+bike	Cadence Drill Ride	2026-02-15	3000	30000	136	158	500	6			182	188	120	High cadence 100+ rpm drills
+run	Hill Repeat Session	2026-02-15	2400	7500	152	176	480	8						6x3min steep hill repeats
+swim	Aerobic Paddle Swim	2026-02-16	2100	3600	128	148	380	5	25	33				Steady 100s with paddles
+bike	FTP Test Ride	2026-02-16	3600	36000	148	170	700	8			205	210	160	20min all-out FTP test
+run	Steady State 10K	2026-02-17	3000	10500	144	166	540	6						Even pace throughout felt strong
+bike	Solo Century Attempt	2026-02-17	7200	72000	144	176	1200	8			172	180	350	Cardiac drift kicked in hard after 2 hours
+swim	Easy Pull Recovery	2026-02-18	1800	3000	122	140	300	4	25	36				Recovery pull and kick sets
+bike	Over Under Intervals	2026-02-18	3600	35000	146	168	660	8			198	204	190	4x8min over-under threshold
+run	Fartlek Fun Run	2026-02-19	2700	9000	148	174	500	7						Varied pace lamp post fartlek
+run	Humid Evening Slog	2026-02-19	3600	11500	150	178	620	7						Humidity crushed me HR kept climbing
+swim	CSS Test 400 200	2026-02-20	1500	2600	136	156	280	7	25	32				400m then 200m time trial
+bike	Saturday Group Ride	2026-02-20	4800	50000	140	168	820	7			188	196	320	Hard group ride with attacks
+run	Brick Run Off Bike	2026-02-21	1800	6200	154	178	380	7						Straight off the trainer legs heavy
+swim	Technique Drill Day	2026-02-21	2100	3400	124	142	340	4	25	35				Catch-up and finger drag drills
+bike	Easy Coffee Spin	2026-02-22	3000	32000	130	150	460	5			172	178	100	Social easy recovery spin
+run	Park Loop Easy	2026-02-22	2400	8500	140	162	440	6						Comfortable pace around the park
+swim	Long Open Water Swim	2026-02-22	3000	4500	138	158	480	7	50	36				2.5km continuous nonstop effort
+swim	Race Pace Continuous	2026-02-23	2400	4200	136	158	440	7	25	31				Continuous race pace effort no breaks
+bike	Race Simulation Ride	2026-02-23	5400	58000	138	162	920	7			185	192	280	Full race effort simulation long day
+run	Long Run with Surges	2026-02-24	4800	16000	142	168	820	7						4x5min surge at half marathon pace
+swim	Descending 200s Set	2026-02-24	1800	3000	134	156	360	6	25	32				5x200m descending times
+bike	Hilly Grind Ride	2026-02-24	4800	46000	142	170	840	7			178	186	450	HR crept up on every single climb
+bike	Threshold Power Blocks	2026-02-25	3600	37000	150	174	680	8			208	215	200	5x6min at threshold power
+run	Race Pace Tempo 6K	2026-02-25	3000	11000	152	176	580	8						6km at target race pace effort
+swim	Easy Recovery Laps	2026-02-26	1200	2000	118	136	220	3	25	37				Slow easy laps with stretching
+bike	Endurance Tempo Mix	2026-02-26	4200	44000	136	160	720	6			180	186	220	3x10min tempo in long ride
+run	Progressive Fatigue Run	2026-02-26	4200	14000	146	174	680	7						Deliberately pushed second half hard
+run	Progressive Long Run	2026-02-27	3600	13000	140	166	640	6						Last 5km getting faster each km
+swim	Mixed Medley Set	2026-02-27	2100	3800	130	152	380	6	25	33				IM drills and freestyle mix
+bike	Pre Race Easy Spin	2026-02-28	2400	26000	126	146	380	4			168	172	80	Taper ride legs feeling fresh
+run	Race Week Shakeout	2026-02-28	1500	5000	132	152	280	4						Short and snappy shakeout run
+swim	Continuous Distance Swim	2026-02-28	2700	4000	134	154	420	6	25	34				Nonstop distance no rest session

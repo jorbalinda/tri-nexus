@@ -171,7 +171,7 @@ export default function NutritionPage() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Bike Nutrition</h2>
             <span className="text-[10px] font-bold uppercase tracking-[2px] text-orange-500">Per Hour</span>
           </div>
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
             <div className="p-4 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-center">
               <Zap size={18} className="text-orange-500 mx-auto mb-1" />
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{bikePlan.carbs_per_hour_g}g</p>
@@ -222,7 +222,7 @@ export default function NutritionPage() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Run Nutrition</h2>
             <span className="text-[10px] font-bold uppercase tracking-[2px] text-green-500">Per Hour</span>
           </div>
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
             <div className="p-4 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-center">
               <Zap size={18} className="text-orange-500 mx-auto mb-1" />
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{runPlan.carbs_per_hour_g}g</p>

@@ -5,6 +5,96 @@ interface TimelineEventDef {
   is_day_before?: boolean
 }
 
+export interface ConfigurableActivity {
+  id: string
+  event_name: string
+  event_type: 'logistics' | 'nutrition' | 'action'
+  defaultOffsetShort: number
+  defaultOffsetLong: number
+  longOnly?: boolean
+}
+
+export const CONFIGURABLE_ACTIVITIES: ConfigurableActivity[] = [
+  {
+    id: 'wake-up',
+    event_name: 'Wake up',
+    event_type: 'action',
+    defaultOffsetShort: 210,
+    defaultOffsetLong: 240,
+  },
+  {
+    id: 'breakfast',
+    event_name: 'Race morning breakfast',
+    event_type: 'nutrition',
+    defaultOffsetShort: 180,
+    defaultOffsetLong: 210,
+  },
+  {
+    id: 'leave-for-venue',
+    event_name: 'Leave for venue',
+    event_type: 'logistics',
+    defaultOffsetShort: 120,
+    defaultOffsetLong: 150,
+  },
+  {
+    id: 'arrive-venue',
+    event_name: 'Arrive at venue',
+    event_type: 'logistics',
+    defaultOffsetShort: 90,
+    defaultOffsetLong: 120,
+  },
+  {
+    id: 'setup-transition',
+    event_name: 'Set up transition area',
+    event_type: 'logistics',
+    defaultOffsetShort: 60,
+    defaultOffsetLong: 90,
+  },
+  {
+    id: 'warmup',
+    event_name: 'Warm-up start',
+    event_type: 'action',
+    defaultOffsetShort: 30,
+    defaultOffsetLong: 30,
+  },
+  {
+    id: 'enter-water',
+    event_name: 'Enter water / corral',
+    event_type: 'action',
+    defaultOffsetShort: 5,
+    defaultOffsetLong: 5,
+  },
+]
+
+export function generateTimelineFromSelections(
+  gunStartTime: Date,
+  selections: { event_name: string; scheduled_time: string; event_type: 'logistics' | 'nutrition' | 'action' }[]
+): GeneratedEvent[] {
+  const events: GeneratedEvent[] = []
+
+  // Use the date portion of gunStartTime for combining with HH:MM times
+  const dateStr = `${gunStartTime.getFullYear()}-${String(gunStartTime.getMonth() + 1).padStart(2, '0')}-${String(gunStartTime.getDate()).padStart(2, '0')}`
+
+  for (const sel of selections) {
+    const time = new Date(`${dateStr}T${sel.scheduled_time}:00`)
+    events.push({
+      event_name: sel.event_name,
+      scheduled_time: time,
+      event_type: sel.event_type,
+    })
+  }
+
+  // Add gun start
+  events.push({
+    event_name: 'Gun start',
+    scheduled_time: new Date(gunStartTime),
+    event_type: 'action',
+  })
+
+  events.sort((a, b) => a.scheduled_time.getTime() - b.scheduled_time.getTime())
+  return events
+}
+
 const SHORT_RACE: TimelineEventDef[] = [
   { event_name: 'Gun start', offset_minutes: 0, event_type: 'action' },
   { event_name: 'Enter water / corral', offset_minutes: -5, event_type: 'action' },
@@ -19,9 +109,7 @@ const SHORT_RACE: TimelineEventDef[] = [
 const LONG_RACE: TimelineEventDef[] = [
   { event_name: 'Gun start', offset_minutes: 0, event_type: 'action' },
   { event_name: 'Enter water / corral', offset_minutes: -5, event_type: 'action' },
-  { event_name: 'Apply sunscreen & body glide', offset_minutes: -15, event_type: 'action' },
   { event_name: 'Warm-up start', offset_minutes: -30, event_type: 'action' },
-  { event_name: 'Final transition check', offset_minutes: -45, event_type: 'logistics' },
   { event_name: 'Set up transition area', offset_minutes: -90, event_type: 'logistics' },
   { event_name: 'Arrive at venue', offset_minutes: -120, event_type: 'logistics' },
   { event_name: 'Leave for venue', offset_minutes: -150, event_type: 'logistics' },

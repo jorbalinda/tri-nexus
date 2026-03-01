@@ -120,7 +120,7 @@ export default function ResultsPage() {
               {race.status === 'completed' ? 'Finished' : race.status?.toUpperCase()}
             </p>
           </div>
-          <div className="grid grid-cols-5 gap-2 text-center">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center">
             {[
               { label: 'Swim', time: race.actual_swim_seconds, color: 'text-blue-600' },
               { label: 'T1', time: race.actual_t1_seconds, color: 'text-gray-500' },

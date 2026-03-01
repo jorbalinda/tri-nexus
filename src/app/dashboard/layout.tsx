@@ -1,6 +1,7 @@
 'use client'
 
 import Sidebar from '@/components/layout/Sidebar'
+import BottomNav from '@/components/layout/BottomNav'
 import { UnitProvider } from '@/hooks/useUnits'
 
 export default function DashboardLayout({
@@ -10,11 +11,12 @@ export default function DashboardLayout({
 }) {
   return (
     <UnitProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-[100dvh] bg-background">
         <Sidebar />
-        <main style={{ marginLeft: 'var(--sidebar-width)' }} className="p-8">
+        <main className="px-4 py-6 lg:ml-[var(--sidebar-width)] lg:px-8 lg:py-8 pb-safe-nav">
           {children}
         </main>
+        <BottomNav />
       </div>
     </UnitProvider>
   )

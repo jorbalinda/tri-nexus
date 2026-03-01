@@ -3,17 +3,14 @@
 import { useRef } from 'react'
 import PacingCard from './PacingCard'
 import NutritionCard from './NutritionCard'
-import EquipmentCard from './EquipmentCard'
 import MindsetCard from './MindsetCard'
 import QualificationCard from './QualificationCard'
 import ExportPDF from './ExportPDF'
-import type { RacePlan, RacePlanChecklist, QualificationReadiness } from '@/lib/types/race-plan'
+import type { RacePlan, QualificationReadiness } from '@/lib/types/race-plan'
 import { ArrowLeft, Calendar, Target, Mountain, Thermometer, Users, Trophy } from 'lucide-react'
 
 interface RacePlanViewProps {
   plan: RacePlan
-  checklistItems: RacePlanChecklist[]
-  onToggleChecklist: (itemId: string, checked: boolean) => void
   onBack: () => void
   onRegenerate: () => void
   onDelete: () => void
@@ -74,8 +71,6 @@ const goalLabels: Record<string, string> = {
 
 export default function RacePlanView({
   plan,
-  checklistItems,
-  onToggleChecklist,
   onBack,
   onRegenerate,
   onDelete,
@@ -222,13 +217,6 @@ export default function RacePlanView({
         )}
         {plan.nutrition_plan && (
           <NutritionCard nutrition={plan.nutrition_plan} />
-        )}
-        {plan.equipment_plan && (
-          <EquipmentCard
-            equipment={plan.equipment_plan}
-            checklistItems={checklistItems}
-            onToggle={onToggleChecklist}
-          />
         )}
         {plan.mindset_plan && (
           <MindsetCard mindset={plan.mindset_plan} />

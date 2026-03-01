@@ -38,7 +38,7 @@ export default function PacingCard({ pacing, useImperial }: PacingCardProps) {
   const { swim, bike, run, transitions, totalEstimate, qualificationPacing } = pacing
 
   return (
-    <div className="card-squircle p-8">
+    <div className="card-squircle p-4 sm:p-6 lg:p-8">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between cursor-pointer"
@@ -57,7 +57,7 @@ export default function PacingCard({ pacing, useImperial }: PacingCardProps) {
       {expanded && (
         <div className="mt-6 flex flex-col gap-6">
           {/* Finish time scenarios */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-2xl p-4 bg-green-50 dark:bg-green-950/20 border border-green-200/50 dark:border-green-800/30">
               <p className="text-[10px] font-bold uppercase tracking-wider text-green-500 mb-1">Optimistic</p>
               <p className="text-xl font-bold text-green-600 dark:text-green-400">{formatTime(totalEstimate.optimisticSeconds)}</p>
@@ -118,7 +118,7 @@ export default function PacingCard({ pacing, useImperial }: PacingCardProps) {
           <Section title="Transitions" color="purple" available={true}>
             <Row label="T1 Target" value={formatTime(transitions.t1Seconds)} />
             <Row label="T2 Target" value={formatTime(transitions.t2Seconds)} />
-            <div className="grid grid-cols-2 gap-4 mt-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
               <div>
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2">T1 Checklist</p>
                 <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
@@ -192,7 +192,7 @@ function Section({
       <div className="flex items-center gap-2 mb-2">
         <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{title}</p>
         {badge && (
-          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+          <span className="px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
             {badge}
           </span>
         )}

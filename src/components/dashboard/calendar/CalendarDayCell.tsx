@@ -48,7 +48,7 @@ export default function CalendarDayCell({
 
   return (
     <div
-      className={`min-h-[100px] md:min-h-[120px] border p-1.5 flex flex-col ${
+      className={`min-h-[72px] sm:min-h-[88px] lg:min-h-[120px] border p-1.5 flex flex-col ${
         hasRaceDay
           ? 'border-red-200 dark:border-red-800/50 bg-red-50/30 dark:bg-red-950/10'
           : 'border-gray-100 dark:border-gray-800'

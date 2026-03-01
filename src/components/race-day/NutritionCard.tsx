@@ -13,7 +13,7 @@ export default function NutritionCard({ nutrition }: NutritionCardProps) {
   const { preRace, raceMorning, swim, bike, run, summary } = nutrition
 
   return (
-    <div className="card-squircle p-8">
+    <div className="card-squircle p-4 sm:p-6 lg:p-8">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between cursor-pointer"
@@ -32,7 +32,7 @@ export default function NutritionCard({ nutrition }: NutritionCardProps) {
       {expanded && (
         <div className="mt-6 flex flex-col gap-6">
           {/* Calorie summary */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <SummaryBox label="Total Race" carbs={summary.totalCarbsGrams} cals={summary.totalCalories} color="blue" />
             <SummaryBox label="Bike Segment" carbs={summary.bikeCarbsGrams} cals={summary.bikeCalories} color="orange" />
             <SummaryBox label="Run Segment" carbs={summary.runCarbsGrams} cals={summary.runCalories} color="green" />

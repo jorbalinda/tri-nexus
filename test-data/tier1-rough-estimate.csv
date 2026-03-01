@@ -1,0 +1,10 @@
+sport,title,date,duration,distance,avg hr,max hr,avg power,normalized power,rpe,elevation gain,notes
+swim,Morning Swim,2026-02-25,900,1800,125,145,,,5,,Steady laps
+swim,Pool Session,2026-02-18,1000,2000,128,148,,,5,,Technique work
+swim,Open Water Swim,2026-02-10,800,1500,,,,,4,,Easy OW swim
+swim,Pool Laps,2026-01-28,750,1400,,,,,5,,Drill focus
+bike,Steady Ride,2026-02-26,2400,28000,138,158,,,6,120,Zone 2
+bike,Recovery Ride,2026-02-19,1800,20000,125,145,,,4,,Easy spin
+bike,Endurance Ride,2026-02-12,3600,38000,135,155,,,6,200,Long steady
+bike,Hills Ride,2026-01-30,2100,22000,,,,,5,350,Rolling hills
+run,Easy Run,2026-02-22,1500,8000,142,162,,,5,,Recovery pace

@@ -14,6 +14,7 @@ export function useWorkouts(sport?: string) {
     let query = supabaseRef.current
       .from('workouts')
       .select('*')
+      .is('deleted_at', null)
       .order('date', { ascending: false })
       .limit(100)
 

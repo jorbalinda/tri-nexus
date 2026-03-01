@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { ChevronDown, CalendarCheck } from 'lucide-react'
+import { ChevronDown, CalendarCheck, CheckCircle, Thermometer, Mountain, Waves } from 'lucide-react'
 import { useRaceCourses } from '@/hooks/useRaceCourses'
 import type { TargetRace } from '@/lib/types/target-race'
 
@@ -42,13 +42,22 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
   const [customBike, setCustomBike] = useState(initialData?.custom_bike_distance_km?.toString() || '')
   const [customRun, setCustomRun] = useState(initialData?.custom_run_distance_km?.toString() || '')
   const [gunStartTime, setGunStartTime] = useState(initialData?.gun_start_time || '')
+  const [expectedTempF, setExpectedTempF] = useState(initialData?.expected_temp_f?.toString() || '')
+  const [altitudeFt, setAltitudeFt] = useState(initialData?.altitude_ft?.toString() || '')
+  const [courseProfile, setCourseProfile] = useState<string>(initialData?.course_profile || '')
+  const [swimType, setSwimType] = useState<string>(initialData?.swim_type || initialData?.water_type || '')
+  const [wetsuit, setWetsuit] = useState(initialData?.wetsuit ?? false)
+  const [conditionsExpanded, setConditionsExpanded] = useState(false)
   const [dateFromCourse, setDateFromCourse] = useState(false)
+  const [distanceFromCourse, setDistanceFromCourse] = useState(false)
+  const [gunTimeFromCourse, setGunTimeFromCourse] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [customName, setCustomName] = useState(false)
   const [courseDropdownOpen, setCourseDropdownOpen] = useState(false)
   const [distanceDropdownOpen, setDistanceDropdownOpen] = useState(false)
   const [courseSearch, setCourseSearch] = useState('')
+  const [courseSort, setCourseSort] = useState<'date' | 'name'>('date')
 
   const courseDropdownRef = useRef<HTMLDivElement>(null)
   const distanceDropdownRef = useRef<HTMLDivElement>(null)
@@ -78,12 +87,21 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const filteredCourses = courseSearch
+  const filteredCourses = (courseSearch
     ? courses.filter((c) =>
         c.name.toLowerCase().includes(courseSearch.toLowerCase()) ||
         c.location_city.toLowerCase().includes(courseSearch.toLowerCase())
       )
     : courses
+  ).slice().sort((a, b) => {
+    if (courseSort === 'date') {
+      if (!a.next_race_date && !b.next_race_date) return a.name.localeCompare(b.name)
+      if (!a.next_race_date) return 1
+      if (!b.next_race_date) return -1
+      return a.next_race_date.localeCompare(b.next_race_date)
+    }
+    return a.name.localeCompare(b.name)
+  })
 
   // Initialize goal time from initialData
   useEffect(() => {
@@ -125,10 +143,13 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
         actual_t1_seconds: initialData?.actual_t1_seconds || null,
         actual_t2_seconds: initialData?.actual_t2_seconds || null,
         race_type: initialData?.race_type || 'triathlon',
-        water_type: initialData?.water_type || null,
-        wetsuit: initialData?.wetsuit || false,
-        expected_temp_f: initialData?.expected_temp_f || null,
+        water_type: (['pool', 'lake', 'river', 'bay', 'ocean'].includes(swimType) ? swimType as TargetRace['water_type'] : null),
+        wetsuit,
+        expected_temp_f: expectedTempF ? parseFloat(expectedTempF) : null,
         gun_start_time: gunStartTime || initialData?.gun_start_time || null,
+        altitude_ft: altitudeFt ? parseFloat(altitudeFt) : null,
+        course_profile: (['flat', 'rolling', 'hilly', 'mountainous'].includes(courseProfile) ? courseProfile as TargetRace['course_profile'] : null),
+        swim_type: (['pool', 'lake', 'river', 'bay', 'ocean'].includes(swimType) ? swimType as TargetRace['swim_type'] : null),
         status: initialData?.status || 'upcoming',
       })
     } catch (err: unknown) {
@@ -149,6 +170,8 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
       setRaceName('')
       setRaceCourseId('')
       setDateFromCourse(false)
+      setDistanceFromCourse(false)
+      setGunTimeFromCourse(false)
       setRaceDate('')
       setGunStartTime('')
       return
@@ -158,6 +181,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
       setRaceCourseId(course.id)
       setRaceName(course.name)
       setRaceDistance(course.race_distance as TargetRace['race_distance'])
+      setDistanceFromCourse(true)
       if (course.next_race_date) {
         setRaceDate(course.next_race_date)
         setDateFromCourse(true)
@@ -168,9 +192,20 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
       if (course.next_race_date && course.typical_start_time) {
         const gunDate = new Date(`${course.next_race_date}T${course.typical_start_time}:00`)
         setGunStartTime(gunDate.toISOString())
+        setGunTimeFromCourse(true)
+      } else if (course.typical_start_time) {
+        setGunStartTime(course.typical_start_time)
+        setGunTimeFromCourse(true)
       } else {
         setGunStartTime('')
+        setGunTimeFromCourse(false)
       }
+      // Auto-populate race conditions from course data
+      if (course.typical_temp_high_f) setExpectedTempF(course.typical_temp_high_f.toString())
+      if (course.altitude_ft) setAltitudeFt(course.altitude_ft.toString())
+      if (course.course_profile) setCourseProfile(course.course_profile)
+      if (course.water_type) setSwimType(course.water_type)
+      if (course.wetsuit_legal != null) setWetsuit(course.wetsuit_legal)
       setCustomName(false)
     }
   }
@@ -201,7 +236,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
             </button>
             {courseDropdownOpen && (
               <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
-                <div className="p-2 border-b border-gray-100 dark:border-gray-800">
+                <div className="p-2 border-b border-gray-100 dark:border-gray-800 space-y-2">
                   <input
                     type="text"
                     value={courseSearch}
@@ -210,6 +245,31 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
                     placeholder="Search courses..."
                     autoFocus
                   />
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">Sort by</span>
+                    <button
+                      type="button"
+                      onClick={() => setCourseSort('date')}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                        courseSort === 'date'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
+                      }`}
+                    >
+                      Date
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCourseSort('name')}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                        courseSort === 'name'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
+                      }`}
+                    >
+                      Name
+                    </button>
+                  </div>
                 </div>
                 <div className="max-h-52 overflow-y-auto">
                   {filteredCourses.map((c) => (
@@ -305,6 +365,14 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
         </div>
         <div ref={distanceDropdownRef} className="relative">
           <label className={LABEL_CLASS}>Distance</label>
+          {distanceFromCourse ? (
+            <div className={`${INPUT_CLASS} flex items-center gap-2 bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-800`}>
+              <CheckCircle size={14} className="text-green-500 shrink-0" />
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {DISTANCES.find((d) => d.value === raceDistance)?.label || raceDistance}
+              </span>
+            </div>
+          ) : (
           <button
             type="button"
             onClick={() => setDistanceDropdownOpen(!distanceDropdownOpen)}
@@ -315,6 +383,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
             </span>
             <ChevronDown size={16} className={`text-gray-400 transition-transform ${distanceDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
+          )}
           {distanceDropdownOpen && (
             <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
               {DISTANCES.map((d) => (
@@ -354,6 +423,39 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
           </div>
         </div>
       )}
+
+      {/* Gun Start Time */}
+      <div>
+        <label className={LABEL_CLASS}>Gun Start Time</label>
+        {gunTimeFromCourse && gunStartTime ? (
+          <div className={`${INPUT_CLASS} flex items-center gap-2 bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-800`}>
+            <CheckCircle size={14} className="text-green-500 shrink-0" />
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {(() => {
+                try {
+                  // Handle both ISO string and HH:MM format
+                  if (gunStartTime.includes('T')) {
+                    return new Date(gunStartTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+                  }
+                  const [h, m] = gunStartTime.split(':').map(Number)
+                  const ampm = h >= 12 ? 'PM' : 'AM'
+                  const hour12 = h % 12 || 12
+                  return `${hour12}:${m.toString().padStart(2, '0')} ${ampm}`
+                } catch {
+                  return gunStartTime
+                }
+              })()}
+            </span>
+          </div>
+        ) : (
+          <input
+            type="time"
+            value={gunStartTime.includes('T') ? gunStartTime.slice(11, 16) : gunStartTime}
+            onChange={(e) => setGunStartTime(e.target.value)}
+            className={INPUT_CLASS}
+          />
+        )}
+      </div>
 
       {/* Priority */}
       <div>
@@ -402,6 +504,100 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
           />
           <span className="text-gray-400 text-sm">m</span>
         </div>
+      </div>
+
+      {/* Race Conditions (collapsible) */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setConditionsExpanded(!conditionsExpanded)}
+          className="flex items-center gap-2 w-full text-left mb-2 cursor-pointer"
+        >
+          <ChevronDown size={14} className={`text-gray-400 transition-transform ${conditionsExpanded ? 'rotate-180' : ''}`} />
+          <span className={LABEL_CLASS + ' mb-0'}>Race Conditions</span>
+          {(expectedTempF || altitudeFt || courseProfile || swimType) && (
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400">
+              Set
+            </span>
+          )}
+        </button>
+        {conditionsExpanded && (
+          <div className="space-y-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/30">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <Thermometer size={10} />
+                  Expected High Temp (°F)
+                </label>
+                <input
+                  type="number"
+                  value={expectedTempF}
+                  onChange={(e) => setExpectedTempF(e.target.value)}
+                  className={INPUT_CLASS}
+                  placeholder="85"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <Mountain size={10} />
+                  Altitude (ft)
+                </label>
+                <input
+                  type="number"
+                  value={altitudeFt}
+                  onChange={(e) => setAltitudeFt(e.target.value)}
+                  className={INPUT_CLASS}
+                  placeholder="1000"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Course Profile</label>
+                <select
+                  value={courseProfile}
+                  onChange={(e) => setCourseProfile(e.target.value)}
+                  className={INPUT_CLASS}
+                >
+                  <option value="">Not set</option>
+                  <option value="flat">Flat</option>
+                  <option value="rolling">Rolling</option>
+                  <option value="hilly">Hilly</option>
+                  <option value="mountainous">Mountainous</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-1">
+                  <Waves size={10} />
+                  Swim Type
+                </label>
+                <select
+                  value={swimType}
+                  onChange={(e) => setSwimType(e.target.value)}
+                  className={INPUT_CLASS}
+                >
+                  <option value="">Not set</option>
+                  <option value="pool">Pool</option>
+                  <option value="lake">Lake</option>
+                  <option value="river">River</option>
+                  <option value="bay">Bay</option>
+                  <option value="ocean">Ocean</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={wetsuit}
+                  onChange={(e) => setWetsuit(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500/30"
+                />
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Wetsuit Legal</span>
+              </label>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Notes */}

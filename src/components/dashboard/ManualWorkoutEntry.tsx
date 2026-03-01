@@ -1,62 +1,141 @@
 'use client'
 
-import { useState } from 'react'
-import { Plus, X } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { useState, useEffect } from 'react'
+import { Plus, X, ChevronRight, ChevronLeft, Waves, Bike, Footprints } from 'lucide-react'
+import { apiPost } from '@/lib/api/client'
+import { useUnits } from '@/hooks/useUnits'
+import { inputDistanceToMeters, feetToMeters, distanceInputLabel, elevationLabel } from '@/lib/units'
+import type { UnitSystem } from '@/lib/units'
 
 interface ManualWorkoutEntryProps {
   onSaved: () => void
 }
 
-export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps) {
-  const [open, setOpen] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [sport, setSport] = useState<'swim' | 'bike' | 'run'>('run')
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
-  const [durationMin, setDurationMin] = useState('')
-  const [distanceKm, setDistanceKm] = useState('')
-  const [notes, setNotes] = useState('')
+const INPUT_CLASS = 'w-full px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all'
+const LABEL_CLASS = 'block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1'
 
-  const supabase = createClient()
+type Sport = 'swim' | 'bike' | 'run'
+
+function parseDuration(hms: string): number | null {
+  const parts = hms.split(':').map(Number)
+  if (parts.some(isNaN)) return null
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
+  if (parts.length === 2) return parts[0] * 60 + parts[1]
+  if (parts.length === 1) return parts[0] * 60
+  return null
+}
+
+export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps) {
+  const { isImperial } = useUnits()
+  const [open, setOpen] = useState(false)
+  const [step, setStep] = useState(1)
+  const [saving, setSaving] = useState(false)
+  // Local unit toggle — defaults from profile, can be changed per-workout
+  const [localUnits, setLocalUnits] = useState<UnitSystem>(isImperial ? 'imperial' : 'metric')
+  const localImperial = localUnits === 'imperial'
+  // Step 1: Sport
+  const [sport, setSport] = useState<Sport>('run')
+  // Step 2: Core details
+  const [title, setTitle] = useState('')
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+  const [durationHMS, setDurationHMS] = useState('')
+  const [distance, setDistance] = useState('')
+  const [isIndoor, setIsIndoor] = useState(false)
+  // Step 3: Performance metrics
+  const [avgHr, setAvgHr] = useState('')
+  const [maxHr, setMaxHr] = useState('')
+  const [avgPower, setAvgPower] = useState('')
+  const [cadence, setCadence] = useState('')
+  const [elevation, setElevation] = useState('')
+  const [rpe, setRpe] = useState('')
+  const [calories, setCalories] = useState('')
+  const [notes, setNotes] = useState('')
+  // Sync local units when profile preference changes
+  useEffect(() => {
+    setLocalUnits(isImperial ? 'imperial' : 'metric')
+  }, [isImperial])
+
+  const resetForm = () => {
+    setStep(1)
+    setSport('run')
+    setTitle('')
+    setDate(new Date().toISOString().split('T')[0])
+    setDurationHMS('')
+    setDistance('')
+    setIsIndoor(false)
+    setAvgHr('')
+    setMaxHr('')
+    setAvgPower('')
+    setCadence('')
+    setElevation('')
+    setRpe('')
+    setCalories('')
+    setNotes('')
+  }
 
   const handleSave = async () => {
     setSaving(true)
-    const durationSeconds = durationMin ? Math.round(parseFloat(durationMin) * 60) : null
-    const distanceMeters = distanceKm ? Math.round(parseFloat(distanceKm) * (sport === 'swim' ? 1 : 1000)) : null
+    const durationSeconds = parseDuration(durationHMS)
+    const distanceMeters = distance
+      ? inputDistanceToMeters(parseFloat(distance), sport, localUnits)
+      : null
 
-    const { error } = await supabase.from('workouts').insert({
-      sport,
-      title: `${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`,
-      date,
-      duration_seconds: durationSeconds,
-      distance_meters: distanceMeters,
-      notes: notes || null,
-      source: 'manual',
-    })
-
-    setSaving(false)
-    if (!error) {
+    try {
+      await apiPost('/api/workouts', {
+        sport,
+        title: title || `${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`,
+        date,
+        duration_seconds: durationSeconds,
+        distance_meters: distanceMeters,
+        is_indoor: isIndoor,
+        avg_hr: avgHr ? parseInt(avgHr) : null,
+        max_hr: maxHr ? parseInt(maxHr) : null,
+        avg_power_watts: avgPower ? parseInt(avgPower) : null,
+        avg_cadence_rpm: sport === 'bike' && cadence ? parseInt(cadence) : null,
+        avg_cadence_spm: sport === 'run' && cadence ? parseInt(cadence) : null,
+        elevation_gain_meters: elevation ? (localImperial ? feetToMeters(parseFloat(elevation)) : parseFloat(elevation)) : null,
+        rpe: rpe ? parseFloat(rpe) : null,
+        calories: calories ? parseInt(calories) : null,
+        notes: notes || null,
+      })
       setOpen(false)
-      setSport('run')
-      setDurationMin('')
-      setDistanceKm('')
-      setNotes('')
+      resetForm()
       onSaved()
-    }
+    } catch { /* ignore */ }
+    setSaving(false)
   }
+
+  const distLabel = distanceInputLabel(sport, localUnits)
+  const elevLabel = elevationLabel(localUnits)
+  const distPlaceholder = sport === 'swim'
+    ? (localImperial ? '2200' : '2000')
+    : (localImperial ? '6' : '10')
 
   if (!open) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="card-squircle px-6 py-4 flex items-center gap-3 w-full cursor-pointer group hover:shadow-md transition-all"
+        className="card-squircle p-5 flex flex-col w-full cursor-pointer group hover:shadow-md transition-all text-left"
       >
-        <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center">
-          <Plus size={16} className="text-white" />
+        <div className="flex items-center gap-2 mb-4">
+          <Plus size={16} className="text-blue-600" />
+          <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
+            Add Workout
+          </p>
         </div>
-        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-          Add Workout
-        </span>
+
+        <div className="flex-1 flex flex-col items-center justify-center py-3">
+          <div className="w-12 h-12 rounded-2xl bg-blue-600 group-hover:bg-blue-700 flex items-center justify-center transition-all shadow-lg shadow-blue-600/20 group-hover:shadow-blue-600/30">
+            <Plus size={24} className="text-white" />
+          </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">Log a manual workout</p>
+        </div>
+
+        <div className="flex justify-center gap-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+          <span className="text-[10px] font-medium text-blue-500 flex items-center gap-1"><Waves size={12} /> Swim</span>
+          <span className="text-[10px] font-medium text-orange-500 flex items-center gap-1"><Bike size={12} /> Bike</span>
+          <span className="text-[10px] font-medium text-green-500 flex items-center gap-1"><Footprints size={12} /> Run</span>
+        </div>
       </button>
     )
   }
@@ -64,91 +143,172 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   return (
     <div className="card-squircle p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Log Workout</h3>
-        <button onClick={() => setOpen(false)} className="p-1 cursor-pointer">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          Log Workout {step > 1 && `(${step}/3)`}
+        </h3>
+        <button onClick={() => { setOpen(false); resetForm() }} className="p-1 cursor-pointer">
           <X size={16} className="text-gray-400" />
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {/* Sport */}
-        <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Sport</label>
-          <div className="flex gap-1">
-            {(['swim', 'bike', 'run'] as const).map((s) => (
+      {/* Step 1: Sport Selection */}
+      {step === 1 && (
+        <>
+          <div className="mb-4">
+            <label className={LABEL_CLASS}>Sport</label>
+            <div className="flex gap-1">
+              {(['swim', 'bike', 'run'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSport(s)}
+                  className={`flex-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                    sport === s
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                  }`}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={() => setStep(2)}
+            className="w-full flex items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all cursor-pointer"
+          >
+            Next <ChevronRight size={16} />
+          </button>
+        </>
+      )}
+
+      {/* Step 2: Core Details */}
+      {step === 2 && (
+        <>
+          {/* Unit toggle */}
+          <div className="flex items-center justify-end mb-3">
+            <div className="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-0.5">
               <button
-                key={s}
-                onClick={() => setSport(s)}
-                className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                  sport === s
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                onClick={() => setLocalUnits('metric')}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  !localImperial
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                    : 'text-gray-400 dark:text-gray-500'
                 }`}
               >
-                {s.charAt(0).toUpperCase() + s.slice(1)}
+                km
               </button>
-            ))}
+              <button
+                onClick={() => setLocalUnits('imperial')}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  localImperial
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                    : 'text-gray-400 dark:text-gray-500'
+                }`}
+              >
+                mi
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Date */}
-        <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all"
-          />
-        </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            <div className="col-span-2">
+              <label className={LABEL_CLASS}>Title</label>
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}>Date</label>
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}>Duration (HH:MM:SS)</label>
+              <input type="text" value={durationHMS} onChange={(e) => setDurationHMS(e.target.value)} className={INPUT_CLASS} placeholder="1:30:00" />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}>Distance ({distLabel})</label>
+              <input type="number" step="0.1" value={distance} onChange={(e) => setDistance(e.target.value)} className={INPUT_CLASS} placeholder={distPlaceholder} />
+            </div>
+            <div className="flex items-end">
+              <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+                <input type="checkbox" checked={isIndoor} onChange={(e) => setIsIndoor(e.target.checked)} className="rounded" />
+                Indoor
+              </label>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setStep(1)}
+              className="flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+            >
+              <ChevronLeft size={16} /> Back
+            </button>
+            <button
+              onClick={() => setStep(3)}
+              className="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all cursor-pointer"
+            >
+              Next <ChevronRight size={16} />
+            </button>
+          </div>
+        </>
+      )}
 
-        {/* Duration */}
-        <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Duration (min)</label>
-          <input
-            type="number"
-            placeholder="60"
-            value={durationMin}
-            onChange={(e) => setDurationMin(e.target.value)}
-            className="w-full px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all"
-          />
-        </div>
-
-        {/* Distance */}
-        <div>
-          <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">
-            Distance ({sport === 'swim' ? 'm' : 'km'})
-          </label>
-          <input
-            type="number"
-            step="0.1"
-            placeholder={sport === 'swim' ? '2000' : '10'}
-            value={distanceKm}
-            onChange={(e) => setDistanceKm(e.target.value)}
-            className="w-full px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all"
-          />
-        </div>
-      </div>
-
-      {/* Notes */}
-      <div className="mb-4">
-        <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1">Notes</label>
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Optional notes..."
-          rows={2}
-          className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all resize-none"
-        />
-      </div>
-
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
-      >
-        {saving ? 'Saving...' : 'Save Workout'}
-      </button>
+      {/* Step 3: Performance Metrics + Save */}
+      {step === 3 && (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            <div>
+              <label className={LABEL_CLASS}>Avg HR (bpm)</label>
+              <input type="number" value={avgHr} onChange={(e) => setAvgHr(e.target.value)} className={INPUT_CLASS} placeholder="145" />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}>Max HR (bpm)</label>
+              <input type="number" value={maxHr} onChange={(e) => setMaxHr(e.target.value)} className={INPUT_CLASS} placeholder="175" />
+            </div>
+            {(sport === 'bike') && (
+              <div>
+                <label className={LABEL_CLASS}>Avg Power (W)</label>
+                <input type="number" value={avgPower} onChange={(e) => setAvgPower(e.target.value)} className={INPUT_CLASS} placeholder="200" />
+              </div>
+            )}
+            <div>
+              <label className={LABEL_CLASS}>Cadence ({sport === 'bike' ? 'rpm' : 'spm'})</label>
+              <input type="number" value={cadence} onChange={(e) => setCadence(e.target.value)} className={INPUT_CLASS} placeholder={sport === 'bike' ? '85' : '170'} />
+            </div>
+            {!isIndoor && (
+              <div>
+                <label className={LABEL_CLASS}>Elevation ({elevLabel})</label>
+                <input type="number" value={elevation} onChange={(e) => setElevation(e.target.value)} className={INPUT_CLASS} placeholder={localImperial ? '1500' : '500'} />
+              </div>
+            )}
+            <div>
+              <label className={LABEL_CLASS}>RPE (1-10)</label>
+              <input type="number" min="1" max="10" value={rpe} onChange={(e) => setRpe(e.target.value)} className={INPUT_CLASS} placeholder="7" />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}>Calories</label>
+              <input type="number" value={calories} onChange={(e) => setCalories(e.target.value)} className={INPUT_CLASS} placeholder="600" />
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className={LABEL_CLASS}>Notes</label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes..." rows={2} className={`${INPUT_CLASS} resize-none`} />
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setStep(2)}
+              className="flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer"
+            >
+              <ChevronLeft size={16} /> Back
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {saving ? 'Saving...' : 'Save Workout'}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -270,52 +270,9 @@ export default function ExportPDF({ plan }: ExportPDFProps) {
         y += 4
       }
 
-      // ---- EQUIPMENT ----
-      if (plan.equipment_plan) {
-        addSectionTitle('EQUIPMENT CHECKLIST')
-        const categories = ['swim', 'bike', 'run', 'transition', 'nutrition', 'special_needs'] as const
-        for (const cat of categories) {
-          const items = plan.equipment_plan.checklist.filter((i) => i.category === cat)
-          if (items.length > 0) {
-            addSubTitle(cat === 'special_needs' ? 'Special Needs' : cat.charAt(0).toUpperCase() + cat.slice(1))
-            items.forEach((item) => addBullet(item.name))
-            y += 2
-          }
-        }
-        y += 2
-
-        addSubTitle('Race Week Timeline')
-        for (const day of plan.equipment_plan.raceWeekTimeline) {
-          checkSpace(15)
-          doc.setFontSize(9)
-          doc.setFont('helvetica', 'bold')
-          doc.setTextColor(60)
-          doc.text(day.label, margin + 4, y)
-          y += 4
-          day.tasks.forEach((task) => addBullet(task))
-          y += 2
-        }
-        y += 4
-      }
-
       // ---- MINDSET ----
       if (plan.mindset_plan) {
         addSectionTitle('MINDSET & MENTAL PREP')
-
-        addSubTitle('Your Mantras')
-        plan.mindset_plan.mantras.forEach((m) => {
-          checkSpace(6)
-          doc.setFontSize(9)
-          doc.setFont('helvetica', 'italic')
-          doc.setTextColor(80)
-          doc.text(`"${m}"`, margin + 6, y)
-          y += 5
-        })
-        y += 2
-
-        addSubTitle('Process Goals')
-        plan.mindset_plan.processGoals.forEach((g, i) => addBullet(`${i + 1}. ${g}`))
-        y += 2
 
         addSubTitle('During Race Strategies')
         plan.mindset_plan.duringRaceStrategies.forEach((s) => {

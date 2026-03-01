@@ -9,18 +9,27 @@ interface GarminActivity {
   activityId: number
   activityType: string
   startTimeLocal: string
+  startTimeGMT?: string
   durationInSeconds: number
+  movingDurationInSeconds?: number
   distanceInMeters: number
   averageHeartRateInBeatsPerMinute?: number
   maxHeartRateInBeatsPerMinute?: number
   averagePowerInWatts?: number
   normalizedPowerInWatts?: number
+  maxPowerInWatts?: number
   averageRunCadenceInStepsPerMinute?: number
   averageBikeCadenceInRoundsPerMinute?: number
+  maxCadenceInRoundsPerMinute?: number
   averagePaceInMinutesPerKilometer?: number
+  averageSpeedInMetersPerSecond?: number
+  maxSpeedInMetersPerSecond?: number
   elevationGainInMeters?: number
+  elevationLossInMeters?: number
   calories?: number
   activeTrainingStressScore?: number
+  heartRateZones?: { zoneNumber: number; secsInZone: number; zoneLowBoundary: number; zoneHighBoundary?: number }[]
+  laps?: { startTimeLocal: string; duration: number; distance: number; averageHR?: number; maxHR?: number; averagePower?: number; averageRunCadence?: number; averageBikeCadence?: number; elevationGain?: number; averageSpeed?: number }[]
 }
 
 function mapSport(activityType: string): 'swim' | 'bike' | 'run' | null {
@@ -68,7 +77,7 @@ export async function syncGarminActivities(
 
     const date = activity.startTimeLocal.split('T')[0]
 
-    await supabase.from('workouts').insert({
+    const { data: workout } = await supabase.from('workouts').insert({
       user_id: userId,
       sport,
       title: activity.activityType.replace(/_/g, ' '),
@@ -90,7 +99,48 @@ export async function syncGarminActivities(
       source: 'garmin',
       external_id: activity.activityId.toString(),
       external_url: garminConnectUrl(activity.activityId),
-    })
+      // New fields
+      started_at: activity.startTimeGMT || activity.startTimeLocal,
+      moving_time_seconds: activity.movingDurationInSeconds || null,
+      max_power_watts: activity.maxPowerInWatts || null,
+      avg_speed_mps: activity.averageSpeedInMetersPerSecond || null,
+      max_speed_mps: activity.maxSpeedInMetersPerSecond || null,
+      max_cadence: activity.maxCadenceInRoundsPerMinute || null,
+      total_descent_meters: activity.elevationLossInMeters || null,
+    }).select().single()
+
+    // Insert HR zones if available
+    if (workout && activity.heartRateZones && activity.heartRateZones.length > 0) {
+      const totalSecs = activity.heartRateZones.reduce((s, z) => s + z.secsInZone, 0)
+      const hrZones = activity.heartRateZones.slice(0, 5).map((z) => ({
+        workout_id: workout.id,
+        zone_number: z.zoneNumber,
+        min_hr: z.zoneLowBoundary,
+        max_hr: z.zoneHighBoundary || z.zoneLowBoundary + 20,
+        time_in_zone_seconds: z.secsInZone,
+        percent_of_total: totalSecs > 0 ? Number(((z.secsInZone / totalSecs) * 100).toFixed(1)) : 0,
+      }))
+      await supabase.from('workout_hr_zones').insert(hrZones)
+    }
+
+    // Insert laps if available
+    if (workout && activity.laps && activity.laps.length > 0) {
+      const lapStartTime = new Date(activity.laps[0].startTimeLocal).getTime()
+      const lapRows = activity.laps.map((l, i) => ({
+        workout_id: workout.id,
+        lap_number: i + 1,
+        start_offset_seconds: Math.round((new Date(l.startTimeLocal).getTime() - lapStartTime) / 1000),
+        duration_seconds: Math.round(l.duration),
+        distance_meters: Math.round(l.distance),
+        avg_hr: l.averageHR || null,
+        max_hr: l.maxHR || null,
+        avg_power_watts: l.averagePower || null,
+        avg_pace_sec_per_km: l.averageSpeed && l.averageSpeed > 0 ? Math.round(1000 / l.averageSpeed) : null,
+        avg_cadence: l.averageRunCadence || l.averageBikeCadence || null,
+        elevation_gain_meters: l.elevationGain || null,
+      }))
+      await supabase.from('workout_laps').insert(lapRows)
+    }
 
     results.synced++
   }
