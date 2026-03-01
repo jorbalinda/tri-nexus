@@ -46,11 +46,11 @@ function computeThresholdAdjustment(assessment: ThresholdHRAssessment): { value:
   else adjustment = 0.03
 
   const labels: Record<string, string> = {
-    well_below: 'Well below LTHR — strong aerobic base',
-    below: 'Below LTHR — good headroom',
-    at: 'At LTHR — training at threshold',
-    above: 'Above LTHR — pushing limits',
-    well_above: 'Well above LTHR — high cardiac stress',
+    well_below: 'Well below LTHR. Strong aerobic base.',
+    below: 'Below LTHR. Good headroom.',
+    at: 'At LTHR. Training at threshold.',
+    above: 'Above LTHR. Pushing limits.',
+    well_above: 'Well above LTHR. High cardiac stress.',
   }
 
   return { value: ratio, adjustment, status: labels[assessment.assessment] || assessment.assessment, available: true }
@@ -69,9 +69,9 @@ function computeDriftAdjustment(drift: CardiacDriftResult): { value: number; adj
   else adjustment = 0.05
 
   const labels: Record<string, string> = {
-    low: 'Low cardiac drift — strong endurance',
-    moderate: 'Moderate drift — some fatigue expected',
-    high: 'High drift — risk of fading late',
+    low: 'Low cardiac drift. Strong endurance.',
+    moderate: 'Moderate drift. Some fatigue expected.',
+    high: 'High drift. Risk of fading late.',
   }
 
   return { value: drift.driftPct, adjustment, status: labels[drift.rating], available: true }
@@ -91,9 +91,9 @@ function computeEFAdjustment(efResult: { trendPct: number | null; rating: string
   else adjustment = 0.02
 
   const labels: Record<string, string> = {
-    improving: 'Improving — aerobic fitness trending up',
-    stable: 'Stable — consistent efficiency',
-    declining: 'Declining — aerobic efficiency dropping',
+    improving: 'Improving. Aerobic fitness trending up.',
+    stable: 'Stable. Consistent efficiency.',
+    declining: 'Declining. Aerobic efficiency dropping.',
   }
 
   return { value: efResult.trendPct, adjustment, status: labels[efResult.rating] || efResult.rating, available: true }
@@ -112,10 +112,10 @@ function computeSustainabilityAdjustment(result: SustainabilityResult): { value:
   else adjustment = 0.04
 
   const labels: Record<string, string> = {
-    proven: 'Proven — has sustained race effort duration',
-    likely: 'Likely sustainable — close to race duration',
-    questionable: 'Questionable — needs more long efforts',
-    unproven: 'Unproven — no evidence of race-duration endurance',
+    proven: 'Proven. Has sustained race effort duration.',
+    likely: 'Likely sustainable. Close to race duration.',
+    questionable: 'Questionable. Needs more long efforts.',
+    unproven: 'Unproven. No evidence of race-duration endurance.',
   }
 
   return { value: result.ratio, adjustment, status: labels[result.rating], available: true }

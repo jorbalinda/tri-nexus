@@ -83,8 +83,8 @@ export function calculateReadiness(
 
 export function readinessLabel(score: number): string {
   if (score >= 80) return 'Ready to perform'
-  if (score >= 60) return 'Moderate — train normally'
-  if (score >= 40) return 'Low — easy day recommended'
+  if (score >= 60) return 'Moderate. Train normally.'
+  if (score >= 40) return 'Low. Easy day recommended.'
   return 'Rest day recommended'
 }
 

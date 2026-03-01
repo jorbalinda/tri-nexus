@@ -13,7 +13,13 @@ import { useWeekWorkouts } from '@/hooks/useWeekWorkouts'
 
 export default function DashboardPage() {
   const [weekOffset, setWeekOffset] = useState(0)
+  const [savedCount, setSavedCount] = useState(0)
   const { workoutsByDay, volume, loading, refetch, monday } = useWeekWorkouts(weekOffset)
+
+  const handleWorkoutSaved = () => {
+    refetch()
+    setSavedCount((c) => c + 1)
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,9 +44,9 @@ export default function DashboardPage() {
 
       {/* Action row — training load, add workout, import */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <TrainingLoadCard />
-        <ManualWorkoutEntry onSaved={refetch} />
-        <FitUploadDropzone onUploaded={refetch} />
+        <TrainingLoadCard refreshKey={savedCount} />
+        <ManualWorkoutEntry onSaved={handleWorkoutSaved} />
+        <FitUploadDropzone onUploaded={handleWorkoutSaved} />
       </div>
 
       {/* Weekly Volume */}

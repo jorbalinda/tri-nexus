@@ -264,13 +264,13 @@ function getDimensionSuggestion(
   switch (dimension) {
     case 'volume':
       return {
-        action: 'Increase training frequency — aim for 3+ workouts per week',
+        action: 'Increase training frequency. Aim for 3+ workouts per week.',
         impact: 'Improves data volume score',
         category: 'workout',
       }
     case 'discipline':
       return {
-        action: 'Train all three disciplines — swim, bike, and run each week',
+        action: 'Train all three disciplines. Swim, bike, and run each week.',
         impact: 'Improves discipline balance score',
         category: 'workout',
       }

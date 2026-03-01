@@ -73,58 +73,17 @@ export default function DeviceConnectionCard() {
           {/* Garmin */}
           <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
             <div className="flex items-center gap-3">
-              <Watch size={20} className={garmin?.sync_status === 'active' ? 'text-green-500' : 'text-gray-400'} />
+              <Watch size={20} className="text-gray-300 dark:text-gray-600" />
               <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Garmin Connect</p>
-                {garmin ? (
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
-                    {garmin.sync_status === 'active' ? (
-                      <>
-                        <Check size={10} className="inline text-green-500 mr-1" />
-                        Connected · Last sync {formatSyncTime(garmin.last_sync_at)}
-                      </>
-                    ) : garmin.sync_status === 'error' ? (
-                      <>
-                        <AlertCircle size={10} className="inline text-red-500 mr-1" />
-                        Sync error
-                      </>
-                    ) : (
-                      'Disconnected'
-                    )}
-                  </p>
-                ) : (
-                  <p className="text-xs text-gray-400 dark:text-gray-500">Not connected</p>
-                )}
+                <p className="text-sm font-semibold text-gray-400 dark:text-gray-500">Garmin Connect</p>
+                <p className="text-xs text-gray-300 dark:text-gray-600">Not available yet</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              {garmin && garmin.sync_status === 'active' ? (
-                <>
-                  <button
-                    onClick={handleSyncNow}
-                    disabled={syncing}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-all cursor-pointer disabled:opacity-50"
-                  >
-                    <RefreshCw size={12} className={syncing ? 'animate-spin' : ''} />
-                    {syncing ? 'Syncing...' : 'Sync Now'}
-                  </button>
-                  <button
-                    onClick={handleDisconnect}
-                    disabled={disconnecting}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer disabled:opacity-50"
-                  >
-                    {disconnecting ? 'Disconnecting...' : 'Disconnect'}
-                  </button>
-                </>
-              ) : (
-                <a
-                  href="/api/garmin/auth"
-                  className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-all"
-                >
-                  Connect
-                </a>
-              )}
+              <span className="px-4 py-2 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 text-xs font-semibold cursor-not-allowed select-none">
+                Coming Soon
+              </span>
             </div>
           </div>
         </div>

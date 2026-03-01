@@ -36,10 +36,9 @@ export default function CalendarDayCell({
   const hasRaceDay = raceEvents.some((e) => e.type === 'race_day')
   const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 
-  // Reduce workout slots when race events are present
-  const maxWorkouts = raceEvents.length > 0 ? 2 : 3
-  const visible = workouts.length > maxWorkouts ? workouts.slice(0, maxWorkouts - 1) : workouts
-  const overflow = workouts.length > maxWorkouts ? workouts.length - (maxWorkouts - 1) : 0
+  const MAX_VISIBLE = raceEvents.length > 0 ? 1 : 2
+  const visible = workouts.slice(0, MAX_VISIBLE)
+  const overflow = workouts.length > MAX_VISIBLE ? workouts.length - MAX_VISIBLE : 0
 
   const dailyTSS =
     workouts.length > 1
@@ -167,7 +166,7 @@ function RaceEventPill({ event }: { event: CalendarRaceEvent }) {
           } ${openLeft ? 'right-0' : 'left-0'}`}
         >
           <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
-            {event.label} — {event.raceName}
+            {event.label}: {event.raceName}
           </p>
           <ul className="space-y-1">
             {event.tasks.map((task, i) => (

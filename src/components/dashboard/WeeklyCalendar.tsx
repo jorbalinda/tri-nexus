@@ -117,7 +117,7 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
                     <div className="h-5 bg-gray-100 dark:bg-gray-700 rounded animate-pulse" />
                   ) : (
                     <div className="flex flex-col gap-0.5 sm:gap-1 flex-1 justify-start">
-                      {dayWorkouts.map((w) => {
+                      {dayWorkouts.slice(0, 2).map((w) => {
                         const sport = SPORT_COLORS[w.sport] || SPORT_COLORS.run
                         const Icon = sport.icon
                         return (
@@ -131,6 +131,11 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
                           </button>
                         )
                       })}
+                      {dayWorkouts.length > 2 && (
+                        <span className="text-[10px] text-blue-500 dark:text-blue-400 px-1 cursor-default">
+                          +{dayWorkouts.length - 2} more
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>

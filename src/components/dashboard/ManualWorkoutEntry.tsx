@@ -16,15 +16,6 @@ const LABEL_CLASS = 'block text-[10px] font-bold uppercase tracking-wider text-g
 
 type Sport = 'swim' | 'bike' | 'run'
 
-function parseDuration(hms: string): number | null {
-  const parts = hms.split(':').map(Number)
-  if (parts.some(isNaN)) return null
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
-  if (parts.length === 2) return parts[0] * 60 + parts[1]
-  if (parts.length === 1) return parts[0] * 60
-  return null
-}
-
 export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps) {
   const { isImperial } = useUnits()
   const [open, setOpen] = useState(false)
@@ -38,7 +29,8 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   // Step 2: Core details
   const [title, setTitle] = useState('')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
-  const [durationHMS, setDurationHMS] = useState('')
+  const [durationH, setDurationH] = useState('')
+  const [durationM, setDurationM] = useState('')
   const [distance, setDistance] = useState('')
   const [isIndoor, setIsIndoor] = useState(false)
   // Step 3: Performance metrics
@@ -47,6 +39,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   const [avgPower, setAvgPower] = useState('')
   const [cadence, setCadence] = useState('')
   const [elevation, setElevation] = useState('')
+  const [tss, setTss] = useState('')
   const [rpe, setRpe] = useState('')
   const [calories, setCalories] = useState('')
   const [notes, setNotes] = useState('')
@@ -60,7 +53,8 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
     setSport('run')
     setTitle('')
     setDate(new Date().toISOString().split('T')[0])
-    setDurationHMS('')
+    setDurationH('')
+    setDurationM('')
     setDistance('')
     setIsIndoor(false)
     setAvgHr('')
@@ -68,6 +62,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
     setAvgPower('')
     setCadence('')
     setElevation('')
+    setTss('')
     setRpe('')
     setCalories('')
     setNotes('')
@@ -75,7 +70,9 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
 
   const handleSave = async () => {
     setSaving(true)
-    const durationSeconds = parseDuration(durationHMS)
+    const h = parseInt(durationH || '0')
+    const m = parseInt(durationM || '0')
+    const durationSeconds = h * 3600 + m * 60 || null
     const distanceMeters = distance
       ? inputDistanceToMeters(parseFloat(distance), sport, localUnits)
       : null
@@ -94,6 +91,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
         avg_cadence_rpm: sport === 'bike' && cadence ? parseInt(cadence) : null,
         avg_cadence_spm: sport === 'run' && cadence ? parseInt(cadence) : null,
         elevation_gain_meters: elevation ? (localImperial ? feetToMeters(parseFloat(elevation)) : parseFloat(elevation)) : null,
+        tss: tss ? parseFloat(tss) : null,
         rpe: rpe ? parseFloat(rpe) : null,
         calories: calories ? parseInt(calories) : null,
         notes: notes || null,
@@ -184,32 +182,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
       {/* Step 2: Core Details */}
       {step === 2 && (
         <>
-          {/* Unit toggle */}
-          <div className="flex items-center justify-end mb-3">
-            <div className="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-0.5">
-              <button
-                onClick={() => setLocalUnits('metric')}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  !localImperial
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
-                    : 'text-gray-400 dark:text-gray-500'
-                }`}
-              >
-                km
-              </button>
-              <button
-                onClick={() => setLocalUnits('imperial')}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  localImperial
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
-                    : 'text-gray-400 dark:text-gray-500'
-                }`}
-              >
-                mi
-              </button>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <div className="col-span-2">
               <label className={LABEL_CLASS}>Title</label>
@@ -220,12 +192,40 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
             </div>
             <div>
-              <label className={LABEL_CLASS}>Duration (HH:MM:SS)</label>
-              <input type="text" value={durationHMS} onChange={(e) => setDurationHMS(e.target.value)} className={INPUT_CLASS} placeholder="1:30:00" />
+              <label className={LABEL_CLASS}>Duration</label>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="number" min="0" max="23"
+                  value={durationH}
+                  onChange={(e) => setDurationH(e.target.value)}
+                  className={`${INPUT_CLASS} text-center`}
+                  placeholder="0"
+                />
+                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 shrink-0">h</span>
+                <span className="text-sm font-medium text-gray-300 dark:text-gray-600 shrink-0">:</span>
+                <input
+                  type="number" min="0" max="59"
+                  value={durationM}
+                  onChange={(e) => setDurationM(e.target.value)}
+                  className={`${INPUT_CLASS} text-center`}
+                  placeholder="00"
+                />
+                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 shrink-0">m</span>
+              </div>
             </div>
             <div>
-              <label className={LABEL_CLASS}>Distance ({distLabel})</label>
-              <input type="number" step="0.1" value={distance} onChange={(e) => setDistance(e.target.value)} className={INPUT_CLASS} placeholder={distPlaceholder} />
+              <label className={LABEL_CLASS}>Distance</label>
+              <div className="flex items-center gap-1.5">
+                <input type="number" step="0.1" value={distance} onChange={(e) => setDistance(e.target.value)} className={`${INPUT_CLASS} flex-1 min-w-0`} placeholder={distPlaceholder} />
+                {sport === 'swim' ? (
+                  <div className="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-0.5 shrink-0">
+                    <button onClick={() => setLocalUnits('metric')} className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${!localImperial ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-400 dark:text-gray-500'}`}>m</button>
+                    <button onClick={() => setLocalUnits('imperial')} className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${localImperial ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-400 dark:text-gray-500'}`}>yd</button>
+                  </div>
+                ) : (
+                  <span className="text-xs font-medium text-gray-400 dark:text-gray-500 shrink-0">{distLabel}</span>
+                )}
+              </div>
             </div>
             <div className="flex items-end">
               <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
@@ -279,6 +279,10 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
                 <input type="number" value={elevation} onChange={(e) => setElevation(e.target.value)} className={INPUT_CLASS} placeholder={localImperial ? '1500' : '500'} />
               </div>
             )}
+            <div>
+              <label className={LABEL_CLASS}>TSS</label>
+              <input type="number" value={tss} onChange={(e) => setTss(e.target.value)} className={INPUT_CLASS} placeholder="65" />
+            </div>
             <div>
               <label className={LABEL_CLASS}>RPE (1-10)</label>
               <input type="number" min="1" max="10" value={rpe} onChange={(e) => setRpe(e.target.value)} className={INPUT_CLASS} placeholder="7" />

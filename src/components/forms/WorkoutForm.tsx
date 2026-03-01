@@ -119,7 +119,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
     ? (localImperial ? '2200' : '2000')
     : (localImperial ? '6' : '10')
 
-  const unitToggle = (
+  const unitToggle = sport === 'swim' ? (
     <div className="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-0.5">
       <button
         type="button"
@@ -130,7 +130,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
             : 'text-gray-400 dark:text-gray-500'
         }`}
       >
-        Metric
+        Meters
       </button>
       <button
         type="button"
@@ -141,10 +141,10 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
             : 'text-gray-400 dark:text-gray-500'
         }`}
       >
-        Imperial
+        Yards
       </button>
     </div>
-  )
+  ) : null
 
   const content = (
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">

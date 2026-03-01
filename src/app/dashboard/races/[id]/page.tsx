@@ -162,13 +162,13 @@ export default function RaceDetailPage() {
         {days > 0 && (
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 italic">
             {days > 84
-              ? 'Build phase — focus on consistent volume'
+              ? 'Build phase. Focus on consistent volume.'
               : days > 28
-              ? 'Sharpen phase — add race-specific intensity'
+              ? 'Sharpen phase. Add race-specific intensity.'
               : days > 14
-              ? 'Taper phase — trust the work you\'ve done'
+              ? 'Taper phase. Trust the work you\'ve done.'
               : days > 0
-              ? 'Race week — you\'re ready'
+              ? 'Race week. You\'re ready.'
               : ''}
           </p>
         )}

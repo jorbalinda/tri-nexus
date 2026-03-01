@@ -106,7 +106,7 @@ export default function LTEstimatorCard({
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="rounded-2xl p-5 bg-blue-50 dark:bg-blue-950/30 border border-blue-200/50 dark:border-blue-800/30">
               <p className="text-[10px] font-bold uppercase tracking-[2px] text-blue-400 dark:text-blue-500 mb-2">
-                LT1 — Aerobic
+                LT1: Aerobic
               </p>
               <div className="flex items-end gap-1.5">
                 <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
@@ -120,7 +120,7 @@ export default function LTEstimatorCard({
             </div>
             <div className="rounded-2xl p-5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-800/30">
               <p className="text-[10px] font-bold uppercase tracking-[2px] text-amber-400 dark:text-amber-500 mb-2">
-                LT2 — Anaerobic
+                LT2: Anaerobic
               </p>
               <div className="flex items-end gap-1.5">
                 <span className="text-3xl font-bold text-amber-600 dark:text-amber-400">

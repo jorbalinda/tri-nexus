@@ -142,13 +142,13 @@ export function generateSwimPacing(
 
   const strategy =
     bucket === '140.6' || bucket === '70.3'
-      ? 'Even pacing. Start conservatively — save energy for the bike and run.'
+      ? 'Even pacing. Start conservatively. Save energy for the bike and run.'
       : isDraftLegal(raceDistance)
         ? 'Position yourself to exit the swim near the front pack. The bike is draft-legal.'
         : 'Slight negative split. Settle into rhythm in the first 200m, then build pace.'
 
   const strokeRate =
-    bucket === '140.6' ? '55-60 strokes/min — efficient, sustainable cadence' : '60-66 strokes/min — steady with controlled turnover'
+    bucket === '140.6' ? '55-60 strokes/min. Efficient, sustainable cadence.' : '60-66 strokes/min. Steady with controlled turnover.'
 
   const sighting =
     distances.swim_m > 1500 ? 'Every 6-8 strokes in open water. Sight early and often at start.' : 'Every 8-10 strokes. Use buoy lines to navigate.'
@@ -203,7 +203,7 @@ export function generateBikePacing(
 
   return {
     targetPowerWatts: targetWatts, targetPowerRange: [loWatts, hiWatts],
-    targetHRZone: lthr ? getHRZoneLabel(raceDistance, 'bike', lthr) : 'Use power as primary metric — ride by feel if no power meter',
+    targetHRZone: lthr ? getHRZoneLabel(raceDistance, 'bike', lthr) : 'Use power as primary metric. Ride by feel if no power meter.',
     estimatedSplitSeconds: splitSeconds, cadenceTarget: '85-95 rpm on flats, 70-80 rpm on climbs',
     strategy, heatAdjustment: heat, altitudeAdjustment: alt, dataAvailable: true, isDraftLegal: draftLegal,
   }
@@ -249,16 +249,16 @@ export function generateRunPacing(
 
   const strategy =
     bucket === '140.6'
-      ? 'Even effort with controlled first 10K. The marathon starts at mile 18 — save yourself.'
+      ? 'Even effort with controlled first 10K. The marathon starts at mile 18. Save yourself.'
       : isDraftLegal(raceDistance)
         ? 'Off-the-bike run: transition is critical in draft-legal racing. The run decides the race.'
         : 'Slight negative split. First 1-2 km conservative off the bike, then settle into target pace.'
 
   return {
     targetPaceSecPerKm: targetPace,
-    targetHRZone: lthr ? getHRZoneLabel(raceDistance, 'run', lthr) : 'Run by feel — keep effort conversational early',
+    targetHRZone: lthr ? getHRZoneLabel(raceDistance, 'run', lthr) : 'Run by feel. Keep effort conversational early.',
     estimatedSplitSeconds: splitSeconds, strategy, walkBreakStrategy: walkBreak,
-    brickFactorNote: 'First 1-2 km off the bike will feel 10-20 sec/km slower than standalone pace. This is normal — don\'t chase the pace.',
+    brickFactorNote: 'First 1-2 km off the bike will feel 10-20 sec/km slower than standalone pace. This is normal. Don\'t chase the pace.',
     dataAvailable: true,
   }
 }

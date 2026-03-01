@@ -259,7 +259,7 @@ export default function ProjectionHero({
 
         {/* Range below */}
         <p className="text-center text-sm text-gray-400 dark:text-gray-500 mb-4">
-          {formatTimeShort(projection.optimistic_seconds)} — {formatTimeShort(projection.conservative_seconds)}
+          {formatTimeShort(projection.optimistic_seconds)} to {formatTimeShort(projection.conservative_seconds)}
         </p>
 
         {/* Goal comparison */}
@@ -326,7 +326,7 @@ export default function ProjectionHero({
       {/* Top bar: confidence + badges */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <span className={`text-xs font-semibold ${confidenceTierColor}`}>{confidenceTier} — {confidence}%</span>
+          <span className={`text-xs font-semibold ${confidenceTierColor}`}>{confidenceTier}: {confidence}%</span>
           <div className="w-20 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${confidenceBarColor}`}
@@ -369,7 +369,7 @@ export default function ProjectionHero({
 
       {/* Range */}
       <p className="text-center text-sm text-gray-400 dark:text-gray-500 mb-1">
-        {formatTimeShort(projection.optimistic_seconds)} — {formatTimeShort(projection.conservative_seconds)}
+        {formatTimeShort(projection.optimistic_seconds)} to {formatTimeShort(projection.conservative_seconds)}
       </p>
 
       {/* Goal comparison */}

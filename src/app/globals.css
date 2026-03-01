@@ -119,3 +119,12 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0;
   display: none;
 }
+
+/* Hide scrollbar utility — used by TimeScrollPicker */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

@@ -74,8 +74,8 @@ export default function LandingPage() {
                   <TrendingUp size={24} className="text-blue-500" />
                 </div>
                 <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 1</p>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Train & Sync</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Connect Garmin and train. Every workout sharpens your projection.</p>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Train & Upload</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Upload data and train. Every workout sharpens your projection.</p>
               </div>
               <div className="card-squircle p-6 text-center">
                 <div className="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center mx-auto mb-4">
@@ -91,7 +91,7 @@ export default function LandingPage() {
                 </div>
                 <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 3</p>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Race & Compare</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">After the race, see predicted vs. actual. How close was your projection?</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">After the race, see predicted vs. actual.</p>
               </div>
             </div>
           </div>
@@ -120,21 +120,21 @@ export default function LandingPage() {
               {
                 icon: TrendingUp,
                 title: 'Fitness Tracking',
-                desc: 'CTL, ATL, TSB, weekly volume, and per-discipline trends — all calculated from your synced workouts. Watch your fitness build.',
+                desc: 'TSS, CTL, ATL, TSB, weekly volume, and per-discipline trends. All calculated from your synced workouts. Watch your fitness build.',
                 color: 'text-green-500',
                 bg: 'bg-green-50 dark:bg-green-950/30',
               },
               {
                 icon: Timer,
                 title: 'Race Day Plan',
-                desc: 'Pacing splits, nutrition strategy, equipment checklist, and mindset plan — auto-generated and weather-adjusted for your race.',
+                desc: 'Pacing splits, equipment checklist, and mindset plan. Auto-generated and weather-adjusted for your race.',
                 color: 'text-orange-500',
                 bg: 'bg-orange-50 dark:bg-orange-950/30',
               },
               {
                 icon: Waves,
-                title: 'Device Sync',
-                desc: 'Garmin, Wahoo, Apple Watch, COROS, Suunto, Polar, Hammerhead, Zwift, TrainerRoad, Peloton — connect your devices for automatic workout sync.',
+                title: 'Device Sync*',
+                desc: 'Garmin, Wahoo, Apple Watch, COROS, Suunto, Polar, Hammerhead, Zwift, TrainerRoad, Peloton. Connect your devices for automatic workout sync. *Coming Soon.',
                 color: 'text-purple-500',
                 bg: 'bg-purple-50 dark:bg-purple-950/30',
               },
@@ -175,39 +175,17 @@ export default function LandingPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            {/* Free */}
-            <div className="card-squircle p-8">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 mb-2">Free</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">$0</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Get started, no credit card required</p>
-              <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300 mb-8">
-                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> 1 target race</li>
-                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Garmin sync</li>
-                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Dashboard & fitness trends</li>
-                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Projection progress indicator</li>
-                <li className="flex items-center gap-2"><span className="text-gray-300 dark:text-gray-600">&#10007;</span><span className="text-gray-400">Race week reveal</span></li>
-                <li className="flex items-center gap-2"><span className="text-gray-300 dark:text-gray-600">&#10007;</span><span className="text-gray-400">Full race day plan</span></li>
-              </ul>
-              <Link
-                href="/auth/signup"
-                className="block text-center py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
-              >
-                Get Started Free
-              </Link>
-            </div>
-
-            {/* Pro */}
+          <div className="max-w-md mx-auto">
             <div className="card-squircle p-8 ring-2 ring-blue-500 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-wider">
-                Recommended
+                Free for the first 500 users
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-blue-500 mb-2">Pro</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">$9<span className="text-lg font-normal text-gray-400">/mo</span></p>
+              <p className="text-[10px] font-bold uppercase tracking-[2px] text-blue-500 mb-2">Early Access</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">$0</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Everything you need for race day</p>
               <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300 mb-8">
                 <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Unlimited races</li>
-                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Garmin sync</li>
+                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Garmin sync (Coming Soon)</li>
                 <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Dashboard & fitness trends</li>
                 <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Projection progress indicator</li>
                 <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Race week finish time reveal</li>
@@ -217,7 +195,7 @@ export default function LandingPage() {
                 href="/auth/signup"
                 className="block text-center py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all"
               >
-                Start Pro Trial
+                Get Started Free
               </Link>
             </div>
           </div>

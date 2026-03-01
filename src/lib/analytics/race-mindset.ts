@@ -60,15 +60,15 @@ function generateVisualization(raceDistance: RaceDistance, raceName: string, cla
 
 Picture yourself at ${raceName || 'the race venue'}. It's race morning. Your gear is ready, your nutrition is dialed, and your body is tapered and fresh.
 
-THE SWIM: You walk to the water's edge.${isPro ? ' You see your competitors — you\'ve trained harder.' : ''} The horn sounds. You find clear water, settle into your rhythm. Your stroke is smooth and efficient. Breathe, sight, breathe. You exit the water feeling strong.
+THE SWIM: You walk to the water's edge.${isPro ? ' You see your competitors. You\'ve trained harder.' : ''} The horn sounds. You find clear water, settle into your rhythm. Your stroke is smooth and efficient. Breathe, sight, breathe. You exit the water feeling strong.
 
-T1: You run to your bike. Wetsuit off, helmet on, shoes on — all rehearsed. Smooth transitions are fast transitions.
+T1: You run to your bike. Wetsuit off, helmet on, shoes on. All rehearsed. Smooth transitions are fast transitions.
 
 THE BIKE: You mount and find your power.${draftLegal ? ' You slot into the pack, riding smart, saving energy for the run. You respond to surges but don\'t initiate.' : ` ${isLong ? 'The miles tick by. You fuel on schedule. You stay patient through the middle miles. Discipline wins in the back half.' : 'You ride steady and strong.'}`} You approach T2 feeling ready to run.
 
 T2: Bike racked, shoes swapped. Quick and efficient.
 
-THE RUN: The first kilometer feels different off the bike — this is normal. You ease into your pace. ${isLong ? 'Mile by mile, you settle in. You fuel at every aid station. When it gets hard, you narrow your focus: just the next aid station.' : 'Your legs find their rhythm quickly.'} The finish line comes into view.
+THE RUN: The first kilometer feels different off the bike. This is normal. You ease into your pace. ${isLong ? 'Mile by mile, you settle in. You fuel at every aid station. When it gets hard, you narrow your focus: just the next aid station.' : 'Your legs find their rhythm quickly.'} The finish line comes into view.
 
 THE FINISH: You hear the crowd. ${raceDistance === '140.6' ? 'The announcer says your name: "You are an Ironman!"' : 'You cross the line with everything you had.'} Pride, relief, joy. You did it.
 
@@ -79,17 +79,17 @@ function generateProcessGoals(goalType: GoalType, raceDistance: RaceDistance, cl
   const base = [
     'Execute nutrition plan without deviation',
     'Hit target pacing for each segment',
-    'Stay calm through transitions — no rushing',
+    'Stay calm through transitions. No rushing.',
     'Check in with body at each aid station',
   ]
 
   const goalSpecific: Record<string, string[]> = {
     finish: ['Complete every segment without stopping (walking in run is OK)', 'Stay positive through the tough patches', 'Enjoy the atmosphere'],
     pr: ['Hold power/pace in the second half of the bike', 'Run a negative or even split', 'Don\'t leave time in transitions'],
-    ag_podium: ['Race your own plan regardless of competitors', 'Execute T1 and T2 in under target time', 'Strong finish — empty the tank in the last 20%'],
-    ag_win: ['Race your own plan regardless of competitors', 'Execute T1 and T2 in under target time', 'Strong finish — empty the tank in the last 20%'],
-    qualify_im_kona: ['Every minute matters — no wasted time', 'Execute a perfect nutrition strategy', 'Mental reset at each sport change'],
-    qualify_im_703_worlds: ['Every minute matters — no wasted time', 'Execute a perfect nutrition strategy', 'Mental reset at each sport change'],
+    ag_podium: ['Race your own plan regardless of competitors', 'Execute T1 and T2 in under target time', 'Strong finish. Empty the tank in the last 20%.'],
+    ag_win: ['Race your own plan regardless of competitors', 'Execute T1 and T2 in under target time', 'Strong finish. Empty the tank in the last 20%.'],
+    qualify_im_kona: ['Every minute matters. No wasted time.', 'Execute a perfect nutrition strategy', 'Mental reset at each sport change'],
+    qualify_im_703_worlds: ['Every minute matters. No wasted time.', 'Execute a perfect nutrition strategy', 'Mental reset at each sport change'],
     win_podium: ['Control the race when possible', 'Respond to attacks decisively', 'Save the best effort for the final push'],
     pro_card_qualification: ['Race within 10-15% of the winner', 'Stay consistent across all three disciplines', 'Don\'t blow up on the bike'],
   }

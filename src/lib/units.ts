@@ -119,6 +119,19 @@ export function formatPace(secPerKm: number | null, units: UnitSystem): string {
   return `${m}:${s.toString().padStart(2, '0')}${label}`
 }
 
+export function formatPaceForSport(secPerKm: number | null, sport: string, units: UnitSystem): string {
+  if (!secPerKm) return '-'
+  if (sport === 'swim') {
+    const secPer100m = secPerKm / 10
+    const val = units === 'imperial' ? secPer100mToSecPer100yd(secPer100m) : secPer100m
+    const m = Math.floor(val / 60)
+    const s = Math.round(val % 60)
+    const label = units === 'imperial' ? '/100yd' : '/100m'
+    return `${m}:${s.toString().padStart(2, '0')}${label}`
+  }
+  return formatPace(secPerKm, units)
+}
+
 export function formatElevation(meters: number | null, units: UnitSystem): string {
   if (!meters) return '-'
   if (units === 'imperial') return `${Math.round(metersToFeet(meters))} ft`

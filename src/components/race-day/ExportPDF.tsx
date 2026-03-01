@@ -309,7 +309,7 @@ export default function ExportPDF({ plan }: ExportPDFProps) {
         doc.setFontSize(7)
         doc.setTextColor(180)
         doc.text(
-          `TRI-NEXUS Race Plan — ${plan.race_name} — Page ${i}/${pageCount}`,
+          `TRI-NEXUS Race Plan | ${plan.race_name} | Page ${i}/${pageCount}`,
           margin,
           doc.internal.pageSize.getHeight() - 8
         )

@@ -94,7 +94,7 @@ function generateBikeNutrition(
   if (isPro) { lo = Math.round(lo * 1.15); hi = Math.round(hi * 1.15) }
   const hydration = isHot ? '750-1000ml/hour' : '500-750ml/hour'
   const sodium = isHot ? '750-1000mg/hour' : '500-750mg/hour'
-  const sweatNote = sweatRate ? ` (your sweat rate: ${sweatRate}L/hr — adjust accordingly)` : ''
+  const sweatNote = sweatRate ? ` (your sweat rate: ${sweatRate}L/hr, adjust accordingly)` : ''
   const bikeHours = splitSeconds / 3600
 
   const products: string[] = []
@@ -141,7 +141,7 @@ function generateRunNutrition(
   }
 
   return {
-    carbsPerHour: lo === 0 ? 'Minimal — pre-race fueling sufficient' : `${lo}-${hi}g/hour`,
+    carbsPerHour: lo === 0 ? 'Minimal. Pre-race fueling sufficient.' : `${lo}-${hi}g/hour`,
     hydrationPerHour: hydration,
     electrolytesPerHour: sodium,
     timing: b === 'sprint' ? 'Grab water at aid stations. No major fueling needed.' : 'Take something at every aid station. Small sips, small bites.',

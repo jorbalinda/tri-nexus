@@ -168,7 +168,7 @@ export default function DeepDiveCard({
                       Set your max heart rate to unlock HR analysis
                     </p>
                     <p className="text-xs text-amber-600/80 dark:text-amber-400/70 mt-1">
-                      HR data enables cardiac drift analysis, threshold tracking, and race-effort sustainability checks — refining your projection by up to 5%.
+                      HR data enables cardiac drift analysis, threshold tracking, and race-effort sustainability checks, refining your projection by up to 5%.
                     </p>
                   </div>
                 </div>
@@ -231,14 +231,14 @@ export default function DeepDiveCard({
             <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/20">
               <p className="text-xs text-blue-600/80 dark:text-blue-400/80">
                 {confidence < 30
-                  ? 'Insufficient data — projection is a rough guess. Keep logging workouts across all three disciplines.'
+                  ? 'Insufficient data. Projection is a rough guess. Keep logging workouts across all three disciplines.'
                   : confidence < 50
-                  ? 'Some data gaps — use projection as a ballpark. Add threshold tests (FTP, CSS) for better accuracy.'
+                  ? 'Some data gaps. Use projection as a ballpark. Add threshold tests (FTP, CSS) for better accuracy.'
                   : confidence < 70
-                  ? 'Reasonable data — projection is directionally accurate. Consistency and race conditions will sharpen it.'
+                  ? 'Reasonable data. Projection is directionally accurate. Consistency and race conditions will sharpen it.'
                   : confidence < 85
-                  ? 'Strong data — projection is reliable within ±5%. Keep your training consistent through race week.'
-                  : 'Comprehensive data — projection is highly reliable. Trust the numbers on race day.'}
+                  ? 'Strong data. Projection is reliable within ±5%. Keep your training consistent through race week.'
+                  : 'Comprehensive data. Projection is highly reliable. Trust the numbers on race day.'}
               </p>
             </div>
           </div>

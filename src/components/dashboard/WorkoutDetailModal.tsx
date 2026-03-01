@@ -37,7 +37,7 @@ function formatDuration(seconds: number | null): string {
 }
 
 export default function WorkoutDetailModal({ workout, onClose, onDeleted }: WorkoutDetailModalProps) {
-  const { fmtDistance, fmtPace, fmtElevation } = useUnits()
+  const { fmtDistance, fmtPaceForSport, fmtElevation } = useUnits()
   const sport = SPORT_LABELS[workout.sport] || SPORT_LABELS.run
   const Icon = sport.icon
 
@@ -144,7 +144,7 @@ export default function WorkoutDetailModal({ workout, onClose, onDeleted }: Work
               <Footprints size={14} className="text-green-400" />
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Pace</p>
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{fmtPace(workout.avg_pace_sec_per_km)}</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{fmtPaceForSport(workout.avg_pace_sec_per_km, workout.sport)}</p>
               </div>
             </div>
           )}
@@ -255,7 +255,7 @@ export default function WorkoutDetailModal({ workout, onClose, onDeleted }: Work
                             {formatDuration(lap.duration_seconds)}
                           </td>
                           <td className="py-1.5 text-right text-gray-600 dark:text-gray-300">
-                            {fmtPace(lap.avg_pace_sec_per_km)}
+                            {fmtPaceForSport(lap.avg_pace_sec_per_km, workout.sport)}
                           </td>
                           <td className="py-1.5 text-right text-gray-600 dark:text-gray-300">
                             {lap.avg_hr || '-'}

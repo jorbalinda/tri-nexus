@@ -7,6 +7,7 @@ import {
   formatDistance,
   formatDistanceShort,
   formatPace,
+  formatPaceForSport,
   formatElevation,
   formatSpeed,
   formatWeight,
@@ -36,6 +37,7 @@ interface UnitContextType {
   fmtDistance: (meters: number | null, sport: string) => string
   fmtDistanceShort: (meters: number | null, sport: string) => string
   fmtPace: (secPerKm: number | null) => string
+  fmtPaceForSport: (secPerKm: number | null, sport: string) => string
   fmtElevation: (meters: number | null) => string
   fmtSpeed: (mps: number | null) => string
   fmtWeight: (kg: number | null) => string
@@ -92,6 +94,7 @@ export function UnitProvider({ children }: { children: ReactNode }) {
   const fmtDistance = useCallback((m: number | null, sport: string) => formatDistance(m, sport, units), [units])
   const fmtDistanceShort = useCallback((m: number | null, sport: string) => formatDistanceShort(m, sport, units), [units])
   const fmtPace = useCallback((s: number | null) => formatPace(s, units), [units])
+  const fmtPaceForSportFn = useCallback((s: number | null, sport: string) => formatPaceForSport(s, sport, units), [units])
   const fmtElevation = useCallback((m: number | null) => formatElevation(m, units), [units])
   const fmtSpeed = useCallback((mps: number | null) => formatSpeed(mps, units), [units])
   const fmtWeight = useCallback((kg: number | null) => formatWeight(kg, units), [units])
@@ -128,6 +131,7 @@ export function UnitProvider({ children }: { children: ReactNode }) {
         fmtDistance,
         fmtDistanceShort,
         fmtPace,
+        fmtPaceForSport: fmtPaceForSportFn,
         fmtElevation,
         fmtSpeed,
         fmtWeight,
