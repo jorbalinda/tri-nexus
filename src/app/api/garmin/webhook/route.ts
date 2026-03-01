@@ -8,8 +8,12 @@ export async function POST(request: NextRequest) {
     const body = await request.text()
     const signature = request.headers.get('x-garmin-signature') || ''
 
-    // Validate webhook signature
-    if (process.env.GARMIN_WEBHOOK_SECRET && !validateWebhookSignature(body, signature)) {
+    // Validate webhook signature — GARMIN_WEBHOOK_SECRET must be set
+    if (!process.env.GARMIN_WEBHOOK_SECRET) {
+      console.error('GARMIN_WEBHOOK_SECRET is not configured')
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    }
+    if (!validateWebhookSignature(body, signature)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
     }
 

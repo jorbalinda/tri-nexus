@@ -43,6 +43,5 @@ export function validateQuery<T>(params: Record<string, string | undefined>, sch
 
 export function handleApiError(err: unknown): NextResponse {
   console.error('API error:', err)
-  const message = err instanceof Error ? err.message : 'Internal server error'
-  return NextResponse.json({ error: message }, { status: 500 })
+  return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
 }

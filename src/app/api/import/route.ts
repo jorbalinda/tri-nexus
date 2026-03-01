@@ -13,6 +13,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
+    // Server-side file size limit (50 MB)
+    if (file.size > 50 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File too large (max 50 MB)' }, { status: 413 })
+    }
+
     const ext = file.name.split('.').pop()?.toLowerCase()
     if (!ext || !['fit', 'tcx', 'gpx', 'csv'].includes(ext)) {
       return NextResponse.json({ error: 'Unsupported file format. Use .fit, .tcx, .gpx, or .csv' }, { status: 400 })
@@ -108,8 +113,9 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (error) {
+        console.error('Workout insert error:', error)
         if (errors.length < 3) {
-          errors.push(`${error.message} [${error.code}] ${error.hint || ''} ${error.details || ''}`)
+          errors.push('Failed to save one workout')
         }
       }
       if (!error && workout) {

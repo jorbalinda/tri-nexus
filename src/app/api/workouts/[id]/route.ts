@@ -133,6 +133,7 @@ export async function PATCH(
       .from('workouts')
       .update(cleanData)
       .eq('id', id)
+      .eq('user_id', user!.id)
       .select()
       .single()
 

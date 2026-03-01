@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getRequestToken, getAuthorizeUrl } from '@/lib/garmin/client'
+import { authenticateRequest } from '@/lib/api/utils'
 import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   try {
-    const origin = request.nextUrl.origin
-    const callbackUrl = `${origin}/api/garmin/callback`
+    // Explicit auth check — do not rely solely on middleware
+    const { error: authError } = await authenticateRequest()
+    if (authError) return authError
+
+    // Use APP_URL env var so the callback is never derived from the Host header
+    const baseUrl = process.env.APP_URL || request.nextUrl.origin
+    const callbackUrl = `${baseUrl}/api/garmin/callback`
 
     const { oauth_token, oauth_token_secret } = await getRequestToken(callbackUrl)
 
