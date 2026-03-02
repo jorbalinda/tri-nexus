@@ -188,7 +188,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} />
             </div>
             <div className="col-span-2">
-              <div className="grid grid-cols-[1fr_auto] items-end gap-1.5">
+              <div className="grid items-end gap-1.5" style={{ gridTemplateColumns: '1fr auto' }}>
                 <div className="min-w-0">
                   <label className={LABEL_CLASS}>Date</label>
                   <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={`${INPUT_CLASS} min-w-0`} />
