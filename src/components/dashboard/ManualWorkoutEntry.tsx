@@ -187,30 +187,33 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <label className={LABEL_CLASS}>Title</label>
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} />
             </div>
-            <div>
-              <label className={LABEL_CLASS}>Date</label>
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
-            </div>
-            <div>
-              <label className={LABEL_CLASS}>Duration</label>
-              <div className="flex items-center gap-1.5">
-                <input
-                  type="number" min="0" max="23"
-                  value={durationH}
-                  onChange={(e) => setDurationH(e.target.value)}
-                  className={`${INPUT_CLASS} text-center`}
-                  placeholder="0"
-                />
-                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 shrink-0">h</span>
-                <span className="text-sm font-medium text-gray-300 dark:text-gray-600 shrink-0">:</span>
-                <input
-                  type="number" min="0" max="59"
-                  value={durationM}
-                  onChange={(e) => setDurationM(e.target.value)}
-                  className={`${INPUT_CLASS} text-center`}
-                  placeholder="00"
-                />
-                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 shrink-0">m</span>
+            <div className="col-span-2">
+              <div className="flex items-end gap-2">
+                <div className="flex-1 min-w-0">
+                  <label className={LABEL_CLASS}>Date</label>
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
+                </div>
+                <div className="shrink-0">
+                  <label className={LABEL_CLASS}>Duration</label>
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number" min="0" max="23"
+                      value={durationH}
+                      onChange={(e) => setDurationH(e.target.value)}
+                      className="w-12 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
+                      placeholder="0"
+                    />
+                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500">h</span>
+                    <input
+                      type="number" min="0" max="59"
+                      value={durationM}
+                      onChange={(e) => setDurationM(e.target.value)}
+                      className="w-12 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
+                      placeholder="00"
+                    />
+                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500">m</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div>
