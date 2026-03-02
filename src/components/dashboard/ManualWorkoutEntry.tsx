@@ -189,7 +189,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
             </div>
             <div className="col-span-full">
               <label className={LABEL_CLASS}>Date</label>
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={`${INPUT_CLASS} appearance-none`} />
             </div>
             <div className="col-span-full">
               <label className={LABEL_CLASS}>Duration</label>
