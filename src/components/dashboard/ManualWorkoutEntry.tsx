@@ -32,7 +32,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   const [durationH, setDurationH] = useState('')
   const [durationM, setDurationM] = useState('')
   const [distance, setDistance] = useState('')
-  const [isIndoor, setIsIndoor] = useState(false)
   // Step 3: Performance metrics
   const [avgHr, setAvgHr] = useState('')
   const [maxHr, setMaxHr] = useState('')
@@ -56,7 +55,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
     setDurationH('')
     setDurationM('')
     setDistance('')
-    setIsIndoor(false)
     setAvgHr('')
     setMaxHr('')
     setAvgPower('')
@@ -84,7 +82,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
         date,
         duration_seconds: durationSeconds,
         distance_meters: distanceMeters,
-        is_indoor: isIndoor,
         avg_hr: avgHr ? parseInt(avgHr) : null,
         max_hr: maxHr ? parseInt(maxHr) : null,
         avg_power_watts: avgPower ? parseInt(avgPower) : null,
@@ -226,12 +223,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
                 )}
               </div>
             </div>
-            <div className="flex items-end">
-              <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
-                <input type="checkbox" checked={isIndoor} onChange={(e) => setIsIndoor(e.target.checked)} className="rounded" />
-                Indoor
-              </label>
-            </div>
           </div>
           <div className="flex gap-2">
             <button
@@ -272,7 +263,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <label className={LABEL_CLASS}>Cadence ({sport === 'bike' ? 'rpm' : 'spm'})</label>
               <input type="number" value={cadence} onChange={(e) => setCadence(e.target.value)} className={INPUT_CLASS} placeholder={sport === 'bike' ? '85' : '170'} />
             </div>
-            {!isIndoor && (
+            {sport !== 'swim' && (
               <div>
                 <label className={LABEL_CLASS}>Elevation ({elevLabel})</label>
                 <input type="number" value={elevation} onChange={(e) => setElevation(e.target.value)} className={INPUT_CLASS} placeholder={localImperial ? '1500' : '500'} />
