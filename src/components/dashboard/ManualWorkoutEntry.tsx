@@ -193,24 +193,23 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
             </div>
             <div className="col-span-full">
               <label className={LABEL_CLASS}>Duration</label>
-              <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/30 focus-within:border-blue-500 transition-all">
+              <div className="flex items-center gap-2">
                 <input
                   type="number" min="0" max="23"
                   value={durationH}
                   onChange={(e) => setDurationH(e.target.value)}
-                  className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-transparent dark:text-gray-200 focus:outline-none text-center"
+                  className={`${INPUT_CLASS} text-center`}
                   placeholder="0"
                 />
-                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 select-none">h</span>
-                <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2 shrink-0" />
+                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 shrink-0">h</span>
                 <input
                   type="number" min="0" max="59"
                   value={durationM}
                   onChange={(e) => setDurationM(e.target.value)}
-                  className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-transparent dark:text-gray-200 focus:outline-none text-center"
+                  className={`${INPUT_CLASS} text-center`}
                   placeholder="00"
                 />
-                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 select-none pr-3">m</span>
+                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 shrink-0">m</span>
               </div>
             </div>
             <div>
