@@ -29,6 +29,8 @@ function formatDuration(seconds: number | null): string {
   return `${m}m`
 }
 
+const COLLAPSED_COUNT = 4
+
 export default function ActivityFeed() {
   const { fmtDistanceShort } = useUnits()
   const [workouts, setWorkouts] = useState<Workout[]>([])
@@ -36,6 +38,7 @@ export default function ActivityFeed() {
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
   const [sportFilter, setSportFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   const fetchWorkouts = useCallback(async () => {
     setLoading(true)
@@ -98,7 +101,7 @@ export default function ActivityFeed() {
         <p className="text-sm text-gray-400 text-center py-8">No workouts yet</p>
       ) : (
         <div className="space-y-2">
-          {workouts.map((w) => {
+          {(expanded ? workouts : workouts.slice(0, COLLAPSED_COUNT)).map((w) => {
             const config = SPORT_CONFIG[w.sport] || SPORT_CONFIG.run
             const Icon = config.icon
             return (
@@ -141,6 +144,15 @@ export default function ActivityFeed() {
               </button>
             )
           })}
+          {workouts.length > COLLAPSED_COUNT && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="w-full flex items-center justify-center gap-1.5 pt-2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+            >
+              {expanded ? 'Show less' : `Show ${workouts.length - COLLAPSED_COUNT} more`}
+              <ChevronDown size={13} className={`transition-transform ${expanded ? 'rotate-180' : ''}`} />
+            </button>
+          )}
         </div>
       )}
 

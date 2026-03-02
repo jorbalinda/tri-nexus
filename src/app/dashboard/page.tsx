@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import WeekVolumeSummary from '@/components/dashboard/WeekVolumeSummary'
 import WeeklyCalendar from '@/components/dashboard/WeeklyCalendar'
 import TrainingLoadCard from '@/components/dashboard/TrainingLoadCard'
 import UpcomingRaceCards from '@/components/dashboard/UpcomingRaceCards'
@@ -14,7 +13,7 @@ import { useWeekWorkouts } from '@/hooks/useWeekWorkouts'
 export default function DashboardPage() {
   const [weekOffset, setWeekOffset] = useState(0)
   const [savedCount, setSavedCount] = useState(0)
-  const { workoutsByDay, volume, loading, refetch, monday } = useWeekWorkouts(weekOffset)
+  const { workoutsByDay, loading, refetch, monday } = useWeekWorkouts(weekOffset)
 
   const handleWorkoutSaved = () => {
     refetch()
@@ -48,9 +47,6 @@ export default function DashboardPage() {
         <ManualWorkoutEntry onSaved={handleWorkoutSaved} />
         <FitUploadDropzone onUploaded={handleWorkoutSaved} />
       </div>
-
-      {/* Weekly Volume */}
-      <WeekVolumeSummary volume={volume} loading={loading} />
 
       {/* Fitness / Fatigue / Form */}
       <FitnessTrends />
