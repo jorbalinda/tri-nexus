@@ -10,7 +10,12 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      const forwardedHost = request.headers.get('x-forwarded-host')
+      const base =
+        process.env.NODE_ENV === 'development' || !forwardedHost
+          ? origin
+          : `https://${forwardedHost}`
+      return NextResponse.redirect(`${base}${next}`)
     }
   }
 
