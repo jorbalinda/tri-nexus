@@ -182,16 +182,16 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
       {/* Step 2: Core Details */}
       {step === 2 && (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 min-w-0">
+            <div className="col-span-full">
               <label className={LABEL_CLASS}>Title</label>
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-full">
               <label className={LABEL_CLASS}>Date</label>
               <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-full">
               <label className={LABEL_CLASS}>Duration</label>
               <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/30 focus-within:border-blue-500 transition-all">
                 <input
