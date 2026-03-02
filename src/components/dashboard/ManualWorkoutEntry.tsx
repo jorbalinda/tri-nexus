@@ -188,32 +188,29 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} />
             </div>
             <div className="col-span-2">
-              <div className="grid items-end gap-1.5" style={{ gridTemplateColumns: '1fr auto' }}>
-                <div className="min-w-0">
-                  <label className={LABEL_CLASS}>Date</label>
-                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={`${INPUT_CLASS} min-w-0`} />
-                </div>
-                <div className="shrink-0">
-                  <label className={LABEL_CLASS}>Duration</label>
-                  <div className="flex items-center gap-0.5">
-                    <input
-                      type="number" min="0" max="23"
-                      value={durationH}
-                      onChange={(e) => setDurationH(e.target.value)}
-                      className="w-10 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
-                      placeholder="0"
-                    />
-                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500 px-0.5">h</span>
-                    <input
-                      type="number" min="0" max="59"
-                      value={durationM}
-                      onChange={(e) => setDurationM(e.target.value)}
-                      className="w-10 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
-                      placeholder="00"
-                    />
-                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500 px-0.5">m</span>
-                  </div>
-                </div>
+              <label className={LABEL_CLASS}>Date</label>
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
+            </div>
+            <div className="col-span-2">
+              <label className={LABEL_CLASS}>Duration</label>
+              <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/30 focus-within:border-blue-500 transition-all">
+                <input
+                  type="number" min="0" max="23"
+                  value={durationH}
+                  onChange={(e) => setDurationH(e.target.value)}
+                  className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-transparent dark:text-gray-200 focus:outline-none text-center"
+                  placeholder="0"
+                />
+                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 select-none">h</span>
+                <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2 shrink-0" />
+                <input
+                  type="number" min="0" max="59"
+                  value={durationM}
+                  onChange={(e) => setDurationM(e.target.value)}
+                  className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-transparent dark:text-gray-200 focus:outline-none text-center"
+                  placeholder="00"
+                />
+                <span className="text-sm font-medium text-gray-400 dark:text-gray-500 select-none pr-3">m</span>
               </div>
             </div>
             <div>
