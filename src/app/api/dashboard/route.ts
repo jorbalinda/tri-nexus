@@ -13,9 +13,10 @@ export async function GET() {
     // Get all active workouts for stress calculations + this week's volume
     const { data: allWorkouts } = await supabase
       .from('workouts')
-      .select('*')
+      .select('date, sport, duration_seconds, distance_meters, tss, avg_hr, avg_power_watts, intensity_factor')
       .eq('user_id', user!.id)
       .is('deleted_at', null)
+      .gte('date', new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
       .order('date', { ascending: false })
 
     const workouts = (allWorkouts as Workout[]) || []

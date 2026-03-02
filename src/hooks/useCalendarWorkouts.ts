@@ -13,7 +13,7 @@ export function useCalendarWorkouts(startDate: string, endDate: string) {
     setLoading(true)
     const { data } = await supabaseRef.current
       .from('workouts')
-      .select('*')
+      .select('id, date, sport, title, duration_seconds, distance_meters, tss')
       .is('deleted_at', null)
       .gte('date', startDate)
       .lte('date', endDate)

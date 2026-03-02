@@ -21,9 +21,10 @@ export async function GET(request: NextRequest) {
     // Fetch all workouts
     const { data: allWorkouts } = await supabase
       .from('workouts')
-      .select('*')
+      .select('id, date, sport, duration_seconds, distance_meters, tss, avg_hr, avg_power_watts, intensity_factor, rpe')
       .eq('user_id', user!.id)
       .is('deleted_at', null)
+      .gte('date', new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
       .order('date', { ascending: false })
 
     const workouts = (allWorkouts as Workout[]) || []

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Garmin Connect">
+  <trk>
+    <name>Saturday Long Run</name>
+    <type>running</type>
+    <trkseg>
+      <trkpt lat="33.7490" lon="-84.3880">
+        <ele>320</ele>
+        <time>2026-02-21T07:00:00Z</time>
+        <extensions><hr>128</hr><cad>170</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7510" lon="-84.3860">
+        <ele>325</ele>
+        <time>2026-02-21T07:03:00Z</time>
+        <extensions><hr>142</hr><cad>174</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7540" lon="-84.3830">
+        <ele>330</ele>
+        <time>2026-02-21T07:06:00Z</time>
+        <extensions><hr>148</hr><cad>176</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7570" lon="-84.3800">
+        <ele>318</ele>
+        <time>2026-02-21T07:09:00Z</time>
+        <extensions><hr>150</hr><cad>176</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7600" lon="-84.3770">
+        <ele>322</ele>
+        <time>2026-02-21T07:12:00Z</time>
+        <extensions><hr>152</hr><cad>178</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7630" lon="-84.3740">
+        <ele>335</ele>
+        <time>2026-02-21T07:15:00Z</time>
+        <extensions><hr>155</hr><cad>178</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7660" lon="-84.3710">
+        <ele>340</ele>
+        <time>2026-02-21T07:18:00Z</time>
+        <extensions><hr>156</hr><cad>176</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7690" lon="-84.3680">
+        <ele>328</ele>
+        <time>2026-02-21T07:21:00Z</time>
+        <extensions><hr>158</hr><cad>178</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7720" lon="-84.3650">
+        <ele>315</ele>
+        <time>2026-02-21T07:24:00Z</time>
+        <extensions><hr>160</hr><cad>180</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7750" lon="-84.3620">
+        <ele>320</ele>
+        <time>2026-02-21T07:27:00Z</time>
+        <extensions><hr>158</hr><cad>178</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7780" lon="-84.3590">
+        <ele>330</ele>
+        <time>2026-02-21T07:30:00Z</time>
+        <extensions><hr>156</hr><cad>176</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7810" lon="-84.3560">
+        <ele>338</ele>
+        <time>2026-02-21T07:33:00Z</time>
+        <extensions><hr>158</hr><cad>178</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7840" lon="-84.3530">
+        <ele>325</ele>
+        <time>2026-02-21T07:36:00Z</time>
+        <extensions><hr>160</hr><cad>180</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7870" lon="-84.3500">
+        <ele>318</ele>
+        <time>2026-02-21T07:39:00Z</time>
+        <extensions><hr>162</hr><cad>180</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7900" lon="-84.3470">
+        <ele>322</ele>
+        <time>2026-02-21T07:42:00Z</time>
+        <extensions><hr>160</hr><cad>178</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7930" lon="-84.3440">
+        <ele>330</ele>
+        <time>2026-02-21T07:45:00Z</time>
+        <extensions><hr>158</hr><cad>176</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7960" lon="-84.3410">
+        <ele>335</ele>
+        <time>2026-02-21T07:48:00Z</time>
+        <extensions><hr>156</hr><cad>176</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.7990" lon="-84.3380">
+        <ele>328</ele>
+        <time>2026-02-21T07:51:00Z</time>
+        <extensions><hr>155</hr><cad>174</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.8020" lon="-84.3350">
+        <ele>320</ele>
+        <time>2026-02-21T07:54:00Z</time>
+        <extensions><hr>153</hr><cad>174</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.8050" lon="-84.3320">
+        <ele>322</ele>
+        <time>2026-02-21T07:57:00Z</time>
+        <extensions><hr>150</hr><cad>172</cad></extensions>
+      </trkpt>
+      <trkpt lat="33.8080" lon="-84.3290">
+        <ele>318</ele>
+        <time>2026-02-21T08:00:00Z</time>
+        <extensions><hr>148</hr><cad>170</cad></extensions>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

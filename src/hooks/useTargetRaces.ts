@@ -13,7 +13,7 @@ export function useTargetRaces() {
     setLoading(true)
     const { data } = await supabase
       .from('target_races')
-      .select('*')
+      .select('id, user_id, race_name, race_date, race_distance, priority, status, goal_time_seconds, race_course_id, race_type, water_type, wetsuit, expected_temp_f, gun_start_time, notes')
       .order('race_date', { ascending: true })
       .limit(50)
 
