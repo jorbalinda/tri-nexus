@@ -139,7 +139,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   }
 
   return (
-    <div className="card-squircle p-6">
+    <div className="card-squircle p-4 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
           Log Workout {step > 1 && `(${step}/3)`}
@@ -188,30 +188,30 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} />
             </div>
             <div className="col-span-2">
-              <div className="flex items-end gap-2">
+              <div className="flex items-end gap-1.5">
                 <div className="flex-1 min-w-0">
                   <label className={LABEL_CLASS}>Date</label>
-                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={INPUT_CLASS} />
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={`${INPUT_CLASS} min-w-0`} />
                 </div>
                 <div className="shrink-0">
                   <label className={LABEL_CLASS}>Duration</label>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5">
                     <input
                       type="number" min="0" max="23"
                       value={durationH}
                       onChange={(e) => setDurationH(e.target.value)}
-                      className="w-12 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
+                      className="w-10 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
                       placeholder="0"
                     />
-                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500">h</span>
+                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500 px-0.5">h</span>
                     <input
                       type="number" min="0" max="59"
                       value={durationM}
                       onChange={(e) => setDurationM(e.target.value)}
-                      className="w-12 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
+                      className="w-10 px-1 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all text-center"
                       placeholder="00"
                     />
-                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500">m</span>
+                    <span className="text-xs font-medium text-gray-400 dark:text-gray-500 px-0.5">m</span>
                   </div>
                 </div>
               </div>
