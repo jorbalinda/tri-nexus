@@ -1,6 +1,6 @@
 'use client'
 
-import { Flag, Calendar, ChevronRight, Trash2 } from 'lucide-react'
+import { Calendar, ChevronRight, Trash2, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import type { TargetRace } from '@/lib/types/target-race'
 
@@ -50,10 +50,11 @@ const STATUS_LABELS: Record<string, string> = {
 export default function RaceCard({ race, onDelete }: RaceCardProps) {
   const days = daysUntil(race.race_date)
   const priority = PRIORITY_STYLES[race.priority] || PRIORITY_STYLES.c
+  const isActive = race.status === 'upcoming' || race.status === 'race_week'
 
   return (
-    <div className={`card-squircle p-5 border-l-4 ${priority.accent} group relative`}>
-      <Link href={`/dashboard/races/${race.id}`} className="block">
+    <div className={`card-squircle border-l-4 ${priority.accent} group relative hover:shadow-md transition-shadow`}>
+      <Link href={`/dashboard/races/${race.id}`} className="block p-5">
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-lg ${priority.badge}`}>
@@ -63,7 +64,7 @@ export default function RaceCard({ race, onDelete }: RaceCardProps) {
               {STATUS_LABELS[race.status]}
             </span>
           </div>
-          <ChevronRight size={14} className="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 transition-colors" />
+          <ChevronRight size={14} className="text-gray-300 dark:text-gray-600 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all" />
         </div>
 
         <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-blue-600 transition-colors">
@@ -91,6 +92,16 @@ export default function RaceCard({ race, onDelete }: RaceCardProps) {
             </>
           )}
         </div>
+
+        {isActive && (
+          <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-500 dark:text-blue-400">
+              <TrendingUp size={12} />
+              <span>Tap to see your race prediction</span>
+            </div>
+            <ChevronRight size={12} className="text-blue-400 group-hover:translate-x-0.5 transition-transform" />
+          </div>
+        )}
       </Link>
 
       {onDelete && (
