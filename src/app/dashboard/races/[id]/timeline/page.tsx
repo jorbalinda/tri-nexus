@@ -300,50 +300,52 @@ export default function TimelinePage() {
         </button>
       </div>
 
-      {/* Add custom event — inline row below gun time */}
+      {/* Add custom event — two-row layout for mobile */}
       {events.length > 0 && (
         <div className="card-squircle p-4">
-          <div className="flex items-center gap-3">
-            <Plus size={14} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-            <input
-              ref={newEventInputRef}
-              type="text"
-              value={newEventName}
-              onChange={(e) => setNewEventName(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleAddCustomEvent() }}
-              placeholder="Add event, type name and press Enter"
-              className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
-            />
-            <input
-              type="time"
-              value={newEventTime}
-              onChange={(e) => setNewEventTime(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleAddCustomEvent() }}
-              className="w-[145px] px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all flex-shrink-0"
-            />
-            <div className="flex items-center gap-1 flex-shrink-0">
-              {(['action', 'logistics', 'nutrition'] as const).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setNewEventType(t)}
-                  className={`text-[10px] font-medium px-2 py-1 rounded-full cursor-pointer transition-all ${
-                    newEventType === t
-                      ? TYPE_BADGES[t] + ' ring-2 ring-blue-500/30'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
+          <div className="flex flex-col gap-2">
+            {/* Row 1: name */}
+            <div className="flex items-center gap-2">
+              <Plus size={14} className="text-gray-400 dark:text-gray-500 shrink-0" />
+              <input
+                ref={newEventInputRef}
+                type="text"
+                value={newEventName}
+                onChange={(e) => setNewEventName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAddCustomEvent() }}
+                placeholder="Event name"
+                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
+              />
             </div>
-            <button
-              onClick={handleAddCustomEvent}
-              disabled={!newEventName.trim() || !newEventTime}
-              className="px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-30 cursor-pointer flex-shrink-0"
-            >
-              Add
-            </button>
+            {/* Row 2: time + type + add — indented to align with name input */}
+            <div className="flex items-center gap-2 pl-[22px]">
+              <input
+                type="time"
+                value={newEventTime}
+                onChange={(e) => setNewEventTime(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleAddCustomEvent() }}
+                className="w-[120px] shrink-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+              />
+              <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                <div className={`w-2 h-2 rounded-full shrink-0 ${TYPE_COLORS[newEventType]}`} />
+                <select
+                  value={newEventType}
+                  onChange={(e) => setNewEventType(e.target.value as 'logistics' | 'nutrition' | 'action')}
+                  className="flex-1 min-w-0 px-2 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+                >
+                  <option value="action">Action</option>
+                  <option value="logistics">Logistics</option>
+                  <option value="nutrition">Nutrition</option>
+                </select>
+              </div>
+              <button
+                onClick={handleAddCustomEvent}
+                disabled={!newEventName.trim() || !newEventTime}
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-30 cursor-pointer shrink-0"
+              >
+                Add
+              </button>
+            </div>
           </div>
         </div>
       )}
