@@ -17,6 +17,7 @@ pace/100m = CSS + degradation[distance] + openWaterPenalty(+3) - wetsuitBonus(�
 targetPower = FTP × IF[distance]
 speed: prefer empirical (flat rides, power-adjusted) → fallback: v ≈ 2.4 × P^0.36
 adjust: courseProfile, heat(+3%/5°F>75), altitude(+2%/1000ft>3000)
+wind: loop-course physics — t_wind/t_calm = v₀²/(v₀²−v_eff²), v_eff = wind×0.5, cap +25%
 
 === RUN PACE ===
 basePace = recency-weighted average (half-life 21d) of runs ≥20min, RPE≥4
@@ -45,6 +46,8 @@ import { generateProjectionV2 } from './projections/assembler'
  *   overrides the per-discipline hardcoded optimistic/conservative bands.
  * @param sessionMetrics Optional per-workout HR time-series for cardiac drift analysis
  * @param profileLTHR Optional per-sport LTHR from user profile
+ * @param raceWeather Optional forecast data. wind_speed_mph drives the bike
+ *   wind-resistance adjustment (loop-course physics formula).
  */
 export function generateProjection(
   race: TargetRace,
@@ -52,7 +55,8 @@ export function generateProjection(
   logs: ManualLog[],
   bandProfile?: { low: number; high: number },
   sessionMetrics?: Map<string, SessionMetric[]>,
-  profileLTHR?: { swim: number | null; bike: number | null; run: number | null }
+  profileLTHR?: { swim: number | null; bike: number | null; run: number | null },
+  raceWeather?: { wind_speed_mph: number | null } | null
 ): Omit<RaceProjection, 'id' | 'user_id' | 'created_at' | 'projected_at'> {
-  return generateProjectionV2(race, workouts, logs, bandProfile, sessionMetrics, profileLTHR)
+  return generateProjectionV2(race, workouts, logs, bandProfile, sessionMetrics, profileLTHR, raceWeather)
 }

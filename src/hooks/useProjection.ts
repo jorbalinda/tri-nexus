@@ -46,12 +46,20 @@ export function useProjection(raceId: string) {
   const recalculate = useCallback(async (race: TargetRace) => {
     setRecalculating(true)
 
-    // Fetch workouts, logs, and profile LTHR
-    const [{ data: workouts }, { data: logs }, { data: profileData }] = await Promise.all([
+    // Fetch workouts, logs, profile LTHR, and latest race weather in parallel
+    const [{ data: workouts }, { data: logs }, { data: profileData }, { data: weatherRows }] = await Promise.all([
       supabase.from('workouts').select('*').is('deleted_at', null).order('date'),
       supabase.from('manual_logs').select('*'),
       supabase.from('profiles').select('lthr_swim, lthr_bike, lthr_run').single(),
+      supabase
+        .from('race_weather')
+        .select('wind_speed_mph')
+        .eq('target_race_id', raceId)
+        .order('fetched_at', { ascending: false })
+        .limit(1),
     ])
+
+    const raceWeather = (weatherRows as { wind_speed_mph: number | null }[] | null)?.[0] ?? null
 
     const typedWorkouts = (workouts as Workout[]) || []
     const typedLogs = (logs as ManualLog[]) || []
@@ -126,7 +134,8 @@ export function useProjection(raceId: string) {
       typedLogs,
       suff.bandProfile ?? undefined,
       sessionMetrics,
-      profileLTHR
+      profileLTHR,
+      raceWeather
     )
 
     // Check if it should be revealed

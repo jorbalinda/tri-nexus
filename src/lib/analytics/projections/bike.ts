@@ -3,6 +3,9 @@
 targetPower = FTP × IF[distance]
 speed: prefer empirical (flat rides, power-adjusted) → fallback: v ≈ 2.4 × P^0.36
 adjust: courseProfile, heat(+3%/5°F>75), altitude(+2%/1000ft>3000)
+wind: physics-based loop formula — t_wind/t_calm = v₀²/(v₀²−v_eff²)
+      v_eff = windSpeedKph × 0.5 (average headwind exposure on loop course)
+      threshold ≥13 kph (8 mph), capped at +25% time increase
 */
 
 import type { Workout } from '@/lib/types/database'
@@ -16,12 +19,14 @@ export interface SplitProjection {
 
 export interface BikeProjectionResult extends SplitProjection {
   targetPower: number
+  windAdjustmentSeconds: number // 0 when no wind data; positive = slower
 }
 
 interface BikeConditions {
   tempHighF?: number | null
   altitudeFt?: number | null
   courseProfile?: 'flat' | 'rolling' | 'hilly' | 'mountainous' | null
+  windSpeedKph?: number | null
 }
 
 const IF_TARGET: Record<string, number> = {
@@ -46,7 +51,7 @@ export function projectBikeSplit(
   const effectiveFtp = ftp ?? 180 // age grouper default
   const targetPower = effectiveFtp * (IF_TARGET[raceDistance] ?? 0.76)
 
-  // Environmental adjustments
+  // Environmental adjustments (heat, altitude)
   let envMultiplier = 1.0
 
   if (conditions?.tempHighF != null && conditions.tempHighF > 75) {
@@ -93,14 +98,46 @@ export function projectBikeSplit(
     avgSpeedKph *= 0.87
   }
 
-  // Apply environmental slowdown
+  // Apply heat/altitude slowdown
   avgSpeedKph /= envMultiplier
 
-  const bikeTimeSeconds = (bikeDistanceKm / avgSpeedKph) * 3600
+  const baseTimeSeconds = (bikeDistanceKm / avgSpeedKph) * 3600
+
+  // ─── Wind resistance adjustment ────────────────────────────────────────────
+  // Physics basis: aerodynamic drag scales with (v_ground + v_wind)²,
+  // so riding into a headwind costs disproportionately more than a tailwind saves.
+  //
+  // For a loop/out-and-back course at constant power:
+  //   t_wind / t_calm = v₀² / (v₀² − v_eff²)
+  //
+  // where v_eff = wind_speed × 0.5 (loop exposure factor — on average ~50% of
+  // the course faces a headwind component, rest is tailwind or crosswind).
+  //
+  // Only applied at ≥ 13 kph (8 mph) where the net penalty exceeds ~2%.
+  // Capped at +25% to prevent extreme values in gale conditions.
+  // ───────────────────────────────────────────────────────────────────────────
+  let windAdjustmentSeconds = 0
+
+  if (conditions?.windSpeedKph != null && conditions.windSpeedKph >= 13) {
+    const v0 = avgSpeedKph
+    // Effective headwind component on a loop course (50% exposure)
+    const vEff = conditions.windSpeedKph * 0.5
+
+    if (vEff < v0) {
+      // t_wind/t_calm multiplier — always > 1 (net time cost)
+      const rawMultiplier = (v0 * v0) / (v0 * v0 - vEff * vEff)
+      const windMultiplier = Math.min(rawMultiplier, 1.25)
+      const windTime = Math.round(baseTimeSeconds * windMultiplier)
+      windAdjustmentSeconds = windTime - Math.round(baseTimeSeconds)
+    }
+  }
+
+  const bikeTimeSeconds = Math.round(baseTimeSeconds) + windAdjustmentSeconds
 
   return {
     targetPower: Math.round(targetPower),
-    realistic: Math.round(bikeTimeSeconds),
+    windAdjustmentSeconds,
+    realistic: bikeTimeSeconds,
     optimistic: Math.round(bikeTimeSeconds * 0.97),
     conservative: Math.round(bikeTimeSeconds * 1.05),
   }

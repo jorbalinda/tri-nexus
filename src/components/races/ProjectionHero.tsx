@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { Shield, CheckCircle2, Circle, ArrowRight, Activity } from 'lucide-react'
+import { Shield, CheckCircle2, Circle, ArrowRight, Activity, Wind } from 'lucide-react'
 import type { RaceProjection } from '@/lib/types/projection'
 import type { TargetRace } from '@/lib/types/target-race'
 import type { Workout, ManualLog } from '@/lib/types/database'
@@ -310,6 +310,11 @@ export default function ProjectionHero({
     ? `${Math.floor(racePlan.pacing_plan.run.targetPaceSecPerKm / 60)}:${(racePlan.pacing_plan.run.targetPaceSecPerKm % 60).toString().padStart(2, '0')}/km`
     : null
 
+  // Wind adjustment from weather forecast (stored in weather_adjustment blob)
+  const windAdjSec =
+    (projection.weather_adjustment as { bike_wind_seconds?: number } | null)
+      ?.bike_wind_seconds ?? 0
+
   // Data source footer items
   const footerItems: string[] = []
   if (projection.data_points_used) footerItems.push(`${projection.data_points_used} workouts`)
@@ -392,6 +397,12 @@ export default function ProjectionHero({
           <p className="text-sm font-bold text-orange-600 dark:text-orange-400">{formatTime(projection.bike_seconds)}</p>
           {bikePower && (
             <p className="text-[10px] font-semibold text-orange-500/80 mt-1">{bikePower}</p>
+          )}
+          {windAdjSec > 0 && (
+            <p className="text-[10px] font-semibold text-sky-500 dark:text-sky-400 mt-1 flex items-center gap-0.5 justify-center">
+              <Wind size={9} />
+              +{Math.round(windAdjSec / 60)}m wind
+            </p>
           )}
         </div>
         {/* T2 */}

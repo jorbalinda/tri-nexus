@@ -83,6 +83,9 @@ function buildTime(
  * @param bandProfile Optional tier-based band multipliers. When provided,
  *   overrides the per-discipline hardcoded optimistic/conservative bands
  *   with uniform multipliers (e.g. { low: 0.96, high: 1.06 }).
+ * @param raceWeather Optional forecast data. When provided, wind_speed_mph
+ *   is converted to kph and applied to the bike projection via the loop-course
+ *   physics formula (headwind costs more than tailwind saves).
  */
 export function generateProjectionV2(
   race: TargetRace,
@@ -90,7 +93,8 @@ export function generateProjectionV2(
   logs: ManualLog[],
   bandProfile?: { low: number; high: number },
   sessionMetrics?: Map<string, SessionMetric[]>,
-  profileLTHR?: { swim: number | null; bike: number | null; run: number | null }
+  profileLTHR?: { swim: number | null; bike: number | null; run: number | null },
+  raceWeather?: { wind_speed_mph: number | null } | null
 ): Omit<RaceProjection, 'id' | 'user_id' | 'created_at' | 'projected_at'> {
   const raceDistance = race.race_distance as RaceDistance
   const distances = getDistances(raceDistance, {
@@ -132,13 +136,17 @@ export function generateProjectionV2(
     ageGradedEstimate: null,
   }
 
-  // Race conditions from the target race
+  // Race conditions from the target race + forecast weather
+  const windSpeedKph =
+    raceWeather?.wind_speed_mph != null ? raceWeather.wind_speed_mph * 1.60934 : null
+
   const conditions = {
     tempHighF: race.expected_temp_f,
     altitudeFt: race.altitude_ft,
     courseProfile: race.course_profile as 'flat' | 'rolling' | 'hilly' | 'mountainous' | null,
     swimType: (race.swim_type || race.water_type) as 'pool' | 'lake' | 'river' | 'bay' | 'ocean' | null,
     wetsuitLegal: race.wetsuit ?? null,
+    windSpeedKph,
   }
 
   // Recent bike workouts (last 8 weeks, sorted by date desc)
@@ -238,7 +246,9 @@ export function generateProjectionV2(
     confidence_score: confidenceResult.total,
     data_points_used: workouts.length,
     fitness_snapshot: fitnessSnapshot,
-    weather_adjustment: null,
+    weather_adjustment: bike.windAdjustmentSeconds > 0
+      ? { wind_speed_kph: windSpeedKph, bike_wind_seconds: bike.windAdjustmentSeconds }
+      : null,
     hr_adjustment: hrAdj.overallConfidence !== 'none' ? hrAdj : null,
     is_revealed: false,
   }
