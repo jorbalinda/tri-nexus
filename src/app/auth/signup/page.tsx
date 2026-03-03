@@ -32,6 +32,12 @@ export default function SignupPage() {
       setError(error.message)
       setLoading(false)
     } else {
+      // Fire welcome email (non-blocking — don't await)
+      fetch('/api/email/welcome', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, displayName }),
+      }).catch(() => {}) // ignore failures silently
       router.push('/onboarding')
       router.refresh()
     }
