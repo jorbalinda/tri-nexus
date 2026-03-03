@@ -1,4 +1,4 @@
-export const POLICY_VERSION = '2026-03-03'
+export const POLICY_VERSION = '2026-03-03-r1'
 
 export const POLICY_TEXT = `triraceday.com Privacy Policy & Terms — Version ${POLICY_VERSION}
 
@@ -86,9 +86,9 @@ DATA SECURITY
 We protect your data with:
 
 • TLS 1.2+ encryption for all data in transit
-• AES-256 encryption for health data stored at rest
-• Role-based access controls limiting data access to authorized staff
-• Regular security audits and vulnerability testing
+• Data encrypted at rest via Supabase infrastructure
+• Row-level security controls preventing cross-user data access
+• Automated security scanning on every code deployment
 
 POLICY UPDATES
 

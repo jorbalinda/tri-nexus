@@ -189,9 +189,9 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
               <ul className="space-y-1">
                 {[
                   'TLS 1.2+ encryption for all data in transit',
-                  'AES-256 encryption for health data stored at rest',
-                  'Role-based access controls limiting data access to authorized staff',
-                  'Regular security audits and vulnerability testing',
+                  'Data encrypted at rest via Supabase infrastructure',
+                  'Row-level security controls preventing cross-user data access',
+                  'Automated security scanning on every code deployment',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-xs">
                     <span className="text-blue-500 mt-0.5">•</span>
