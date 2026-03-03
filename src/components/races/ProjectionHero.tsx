@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Shield, CheckCircle2, Circle, ArrowRight, Activity, Wind } from 'lucide-react'
+import { Shield, CheckCircle2, Circle, ArrowRight, Activity, Info } from 'lucide-react'
 import type { RaceProjection } from '@/lib/types/projection'
 import type { TargetRace } from '@/lib/types/target-race'
 import type { Workout, ManualLog } from '@/lib/types/database'
@@ -98,6 +98,8 @@ export default function ProjectionHero({
       return null
     }
   }, [tier, race, workouts, logs])
+
+  const [windTooltipOpen, setWindTooltipOpen] = useState(false)
 
   if (loading) {
     return (
@@ -311,9 +313,9 @@ export default function ProjectionHero({
     : null
 
   // Wind adjustment from weather forecast (stored in weather_adjustment blob)
-  const windAdjSec =
-    (projection.weather_adjustment as { bike_wind_seconds?: number } | null)
-      ?.bike_wind_seconds ?? 0
+  const windAdj = projection.weather_adjustment as { bike_wind_seconds?: number; wind_speed_kph?: number | null } | null
+  const windAdjSec = windAdj?.bike_wind_seconds ?? 0
+  const windSpeedMph = windAdj?.wind_speed_kph != null ? windAdj.wind_speed_kph / 1.60934 : null
 
   // Data source footer items
   const footerItems: string[] = []
@@ -394,14 +396,24 @@ export default function ProjectionHero({
         {/* Bike */}
         <div className="p-2.5 rounded-xl bg-orange-50/40 dark:bg-orange-950/15 border border-orange-100/60 dark:border-orange-900/30">
           <p className="text-[10px] font-bold uppercase tracking-wider text-orange-500 mb-1">Bike</p>
-          <p className="text-sm font-bold text-orange-600 dark:text-orange-400">{formatTime(projection.bike_seconds)}</p>
+          <div className="flex items-center justify-center gap-1">
+            <p className="text-sm font-bold text-orange-600 dark:text-orange-400">{formatTime(projection.bike_seconds)}</p>
+            {windAdjSec > 0 && (
+              <button
+                onClick={() => setWindTooltipOpen(o => !o)}
+                className="text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                aria-label="Wind adjustment info"
+              >
+                <Info size={10} />
+              </button>
+            )}
+          </div>
           {bikePower && (
             <p className="text-[10px] font-semibold text-orange-500/80 mt-1">{bikePower}</p>
           )}
-          {windAdjSec > 0 && (
-            <p className="text-[10px] font-semibold text-blue-600 dark:text-white mt-1 flex items-center gap-0.5 justify-center">
-              <Wind size={9} />
-              +{Math.round(windAdjSec / 60)} min
+          {windAdjSec > 0 && windTooltipOpen && (
+            <p className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 mt-1">
+              {windSpeedMph != null ? `${windSpeedMph.toFixed(1)} mph` : 'Wind'} · +{Math.round(windAdjSec / 60)} min
             </p>
           )}
         </div>
