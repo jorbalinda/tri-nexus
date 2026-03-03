@@ -322,19 +322,19 @@ export default function ProjectionHero({
   if (projection.fitness_snapshot?.weeklyVolumeHours) footerItems.push(`${projection.fitness_snapshot.weeklyVolumeHours}h/wk`)
 
   return (
-    <div className="card-squircle p-8">
+    <div className="card-squircle p-4 sm:p-6 lg:p-8">
       {/* Top bar: confidence + badges */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <span className={`text-xs font-semibold ${confidenceTierColor}`}>{confidenceTier}: {confidence}%</span>
-          <div className="w-20 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+      <div className="flex items-center justify-between gap-2 flex-wrap mb-6">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className={`text-xs font-semibold shrink-0 ${confidenceTierColor}`}>{confidenceTier}: {confidence}%</span>
+          <div className="w-16 sm:w-20 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden shrink-0">
             <div
               className={`h-full rounded-full transition-all duration-500 ${confidenceBarColor}`}
               style={{ width: `${confidence}%` }}
             />
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* HR-Enhanced badge */}
           {hrActive && (
             <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-pink-100 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 text-[10px] font-bold">
@@ -348,15 +348,6 @@ export default function ProjectionHero({
               {tsbBadge.label}
             </span>
           )}
-          {/* Tier badge */}
-          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-            tier === 3
-              ? 'bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400'
-              : 'bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400'
-          }`}>
-            {tier === 3 && <Shield size={9} />}
-            {sufficiency?.tierLabel ?? 'Standard'}
-          </span>
         </div>
       </div>
 
@@ -420,9 +411,19 @@ export default function ProjectionHero({
 
       {/* Data source footer */}
       {footerItems.length > 0 && (
-        <p className="text-[10px] text-gray-400 dark:text-gray-500 text-center mb-4">
-          Based on {footerItems.join(' · ')}
-        </p>
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <p className="text-[10px] text-gray-400 dark:text-gray-500 text-center">
+            Based on {footerItems.join(' · ')}
+          </p>
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 ${
+            tier === 3
+              ? 'bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400'
+              : 'bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400'
+          }`}>
+            {tier === 3 && <Shield size={9} />}
+            {sufficiency?.tierLabel ?? 'Standard'}
+          </span>
+        </div>
       )}
 
       {/* Reveal link */}
