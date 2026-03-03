@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { createHash } from 'crypto'
 import { POLICY_TEXT, POLICY_VERSION } from '@/lib/consent/policy'
 
-async function getUser() {
+async function getSupabaseAndUser() {
   const cookieStore = await cookies()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,20 +19,15 @@ async function getUser() {
     }
   )
   const { data: { user } } = await supabase.auth.getUser()
-  return user
+  return { supabase, user }
 }
 
 // GET — check if the current user has already consented
 export async function GET() {
-  const user = await getUser()
+  const { supabase, user } = await getSupabaseAndUser()
   if (!user) return NextResponse.json({ consented: false })
 
-  const admin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-
-  const { data } = await admin
+  const { data } = await supabase
     .from('consent_records')
     .select('id, agreed_at, policy_version')
     .eq('user_id', user.id)
@@ -51,7 +45,7 @@ export async function GET() {
 
 // POST — record consent with IP, user agent, and policy hash
 export async function POST(request: NextRequest) {
-  const user = await getUser()
+  const { supabase, user } = await getSupabaseAndUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const ip =
@@ -62,12 +56,8 @@ export async function POST(request: NextRequest) {
   const userAgent = request.headers.get('user-agent') ?? 'unknown'
   const policyHash = createHash('sha256').update(POLICY_TEXT).digest('hex')
 
-  const admin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-
-  const { error } = await admin.from('consent_records').insert({
+  // Insert using the user's own authenticated session — RLS allows auth.uid() = user_id
+  const { error } = await supabase.from('consent_records').insert({
     user_id: user.id,
     policy_version: POLICY_VERSION,
     policy_hash: policyHash,
