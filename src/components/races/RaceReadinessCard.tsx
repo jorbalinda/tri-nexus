@@ -101,14 +101,6 @@ export default function RaceReadinessCard({ trainingLoad, daysUntilRace }: RaceR
       </p>
 
       {/* Warnings */}
-      {tsb < -20 && (
-        <div className="mt-3 flex items-start gap-2 p-2.5 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
-          <AlertTriangle size={14} className="text-red-500 shrink-0 mt-0.5" />
-          <p className="text-xs text-red-600 dark:text-red-400">
-            Consider tapering before race day. Deep fatigue can impair performance.
-          </p>
-        </div>
-      )}
       {tsb > 25 && (
         <div className="mt-3 flex items-start gap-2 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
           <AlertTriangle size={14} className="text-amber-500 shrink-0 mt-0.5" />
