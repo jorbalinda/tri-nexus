@@ -120,8 +120,10 @@ export function projectBikeSplit(
 
   if (conditions?.windSpeedKph != null && conditions.windSpeedKph >= 10) {
     const v0 = avgSpeedKph
-    // Effective headwind component on a loop course (50% exposure)
-    const vEff = conditions.windSpeedKph * 0.5
+    // Effective headwind component on a loop course (~35% exposure).
+    // A tri loop faces ~25% pure headwind, ~25% pure tailwind, ~50% crosswind;
+    // crosswind drag contribution reduces effective factor to ~0.35.
+    const vEff = conditions.windSpeedKph * 0.35
 
     if (vEff < v0) {
       // t_wind/t_calm multiplier — always > 1 (net time cost)

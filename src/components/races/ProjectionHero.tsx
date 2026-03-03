@@ -401,7 +401,7 @@ export default function ProjectionHero({
           {windAdjSec > 0 && (
             <p className="text-[10px] font-semibold text-blue-600 dark:text-white mt-1 flex items-center gap-0.5 justify-center">
               <Wind size={9} />
-              +{Math.round(windAdjSec / 60)}m wind
+              +{Math.round(windAdjSec / 60)} min
             </p>
           )}
         </div>
