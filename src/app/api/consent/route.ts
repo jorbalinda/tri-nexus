@@ -5,23 +5,27 @@ import { cookies } from 'next/headers'
 import { createHash } from 'crypto'
 import { POLICY_TEXT, POLICY_VERSION } from '@/lib/consent/policy'
 
-function getSupabaseUser(request: NextRequest) {
-  return createServerClient(
+async function getUser() {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: () => {},
+        getAll: () => cookieStore.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+        },
       },
     }
   )
+  const { data: { user } } = await supabase.auth.getUser()
+  return user
 }
 
 // GET — check if the current user has already consented
-export async function GET(request: NextRequest) {
-  const supabase = getSupabaseUser(request)
-  const { data: { user } } = await supabase.auth.getUser()
+export async function GET() {
+  const user = await getUser()
   if (!user) return NextResponse.json({ consented: false })
 
   const admin = createClient(
@@ -47,8 +51,7 @@ export async function GET(request: NextRequest) {
 
 // POST — record consent with IP, user agent, and policy hash
 export async function POST(request: NextRequest) {
-  const supabase = getSupabaseUser(request)
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const ip =
@@ -57,7 +60,6 @@ export async function POST(request: NextRequest) {
     'unknown'
 
   const userAgent = request.headers.get('user-agent') ?? 'unknown'
-
   const policyHash = createHash('sha256').update(POLICY_TEXT).digest('hex')
 
   const admin = createClient(
