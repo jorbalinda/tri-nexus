@@ -35,7 +35,8 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/auth') ||
     request.nextUrl.pathname.startsWith('/onboarding') ||
     request.nextUrl.pathname.startsWith('/api/cron') ||
-    request.nextUrl.pathname.startsWith('/api/garmin/webhook')
+    request.nextUrl.pathname.startsWith('/api/garmin/webhook') ||
+    request.nextUrl.pathname.startsWith('/api/email')
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
