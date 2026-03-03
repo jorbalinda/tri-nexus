@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { apiPatch } from '@/lib/api/client'
 import DeviceConnectionCard from '@/components/profile/DeviceConnectionCard'
@@ -641,6 +642,29 @@ export default function ProfilePage() {
 
       {/* Devices */}
       <DeviceConnectionCard />
+
+      {/* Privacy & Data */}
+      <div className="card-squircle p-5">
+        <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-3">
+          Privacy & Data
+        </p>
+        <Link
+          href="/dashboard/account/privacy"
+          className="flex items-center justify-between group"
+        >
+          <div>
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              Data & Account Management
+            </p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+              Export your data or delete your account
+            </p>
+          </div>
+          <span className="text-[10px] font-semibold text-blue-500 group-hover:text-blue-600 transition-colors">
+            Manage →
+          </span>
+        </Link>
+      </div>
     </div>
   )
 }
