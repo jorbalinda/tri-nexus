@@ -5,7 +5,7 @@ speed: prefer empirical (flat rides, power-adjusted) → fallback: v ≈ 2.4 × 
 adjust: courseProfile, heat(+3%/5°F>75), altitude(+2%/1000ft>3000)
 wind: physics-based loop formula — t_wind/t_calm = v₀²/(v₀²−v_eff²)
       v_eff = windSpeedKph × 0.5 (average headwind exposure on loop course)
-      threshold ≥13 kph (8 mph), capped at +25% time increase
+      threshold ≥10 kph (6 mph), capped at +25% time increase
 */
 
 import type { Workout } from '@/lib/types/database'
@@ -118,7 +118,7 @@ export function projectBikeSplit(
   // ───────────────────────────────────────────────────────────────────────────
   let windAdjustmentSeconds = 0
 
-  if (conditions?.windSpeedKph != null && conditions.windSpeedKph >= 13) {
+  if (conditions?.windSpeedKph != null && conditions.windSpeedKph >= 10) {
     const v0 = avgSpeedKph
     // Effective headwind component on a loop course (50% exposure)
     const vEff = conditions.windSpeedKph * 0.5
