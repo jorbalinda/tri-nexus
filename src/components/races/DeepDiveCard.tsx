@@ -6,7 +6,7 @@ import type { RaceProjection } from '@/lib/types/projection'
 import type { HRAdjustmentResult } from '@/lib/analytics/hr-adjustment'
 
 interface DeepDiveCardProps {
-  breakdown: { volume: number; discipline: number; thresholds: number; trainingLoad: number; completeness: number } | null
+  breakdown: { volume: number; discipline: number; thresholds: number; completeness: number } | null
   projection: RaceProjection | null
   confidence: number
   workoutCount: number
@@ -63,11 +63,10 @@ export default function DeepDiveCard({
               </p>
               <div className="space-y-3">
                 {[
-                  { label: 'Volume & Recency', value: breakdown.volume, max: 20, color: 'bg-blue-500' },
-                  { label: 'Discipline Balance', value: breakdown.discipline, max: 20, color: 'bg-purple-500' },
-                  { label: 'Threshold Quality', value: breakdown.thresholds, max: 20, color: 'bg-orange-500' },
-                  { label: 'Training Load', value: breakdown.trainingLoad, max: 20, color: 'bg-green-500' },
-                  { label: 'Data Completeness', value: breakdown.completeness, max: 20, color: 'bg-cyan-500' },
+                  { label: 'Volume & Recency', value: breakdown.volume, max: 25, color: 'bg-blue-500' },
+                  { label: 'Discipline Balance', value: breakdown.discipline, max: 25, color: 'bg-purple-500' },
+                  { label: 'Threshold Quality', value: breakdown.thresholds, max: 25, color: 'bg-orange-500' },
+                  { label: 'Data Completeness', value: breakdown.completeness, max: 25, color: 'bg-cyan-500' },
                 ].map((dim) => (
                   <div key={dim.label}>
                     <div className="flex items-center justify-between mb-0.5">

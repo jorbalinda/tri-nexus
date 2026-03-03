@@ -1,21 +1,22 @@
 /*
 === CONFIDENCE SCORE V2 (0–100) ===
-Volume & Recency (0–20):   min(20, workouts_12wk × 0.7 + workouts_14d × 1.0)
-Discipline Balance (0–20):  4/discipline (≥3 workouts) + 8 × (1 - imbalance × 1.5)
-Threshold Quality (0–20):   FTP(0–8) + CSS(0–7) + RunPace(0–5) w/ recency decay
-Training Load (0–20):       CTL(0–10) + TSB(0–6) + Consistency(0–4)
-Completeness (0–20):        Sum of binary checks for HR, weight, power, brick, conditions
+Four data-quality dimensions, each scaled 0–25:
+Volume & Recency (0–25):    min(20, workouts_12wk × 0.7 + workouts_14d × 1.0) × 1.25
+Discipline Balance (0–25):  [4/discipline (≥10 workouts) + 8 × (1 - imbalance × 1.5)] × 1.25
+Threshold Quality (0–25):   [FTP(0–8) + CSS(0–7) + RunPace(0–5)] × 1.25 w/ recency decay
+Data Completeness (0–25):   [Sum of binary checks for HR, weight, power, brick, conditions] × 1.25
+
+Training Load (CTL/ATL/TSB) intentionally excluded — athlete readiness is displayed
+separately via RaceReadinessCard and does not affect data-quality confidence.
 */
 
 import type { Workout, ManualLog } from '@/lib/types/database'
 import type { TargetRace } from '@/lib/types/target-race'
-import type { RaceDistance } from '@/lib/types/race-plan'
 
 export interface ConfidenceBreakdown {
   volume: number
   discipline: number
   thresholds: number
-  trainingLoad: number
   completeness: number
 }
 
@@ -138,57 +139,6 @@ function scoreThresholds(workouts: Workout[]): number {
 }
 
 // ---------------------------------------------------------------------------
-// 2.4 Training Load Readiness (0–20)
-// ---------------------------------------------------------------------------
-function scoreTrainingLoad(
-  ctl: number,
-  tsb: number,
-  workouts: Workout[],
-  raceDistance: RaceDistance
-): number {
-  // CTL sub-score (0-10)
-  let ctlDivisor: number
-  if (raceDistance === '140.6') ctlDivisor = 8
-  else if (raceDistance === '70.3') ctlDivisor = 6
-  else ctlDivisor = 4
-
-  const ctlScore = Math.min(10, Math.round(ctl / ctlDivisor))
-
-  // TSB sub-score (0-6)
-  let tsbScore: number
-  if (tsb < -20) tsbScore = 0
-  else if (tsb < -10) tsbScore = 2
-  else if (tsb < 0) tsbScore = 3
-  else if (tsb <= 10) tsbScore = 4
-  else if (tsb <= 25) tsbScore = 6
-  else tsbScore = 3 // detraining risk
-
-  // Consistency sub-score (0-4)
-  const weekBuckets = new Map<string, number>()
-  workouts
-    .filter((w) => weeksAgo(w.date) <= 8)
-    .forEach((w) => {
-      const d = new Date(w.date)
-      const day = d.getDay()
-      const diff = d.getDate() - day + (day === 0 ? -6 : 1)
-      const monday = new Date(d)
-      monday.setDate(diff)
-      const key = monday.toISOString().split('T')[0]
-      weekBuckets.set(key, (weekBuckets.get(key) || 0) + 1)
-    })
-
-  const consistentWeeks = Array.from(weekBuckets.values()).filter((count) => count >= 3).length
-  let consistencyScore: number
-  if (consistentWeeks >= 8) consistencyScore = 4
-  else if (consistentWeeks >= 7) consistencyScore = 3
-  else if (consistentWeeks >= 5) consistencyScore = 2
-  else if (consistentWeeks >= 3) consistencyScore = 1
-  else consistencyScore = 0
-
-  return Math.min(20, ctlScore + tsbScore + consistencyScore)
-}
-
-// ---------------------------------------------------------------------------
 // 2.5 Data Completeness Bonus (0–20)
 // ---------------------------------------------------------------------------
 function scoreCompleteness(
@@ -277,23 +227,19 @@ export function computeConfidenceV2(
   workouts: Workout[],
   logs: ManualLog[],
   race: TargetRace,
-  ctl: number,
-  tsb: number
 ): ConfidenceResult {
-  const raceDistance = race.race_distance as RaceDistance
+  // Each internal function returns 0–20; scale to 0–25 so 4 dimensions sum to 0–100
+  const volume = Math.round(scoreVolume(workouts) * 1.25)
+  const discipline = Math.round(scoreDiscipline(workouts) * 1.25)
+  const thresholds = Math.round(scoreThresholds(workouts) * 1.25)
+  const completeness = Math.round(scoreCompleteness(workouts, logs, race) * 1.25)
 
-  const volume = scoreVolume(workouts)
-  const discipline = scoreDiscipline(workouts)
-  const thresholds = scoreThresholds(workouts)
-  const trainingLoad = scoreTrainingLoad(ctl, tsb, workouts, raceDistance)
-  const completeness = scoreCompleteness(workouts, logs, race)
-
-  const total = Math.min(100, volume + discipline + thresholds + trainingLoad + completeness)
+  const total = Math.min(100, volume + discipline + thresholds + completeness)
   const { tier, color: tierColor } = getTier(total)
 
   return {
     total,
-    breakdown: { volume, discipline, thresholds, trainingLoad, completeness },
+    breakdown: { volume, discipline, thresholds, completeness },
     tier,
     tierColor,
   }

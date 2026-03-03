@@ -239,14 +239,13 @@ function generateNextActions(
       { key: 'volume', score: breakdown.volume },
       { key: 'discipline', score: breakdown.discipline },
       { key: 'thresholds', score: breakdown.thresholds },
-      { key: 'trainingLoad', score: breakdown.trainingLoad },
       { key: 'completeness', score: breakdown.completeness },
     ]
     dimensions.sort((a, b) => a.score - b.score)
 
     const weakest = dimensions[0]
-    // Only suggest if the dimension is actually low (< 10/20)
-    if (weakest.score < 10) {
+    // Only suggest if the dimension is actually low (< 12.5/25)
+    if (weakest.score < 12.5) {
       const suggestion = getDimensionSuggestion(weakest.key)
       if (suggestion) {
         actions.push({ ...suggestion, priority: 4 })
@@ -279,12 +278,6 @@ function getDimensionSuggestion(
         action: 'Complete threshold tests for FTP, CSS, or run pace',
         impact: 'Improves threshold data quality',
         category: 'threshold',
-      }
-    case 'trainingLoad':
-      return {
-        action: 'Maintain consistent weekly training to build fitness',
-        impact: 'Improves training load readiness',
-        category: 'workout',
       }
     case 'completeness':
       return {

@@ -72,8 +72,8 @@ export default function RaceDetailPage() {
   // Lift confidence computation to page level
   const confidenceResult = useMemo(() => {
     if (workouts.length === 0 || !manualLogs.length || !race) return null
-    return computeConfidenceV2(workouts, manualLogs, race, trainingLoad?.ctl ?? 0, trainingLoad?.tsb ?? 0)
-  }, [workouts, manualLogs, race, trainingLoad])
+    return computeConfidenceV2(workouts, manualLogs, race)
+  }, [workouts, manualLogs, race])
 
   useEffect(() => {
     async function fetchRace() {
