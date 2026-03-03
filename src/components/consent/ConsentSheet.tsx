@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Shield, X, ChevronDown } from 'lucide-react'
 import { POLICY_VERSION } from '@/lib/consent/policy'
 
@@ -12,22 +12,38 @@ interface ConsentSheetProps {
 export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
   const [hasScrolled, setHasScrolled] = useState(false)
   const [agreeing, setAgreeing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const handleScroll = () => {
-    const el = scrollRef.current
-    if (!el || hasScrolled) return
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 60) {
-      setHasScrolled(true)
-    }
-  }
+  // Use IntersectionObserver on a sentinel div at the bottom — more reliable than scroll math
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    const container = scrollRef.current
+    if (!sentinel || !container) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setHasScrolled(true) },
+      { root: container, threshold: 0.1 }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
 
   const handleAgree = async () => {
     setAgreeing(true)
-    const res = await fetch('/api/consent', { method: 'POST' })
-    if (res.ok) {
-      onAccept()
-    } else {
+    setError(null)
+    try {
+      const res = await fetch('/api/consent', { method: 'POST' })
+      if (res.ok) {
+        onAccept()
+      } else {
+        const body = await res.json().catch(() => ({}))
+        setError(body.error ?? `Server error (${res.status}) — please try again.`)
+        setAgreeing(false)
+      }
+    } catch {
+      setError('Network error — please check your connection and try again.')
       setAgreeing(false)
     }
   }
@@ -70,7 +86,6 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
           {/* Scrollable policy body */}
           <div
             ref={scrollRef}
-            onScroll={handleScroll}
             className="flex-1 overflow-y-auto px-5 py-4 text-sm text-gray-700 dark:text-gray-300 space-y-4 leading-relaxed"
           >
             <p className="text-xs italic text-gray-500 dark:text-gray-400">
@@ -215,6 +230,9 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
                 you have read this Privacy Policy, and you agree to its terms.
               </p>
             </div>
+
+            {/* Sentinel — IntersectionObserver watches this to unlock the button */}
+            <div ref={sentinelRef} className="h-1" />
           </div>
 
           {/* Footer */}
@@ -224,6 +242,9 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
                 <ChevronDown size={12} className="animate-bounce" />
                 Scroll to bottom to continue
               </div>
+            )}
+            {error && (
+              <p className="text-xs text-red-600 dark:text-red-400 text-center mb-3">{error}</p>
             )}
             <button
               onClick={handleAgree}
