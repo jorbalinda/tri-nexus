@@ -68,7 +68,7 @@ export function projectBikeSplit(
       (w.elevation_gain_meters ?? 0) / ((w.distance_meters || 1) / 1000) < 8
   )
 
-  if (flatRides.length >= 3 && weight != null) {
+  if (flatRides.length >= 3) {
     // Empirical speed, power-adjusted: speed ∝ power^(1/3)
     const top5 = flatRides.slice(0, 5)
     const avgWorkoutSpeed =
