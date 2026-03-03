@@ -1,7 +1,7 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
-import { Shield, X, ChevronDown } from 'lucide-react'
+import { useState } from 'react'
+import { Shield, X } from 'lucide-react'
 import { POLICY_VERSION } from '@/lib/consent/policy'
 
 interface ConsentSheetProps {
@@ -10,25 +10,8 @@ interface ConsentSheetProps {
 }
 
 export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
-  const [hasScrolled, setHasScrolled] = useState(false)
   const [agreeing, setAgreeing] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const sentinelRef = useRef<HTMLDivElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  // Use IntersectionObserver on a sentinel div at the bottom — more reliable than scroll math
-  useEffect(() => {
-    const sentinel = sentinelRef.current
-    const container = scrollRef.current
-    if (!sentinel || !container) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setHasScrolled(true) },
-      { root: container, threshold: 0.1 }
-    )
-    observer.observe(sentinel)
-    return () => observer.disconnect()
-  }, [])
 
   const handleAgree = async () => {
     setAgreeing(true)
@@ -78,14 +61,13 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
           </div>
 
           <p className="text-[10px] text-gray-400 dark:text-gray-500 px-5 pb-2 shrink-0">
-            Version {POLICY_VERSION} · Scroll to bottom to enable "I Agree"
+            Version {POLICY_VERSION}
           </p>
 
           <div className="mx-5 h-px bg-gray-100 dark:bg-gray-800 shrink-0" />
 
           {/* Scrollable policy body */}
           <div
-            ref={scrollRef}
             className="flex-1 overflow-y-auto px-5 py-4 text-sm text-gray-700 dark:text-gray-300 space-y-4 leading-relaxed"
           >
             <p className="text-xs italic text-gray-500 dark:text-gray-400">
@@ -231,24 +213,16 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
               </p>
             </div>
 
-            {/* Sentinel — IntersectionObserver watches this to unlock the button */}
-            <div ref={sentinelRef} className="h-1" />
           </div>
 
           {/* Footer */}
           <div className="px-5 pb-5 pt-3 border-t border-gray-100 dark:border-gray-800 shrink-0">
-            {!hasScrolled && (
-              <div className="flex items-center justify-center gap-1.5 mb-3 text-[11px] text-gray-400 dark:text-gray-500">
-                <ChevronDown size={12} className="animate-bounce" />
-                Scroll to bottom to continue
-              </div>
-            )}
             {error && (
               <p className="text-xs text-red-600 dark:text-red-400 text-center mb-3">{error}</p>
             )}
             <button
               onClick={handleAgree}
-              disabled={!hasScrolled || agreeing}
+              disabled={agreeing}
               className="w-full py-3.5 rounded-xl bg-blue-600 text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:bg-blue-700 active:scale-[0.98]"
             >
               {agreeing ? 'Saving...' : 'I Agree'}
