@@ -399,7 +399,7 @@ export default function ProjectionHero({
             <p className="text-[10px] font-semibold text-orange-500/80 mt-1">{bikePower}</p>
           )}
           {windAdjSec > 0 && (
-            <p className="text-[10px] font-semibold text-sky-500 dark:text-sky-400 mt-1 flex items-center gap-0.5 justify-center">
+            <p className="text-[10px] font-semibold text-blue-600 dark:text-white mt-1 flex items-center gap-0.5 justify-center">
               <Wind size={9} />
               +{Math.round(windAdjSec / 60)}m wind
             </p>
