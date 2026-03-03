@@ -312,7 +312,7 @@ export function evaluateSufficiency(
   const passingDisciplines = gates.filter((g) => g.passed).length
 
   // Reuse existing confidence score (no duplication)
-  const confidenceResult = computeConfidenceV2(workouts, logs, race, ctl, tsb)
+  const confidenceResult = computeConfidenceV2(workouts, logs, race)
 
   // Determine tier
   const tier = determineTier(confidenceResult.total, gates)

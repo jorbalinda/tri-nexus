@@ -231,7 +231,7 @@ export function generateProjectionV2(
   // Confidence score
   const ctl = calculateCTL(workouts)
   const tsb = calculateTSB(workouts)
-  const confidenceResult = computeConfidenceV2(workouts, logs, race, ctl, tsb)
+  const confidenceResult = computeConfidenceV2(workouts, logs, race)
 
   return {
     target_race_id: race.id,
