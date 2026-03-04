@@ -1,7 +1,7 @@
 /*
 === BIKE SPEED ===
 targetPower = FTP × IF[distance]
-speed: prefer empirical (flat rides, power-adjusted) → fallback: v ≈ 2.4 × P^0.36
+speed: prefer empirical (flat rides, power-adjusted) → fallback: v ≈ 5.1 × P^0.36
 adjust: courseProfile, heat(+3%/5°F>75), altitude(+2%/1000ft>3000)
 wind: physics-based loop formula — t_wind/t_calm = v₀²/(v₀²−v_eff²)
       v_eff = windSpeedKph × 0.5 (average headwind exposure on loop course)
@@ -69,6 +69,7 @@ export function projectBikeSplit(
   const flatRides = recentBikeWorkouts.filter(
     (w) =>
       w.avg_speed_mps != null &&
+      w.avg_speed_mps > 3.5 && // exclude indoor trainer / stationary data (<12.6 km/h)
       (w.duration_seconds || 0) >= 2400 &&
       (w.elevation_gain_meters ?? 0) / ((w.distance_meters || 1) / 1000) < 8
   )
@@ -87,8 +88,8 @@ export function projectBikeSplit(
     avgSpeedKph = avgWorkoutSpeed * Math.pow(targetPower / avgWorkoutPower, 1 / 3)
   } else {
     // Fallback: regression approximation for typical TT setup at sea level
-    // v(km/h) ≈ 2.4 × P^0.36
-    avgSpeedKph = 2.4 * Math.pow(targetPower, 0.36)
+    // v(km/h) ≈ 5.1 × P^0.36  (calibrated: 200W → ~35 km/h, 150W → ~30 km/h)
+    avgSpeedKph = 5.1 * Math.pow(targetPower, 0.36)
   }
 
   // Course profile modifier
