@@ -30,7 +30,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`}>
         <Providers>
-          {children}
+          <div style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
+            {children}
+          </div>
         </Providers>
       </body>
     </html>
