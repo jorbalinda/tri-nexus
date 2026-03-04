@@ -156,8 +156,8 @@ export default function LTEstimatorCard({
           </div>
 
           {/* Zone legend table */}
-          <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+            <table className="w-full text-sm min-w-[380px]">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-800/50">
                   <th className="text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
