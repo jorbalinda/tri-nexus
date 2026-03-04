@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
+  const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -17,27 +18,28 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!agreed) {
+      setError('Please accept the Privacy Policy to continue.')
+      return
+    }
     setLoading(true)
     setError(null)
 
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { display_name: displayName },
-      },
+      options: { data: { display_name: displayName } },
     })
 
     if (error) {
       setError(error.message)
       setLoading(false)
     } else {
-      // Fire welcome email (non-blocking — don't await)
       fetch('/api/email/welcome', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, displayName }),
-      }).catch(() => {}) // ignore failures silently
+      }).catch(() => {})
       router.push('/onboarding')
       router.refresh()
     }
@@ -46,9 +48,7 @@ export default function SignupPage() {
   const handleOAuth = async (provider: 'google') => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
     if (error) setError(error.message)
   }
@@ -58,17 +58,13 @@ export default function SignupPage() {
       {/* Hero Panel */}
       <div className="relative lg:w-1/2 min-h-[280px] lg:min-h-screen overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0 hero-gradient" />
-
         <div className="absolute inset-0 pointer-events-none">
           <Waves className="absolute top-[15%] left-[12%] text-white/10" size={80} strokeWidth={1} />
           <Bike className="absolute top-[45%] right-[10%] text-white/10" size={90} strokeWidth={1} />
           <Footprints className="absolute bottom-[18%] left-[20%] text-white/10" size={70} strokeWidth={1} />
         </div>
-
         <div className="relative z-10 text-center px-8">
-          <p className="text-xs font-bold uppercase tracking-[5px] text-white/80 mb-4">
-            RACE DAY
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[5px] text-white/80 mb-4">RACE DAY</p>
           <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
             Know Your<br />Finish Time.
           </h1>
@@ -83,19 +79,15 @@ export default function SignupPage() {
         <div className="w-full max-w-sm">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mb-8 py-2"
           >
             <ArrowLeft size={14} />
             Back to home
           </Link>
 
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              Create account
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Start your race day projection
-            </p>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Create account</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Start your race day projection</p>
           </div>
 
           <div className="flex flex-col gap-3 mb-6">
@@ -128,10 +120,11 @@ export default function SignupPage() {
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
+              <label htmlFor="signup-name" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                 Display Name
               </label>
               <input
+                id="signup-name"
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
@@ -142,10 +135,11 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
+              <label htmlFor="signup-email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                 Email
               </label>
               <input
+                id="signup-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -156,10 +150,11 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
+              <label htmlFor="signup-password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                 Password
               </label>
               <input
+                id="signup-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -169,6 +164,23 @@ export default function SignupPage() {
                 required
               />
             </div>
+
+            {/* Privacy policy consent */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500/30 shrink-0 cursor-pointer"
+              />
+              <span className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                I agree to the{' '}
+                <Link href="/dashboard/account/privacy" className="text-blue-500 hover:underline">
+                  Privacy Policy
+                </Link>
+                . Tri Race Day collects your training data to generate race projections.
+              </span>
+            </label>
 
             <button
               type="submit"
@@ -180,7 +192,7 @@ export default function SignupPage() {
 
             <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-blue-600 font-medium hover:underline">
+              <Link href="/auth/login" className="text-blue-600 font-medium hover:underline py-2 inline-block">
                 Sign in
               </Link>
             </p>

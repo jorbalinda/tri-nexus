@@ -11,6 +11,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -19,10 +21,7 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
       setError(error.message)
@@ -33,12 +32,28 @@ export default function LoginPage() {
     }
   }
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Enter your email address above, then click Forgot Password.')
+      return
+    }
+    setResetLoading(true)
+    setError(null)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
+    })
+    setResetLoading(false)
+    if (error) {
+      setError(error.message)
+    } else {
+      setResetSent(true)
+    }
+  }
+
   const handleOAuth = async (provider: 'google') => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
     if (error) setError(error.message)
   }
@@ -48,17 +63,13 @@ export default function LoginPage() {
       {/* Hero Panel */}
       <div className="relative lg:w-1/2 min-h-[280px] lg:min-h-screen overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0 hero-gradient" />
-
         <div className="absolute inset-0 pointer-events-none">
           <Waves className="absolute top-[15%] left-[12%] text-white/10" size={80} strokeWidth={1} />
           <Bike className="absolute top-[45%] right-[10%] text-white/10" size={90} strokeWidth={1} />
           <Footprints className="absolute bottom-[18%] left-[20%] text-white/10" size={70} strokeWidth={1} />
         </div>
-
         <div className="relative z-10 text-center px-8">
-          <p className="text-xs font-bold uppercase tracking-[5px] text-white/80 mb-4">
-            RACE DAY
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[5px] text-white/80 mb-4">RACE DAY</p>
           <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
             Know Your<br />Finish Time.
           </h1>
@@ -73,19 +84,15 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors mb-8 py-2"
           >
             <ArrowLeft size={14} />
             Back to home
           </Link>
 
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              Welcome back
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Sign in to your account
-            </p>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Welcome back</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your account</p>
           </div>
 
           <div className="flex flex-col gap-3 mb-6">
@@ -116,12 +123,18 @@ export default function LoginPage() {
                 {error}
               </div>
             )}
+            {resetSent && (
+              <div className="text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 rounded-xl px-4 py-3">
+                Password reset email sent — check your inbox.
+              </div>
+            )}
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
+              <label htmlFor="login-email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
                 Email
               </label>
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -132,10 +145,21 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="login-password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={resetLoading}
+                  className="text-xs text-blue-500 hover:text-blue-600 transition-colors disabled:opacity-50 py-1"
+                >
+                  {resetLoading ? 'Sending...' : 'Forgot password?'}
+                </button>
+              </div>
               <input
+                id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -155,7 +179,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
               Don&apos;t have an account?{' '}
-              <Link href="/auth/signup" className="text-blue-600 font-medium hover:underline">
+              <Link href="/auth/signup" className="text-blue-600 font-medium hover:underline py-2 inline-block">
                 Sign up
               </Link>
             </p>

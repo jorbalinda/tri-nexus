@@ -35,17 +35,17 @@ export default function LandingPage() {
             <div className="flex items-center justify-center gap-4 mb-6">
               <div className="flex items-center gap-1.5 text-blue-500">
                 <Waves size={16} />
-                <span className="text-[10px] font-bold uppercase tracking-[2px]">Swim</span>
+                <span className="text-[11px] font-bold uppercase tracking-[2px]">Swim</span>
               </div>
               <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
               <div className="flex items-center gap-1.5 text-orange-500">
                 <Bike size={16} />
-                <span className="text-[10px] font-bold uppercase tracking-[2px]">Bike</span>
+                <span className="text-[11px] font-bold uppercase tracking-[2px]">Bike</span>
               </div>
               <div className="w-px h-3 bg-gray-300 dark:bg-gray-600" />
               <div className="flex items-center gap-1.5 text-green-500">
                 <Footprints size={16} />
-                <span className="text-[10px] font-bold uppercase tracking-[2px]">Run</span>
+                <span className="text-[11px] font-bold uppercase tracking-[2px]">Run</span>
               </div>
             </div>
 
@@ -73,7 +73,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center mx-auto mb-4">
                   <TrendingUp size={24} className="text-blue-500" />
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 1</p>
+                <p className="text-[11px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 1</p>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Train & Upload</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Upload data and train. Every workout sharpens your projection.</p>
               </div>
@@ -81,7 +81,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center mx-auto mb-4">
                   <Timer size={24} className="text-orange-500" />
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 2</p>
+                <p className="text-[11px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 2</p>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Race Week Reveal</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">One week out, your projected finish time is revealed with a full race plan.</p>
               </div>
@@ -89,7 +89,7 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-2xl bg-green-50 dark:bg-green-950/30 flex items-center justify-center mx-auto mb-4">
                   <Target size={24} className="text-green-500" />
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 3</p>
+                <p className="text-[11px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 3</p>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Race & Compare</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">After the race, see predicted vs. actual.</p>
               </div>
@@ -102,7 +102,7 @@ export default function LandingPage() {
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-[10px] font-bold uppercase tracking-[3px] text-blue-500 mb-3">Features</p>
+            <p className="text-[11px] font-bold uppercase tracking-[3px] text-blue-500 mb-3">Features</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">
               Everything You Need for Race Day
             </h2>
@@ -169,7 +169,7 @@ export default function LandingPage() {
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-[10px] font-bold uppercase tracking-[3px] text-blue-500 mb-3">Pricing</p>
+            <p className="text-[11px] font-bold uppercase tracking-[3px] text-blue-500 mb-3">Pricing</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100">
               Simple, Transparent Pricing
             </h2>
@@ -177,10 +177,10 @@ export default function LandingPage() {
 
           <div className="max-w-md mx-auto">
             <div className="card-squircle p-8 ring-2 ring-blue-500 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-wider">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-blue-600 text-white text-[11px] font-bold uppercase tracking-wider">
                 Free for the first 500 users
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-blue-500 mb-2">Early Access</p>
+              <p className="text-[11px] font-bold uppercase tracking-[2px] text-blue-500 mb-2">Early Access</p>
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">$0</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Everything you need for race day</p>
               <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300 mb-8">
