@@ -379,7 +379,7 @@ export default function ProjectionHero({
       {!race.goal_time_seconds && <div className="mb-5" />}
 
       {/* Split cards with integrated pacing targets — race flow order */}
-      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center mb-5">
+      <div className="grid grid-cols-3 gap-2 text-center mb-5">
         {/* Swim */}
         <div className="p-2.5 rounded-xl bg-blue-50/40 dark:bg-blue-950/15 border border-blue-100/60 dark:border-blue-900/30">
           <p className="text-[10px] font-bold uppercase tracking-wider text-blue-500 mb-1">Swim</p>
@@ -387,11 +387,6 @@ export default function ProjectionHero({
           {swimPace && (
             <p className="text-[10px] font-semibold text-blue-500/80 mt-1">{swimPace}</p>
           )}
-        </div>
-        {/* T1 */}
-        <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/40">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">T1</p>
-          <p className="text-sm font-bold text-gray-500">{formatTime(projection.t1_seconds)}</p>
         </div>
         {/* Bike */}
         <div className="p-2.5 rounded-xl bg-orange-50/40 dark:bg-orange-950/15 border border-orange-100/60 dark:border-orange-900/30">
@@ -416,11 +411,6 @@ export default function ProjectionHero({
               {windSpeedMph != null ? `${windSpeedMph.toFixed(1)} mph` : 'Wind'} · +{Math.round(windAdjSec / 60)} min
             </p>
           )}
-        </div>
-        {/* T2 */}
-        <div className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/40">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">T2</p>
-          <p className="text-sm font-bold text-gray-500">{formatTime(projection.t2_seconds)}</p>
         </div>
         {/* Run */}
         <div className="p-2.5 rounded-xl bg-green-50/40 dark:bg-green-950/15 border border-green-100/60 dark:border-green-900/30">
