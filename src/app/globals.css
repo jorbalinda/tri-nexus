@@ -126,6 +126,15 @@ input[type="number"]::-webkit-outer-spin-button {
   display: none;
 }
 
+/* Prevent iOS Safari auto-zoom on input focus (requires font-size ≥ 16px) */
+@media (max-width: 1023px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* Hide scrollbar utility — used by TimeScrollPicker */
 .scrollbar-none {
   scrollbar-width: none;
