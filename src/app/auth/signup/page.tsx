@@ -170,7 +170,7 @@ export default function SignupPage() {
               <input
                 type="checkbox"
                 checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
+                onChange={(e) => { setAgreed(e.target.checked); if (e.target.checked) setError(null) }}
                 className="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500/30 shrink-0 cursor-pointer"
               />
               <span className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
