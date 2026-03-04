@@ -36,6 +36,7 @@ export default function Sidebar() {
       style={{
         width: 'var(--sidebar-width)',
         borderRight: '1px solid var(--glass-border)',
+        paddingTop: 'calc(2.5rem + env(safe-area-inset-top))',
       }}
     >
       {/* Top section */}

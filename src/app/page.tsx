@@ -7,7 +7,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <p className="text-xs font-bold uppercase tracking-[3px] text-blue-500">RACE DAY</p>
           <div className="flex items-center gap-3">
