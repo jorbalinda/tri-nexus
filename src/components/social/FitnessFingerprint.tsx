@@ -84,7 +84,7 @@ export default function FitnessFingerprint({ percentiles, displayName }: Props) 
                 strokeWidth={2}
               />
               <Tooltip
-                formatter={(value: number) => [`${value}th percentile`, '']}
+                formatter={(value: number | undefined) => [`${value ?? 0}th percentile`, ''] as [string, string]}
                 contentStyle={{
                   backgroundColor: 'var(--card-bg, #ffffff)',
                   border: '1px solid var(--glass-border)',

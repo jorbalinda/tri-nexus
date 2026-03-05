@@ -52,7 +52,7 @@ function RequestRow({ request }: { request: Request }) {
       <div className="flex gap-2">
         <button
           disabled={isPending}
-          onClick={() => startTransition(() => acceptFollowRequest(request.follower_id))}
+          onClick={() => startTransition(async () => { await acceptFollowRequest(request.follower_id) })}
           className="w-9 h-9 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-colors disabled:opacity-50"
           aria-label="Accept"
         >
@@ -60,7 +60,7 @@ function RequestRow({ request }: { request: Request }) {
         </button>
         <button
           disabled={isPending}
-          onClick={() => startTransition(() => rejectFollowRequest(request.follower_id))}
+          onClick={() => startTransition(async () => { await rejectFollowRequest(request.follower_id) })}
           className="w-9 h-9 rounded-xl bg-gray-200 dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-900/40 hover:text-red-600 dark:hover:text-red-400 text-gray-600 dark:text-gray-300 flex items-center justify-center transition-colors disabled:opacity-50"
           aria-label="Reject"
         >
