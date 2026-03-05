@@ -10,9 +10,10 @@ type RaceDistance = 'sprint' | 'olympic' | '70.3' | '140.6'
 interface CatalogueRace {
   id: string
   name: string
-  distance: RaceDistance
-  location: string | null
-  race_date: string | null
+  race_distance: RaceDistance
+  location_city: string | null
+  location_country: string | null
+  typical_race_month: number | null
 }
 
 interface OnboardingData {
@@ -63,9 +64,10 @@ export default function OnboardingPage() {
   // Fetch races catalogue on mount
   useEffect(() => {
     supabase
-      .from('races_catalogue')
-      .select('id, name, distance, location, race_date')
-      .order('race_date', { ascending: true })
+      .from('race_courses')
+      .select('id, name, race_distance, location_city, location_country, typical_race_month')
+      .is('user_id', null)
+      .order('name', { ascending: true })
       .then(({ data: races }) => {
         if (races) setCatalogueRaces(races as CatalogueRace[])
       })
@@ -84,15 +86,16 @@ export default function OnboardingPage() {
 
   const filteredRaces = catalogueRaces.filter((r) =>
     r.name.toLowerCase().includes(raceSearch.toLowerCase()) ||
-    (r.location ?? '').toLowerCase().includes(raceSearch.toLowerCase())
+    (r.location_city ?? '').toLowerCase().includes(raceSearch.toLowerCase()) ||
+    (r.location_country ?? '').toLowerCase().includes(raceSearch.toLowerCase())
   ).slice(0, 8)
 
   const selectCatalogueRace = (race: CatalogueRace) => {
     setData((prev) => ({
       ...prev,
       raceName: race.name,
-      raceDistance: race.distance,
-      raceDate: race.race_date ?? prev.raceDate,
+      raceDistance: race.race_distance,
+      raceDate: prev.raceDate,
       catalogueRaceId: race.id,
     }))
     setRaceSearch(race.name)
@@ -181,7 +184,7 @@ export default function OnboardingPage() {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{data.raceName}</p>
               <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 capitalize">
-                {data.raceDistance} · {data.raceDate || 'Date TBD'}
+                {data.raceDistance}{data.raceDate ? ` · ${data.raceDate}` : ''}
               </p>
             </div>
             <button type="button" onClick={clearRaceSelection} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0">
@@ -235,7 +238,7 @@ export default function OnboardingPage() {
                     >
                       <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{race.name}</p>
                       <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 capitalize">
-                        {race.distance}{race.location ? ` · ${race.location}` : ''}{race.race_date ? ` · ${race.race_date}` : ''}
+                        {race.race_distance}{race.location_city ? ` · ${race.location_city}, ${race.location_country}` : ''}
                       </p>
                     </button>
                   ))
