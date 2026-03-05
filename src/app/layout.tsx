@@ -18,6 +18,20 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Race Day | Know Your Finish Line",
   description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
+  openGraph: {
+    title: "Race Day | Know Your Finish Line",
+    description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
+    url: "https://triraceday.com",
+    siteName: "Tri Race Day",
+    images: [{ url: "/icon.png", width: 512, height: 512 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Race Day | Know Your Finish Line",
+    description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
+    images: ["/icon.png"],
+  },
 };
 
 export default function RootLayout({
