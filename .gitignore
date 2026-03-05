@@ -48,3 +48,11 @@ next-env.d.ts
 .idea
 TriRaceDay.comGoogleCredentials.env
 TriRaceDay.com Google Credentials
+
+# local dev / test artifacts
+qa-screenshots/
+e2e-qa-test*.js
+e2e-qa-test*.ts
+capacitor.config.ts
+ios/
+.claude/
