@@ -91,7 +91,7 @@ export default function LandingPage() {
                 </div>
                 <p className="text-[11px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Step 3</p>
                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Race & Compare</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">See how your finish stacks up against friends&apos; projected times — before and after race day.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">See how your finish stacks up against friends&apos; projected times, before and after race day.</p>
               </div>
             </div>
           </div>
