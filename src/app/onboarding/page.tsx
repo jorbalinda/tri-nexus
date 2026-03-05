@@ -101,6 +101,9 @@ export default function OnboardingPage() {
     setRaceSearch(race.name)
     setShowDropdown(false)
     setUseCustomRace(false)
+    if (race.next_race_date) {
+      setTimeout(() => animateTransition(2), 300)
+    }
   }
 
   const clearRaceSelection = () => {
