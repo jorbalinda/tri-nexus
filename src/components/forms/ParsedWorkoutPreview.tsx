@@ -69,7 +69,6 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
   const [maxHr, setMaxHr] = useState(workout.max_hr?.toString() || '')
   const [rpe, setRpe] = useState(workout.rpe?.toString() || '')
   const [calories, setCalories] = useState(workout.calories?.toString() || '')
-  const [notes, setNotes] = useState(workout.notes || '')
   // Swim
   const [poolLength, setPoolLength] = useState(
     workout.pool_length_meters ? poolToDisplay(workout.pool_length_meters, isImperial) : ''
@@ -134,7 +133,6 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
       max_hr: maxHr ? Number(maxHr) : null,
       rpe: rpe ? Number(rpe) : null,
       calories: calories ? Number(calories) : null,
-      notes: notes || null,
       pool_length_meters: poolLengthMeters,
       swolf: swolf ? Number(swolf) : null,
       avg_power_watts: avgPower ? Number(avgPower) : null,
@@ -214,6 +212,7 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
             onChange={(e) => setTitle(e.target.value)}
             className={inputClass}
             placeholder="Name this workout..."
+            maxLength={100}
           />
           <div className="flex flex-wrap gap-1.5 mt-2">
             {[
@@ -424,17 +423,6 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
             </div>
           </div>
         )}
-
-        {/* Notes */}
-        <div>
-          <label className={labelClass}>Notes</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className={`${inputClass} resize-none h-20`}
-            placeholder="How did the session feel?"
-          />
-        </div>
 
         {/* Save error */}
         {saveError && (

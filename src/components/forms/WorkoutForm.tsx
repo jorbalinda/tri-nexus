@@ -24,7 +24,6 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
   const [maxHr, setMaxHr] = useState('')
   const [rpe, setRpe] = useState('')
   const [calories, setCalories] = useState('')
-  const [notes, setNotes] = useState('')
   // Swim
   const [poolLength, setPoolLength] = useState('')
   const [swolf, setSwolf] = useState('')
@@ -82,7 +81,6 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
       max_hr: maxHr ? Number(maxHr) : null,
       rpe: rpe ? Number(rpe) : null,
       calories: calories ? Number(calories) : null,
-      notes: notes || null,
       pool_length_meters: poolLengthMeters,
       swolf: swolf ? Number(swolf) : null,
       avg_power_watts: avgPower ? Number(avgPower) : null,
@@ -183,6 +181,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
               onChange={(e) => setTitle(e.target.value)}
               className={inputClass}
               placeholder="Morning swim"
+              maxLength={100}
             />
           </div>
           <div>
@@ -365,17 +364,6 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
             </div>
           </div>
         )}
-
-        {/* Notes */}
-        <div>
-          <label className={labelClass}>Notes</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className={`${inputClass} resize-none h-20`}
-            placeholder="How did the session feel?"
-          />
-        </div>
 
         {/* Submit */}
         <button

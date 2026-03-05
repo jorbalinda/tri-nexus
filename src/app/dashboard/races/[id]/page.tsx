@@ -281,7 +281,6 @@ export default function RaceDetailPage() {
         confidence={confidenceResult?.total ?? 0}
         workoutCount={workouts.length}
         daysUntilReveal={Math.max(0, days - 7)}
-        notes={race.notes}
       />
     </div>
   )

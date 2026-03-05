@@ -32,15 +32,12 @@ export function estimateCSSFromWorkouts(workouts: Workout[], maxHR: number | nul
       if (!maxHR || !w.avg_hr) return true
       return w.avg_hr >= maxHR * 0.85 && (w.duration_seconds || 0) >= 600
     })
-    .sort((a, b) => {
-      const paceA = (a.duration_seconds || 0) / ((a.distance_meters || 1) / 100)
-      const paceB = (b.duration_seconds || 0) / ((b.distance_meters || 1) / 100)
-      return paceA - paceB
-    })
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 5)
 
   if (swims.length === 0) return null
-  const best = swims[0]
-  return (best.duration_seconds || 0) / ((best.distance_meters || 1) / 100)
+  const paces = swims.map((w) => (w.duration_seconds || 0) / ((w.distance_meters || 1) / 100))
+  return paces.reduce((a, b) => a + b, 0) / paces.length
 }
 
 export function calculateFTP(best20minPower: number): number {
@@ -50,10 +47,12 @@ export function calculateFTP(best20minPower: number): number {
 export function estimateFTPFromWorkouts(workouts: Workout[]): number | null {
   const bikeWithPower = workouts
     .filter((w) => w.sport === 'bike' && w.normalized_power && (w.duration_seconds || 0) >= 1200)
-    .sort((a, b) => (b.normalized_power || 0) - (a.normalized_power || 0))
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 5)
 
   if (bikeWithPower.length === 0) return null
-  return calculateFTP(bikeWithPower[0].normalized_power!)
+  const avgPower = bikeWithPower.reduce((a, w) => a + (w.normalized_power || 0), 0) / bikeWithPower.length
+  return calculateFTP(avgPower)
 }
 
 export function estimateLTHR(workouts: Workout[], sport: string): number | null {

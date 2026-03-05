@@ -37,7 +37,6 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
   const [raceCourseId, setRaceCourseId] = useState(initialData?.race_course_id || '')
   const [goalHours, setGoalHours] = useState('')
   const [goalMinutes, setGoalMinutes] = useState('')
-  const [notes, setNotes] = useState(initialData?.notes || '')
   const [customSwim, setCustomSwim] = useState(initialData?.custom_swim_distance_m?.toString() || '')
   const [customBike, setCustomBike] = useState(initialData?.custom_bike_distance_km?.toString() || '')
   const [customRun, setCustomRun] = useState(initialData?.custom_run_distance_km?.toString() || '')
@@ -135,7 +134,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
         custom_run_distance_km: customRun ? parseFloat(customRun) : null,
         gpx_course_data: null,
         goal_time_seconds: goalTimeSeconds,
-        notes: notes || null,
+        notes: null,
         actual_finish_seconds: initialData?.actual_finish_seconds || null,
         actual_swim_seconds: initialData?.actual_swim_seconds || null,
         actual_bike_seconds: initialData?.actual_bike_seconds || null,
@@ -244,6 +243,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
                     className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all"
                     placeholder="Search courses..."
                     autoFocus
+                    maxLength={100}
                   />
                   <div className="flex items-center gap-1">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">Sort by</span>
@@ -325,6 +325,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
               }}
               className={INPUT_CLASS}
               placeholder="Enter race name..."
+              maxLength={100}
               required
             />
             <button
@@ -598,18 +599,6 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
             </div>
           </div>
         )}
-      </div>
-
-      {/* Notes */}
-      <div>
-        <label className={LABEL_CLASS}>Notes</label>
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          className={INPUT_CLASS}
-          rows={2}
-          placeholder="Any notes about this race..."
-        />
       </div>
 
       {/* Actions */}

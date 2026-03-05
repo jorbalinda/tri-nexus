@@ -5,7 +5,7 @@ const sourceEnum = z.enum(['manual', 'garmin', 'file_upload', 'strava'])
 
 export const WorkoutCreateSchema = z.object({
   sport: sportEnum,
-  title: z.string().min(1).max(200),
+  title: z.string().min(1).max(100),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   duration_seconds: z.number().int().positive().nullable().optional(),
   distance_meters: z.number().positive().nullable().optional(),
@@ -25,17 +25,15 @@ export const WorkoutCreateSchema = z.object({
   max_hr: z.number().int().min(30).max(250).nullable().optional(),
   calories: z.number().int().min(0).nullable().optional(),
   rpe: z.number().min(1).max(10).nullable().optional(),
-  notes: z.string().max(5000).nullable().optional(),
   blocks: z.array(z.object({
-    label: z.string(),
+    label: z.string().max(100),
     distance_meters: z.number().nullable().optional(),
     zone: z.union([z.number(), z.string()]).nullable().optional(),
     rpe: z.number().nullable().optional(),
     duration_minutes: z.number().nullable().optional(),
-    notes: z.string().nullable().optional(),
   })).nullable().optional(),
   source: sourceEnum.optional().default('manual'),
-  external_id: z.string().nullable().optional(),
+  external_id: z.string().max(255).nullable().optional(),
   external_url: z.string().url().nullable().optional(),
   // New fields
   started_at: z.string().nullable().optional(),
@@ -65,7 +63,8 @@ export const WorkoutQuerySchema = z.object({
 })
 
 export const ProfileUpdateSchema = z.object({
-  display_name: z.string().max(100).nullable().optional(),
+  display_name: z.string().max(50).nullable().optional(),
+  username: z.string().regex(/^[a-z0-9_]{3,20}$/).nullable().optional(),
   weight_kg: z.number().positive().max(500).nullable().optional(),
   date_of_birth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
   gender: z.enum(['male', 'female', 'non_binary']).nullable().optional(),

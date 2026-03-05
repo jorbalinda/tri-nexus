@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { apiPatch } from '@/lib/api/client'
@@ -18,6 +18,7 @@ import {
 
 interface ProfileData {
   display_name: string
+  username: string | null
   email: string
   weight_kg: number | null
   date_of_birth: string | null
@@ -76,10 +77,23 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle')
   const [savingThresholds, setSavingThresholds] = useState(false)
+  const [saveThresholdsStatus, setSaveThresholdsStatus] = useState<'idle' | 'saved' | 'error'>('idle')
   const [displayName, setDisplayName] = useState('')
-  const [dob, setDob] = useState('')
+  const [username, setUsername] = useState('')
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid' | 'unchanged'>('idle')
+  const [originalUsername, setOriginalUsername] = useState('')
+  const usernameDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [dobYear, setDobYear]   = useState('')
+  const [dobMonth, setDobMonth] = useState('')
+  const [dobDay, setDobDay]     = useState('')
   const [gender, setGender] = useState('')
+
+  // Derived ISO string for storage/calculations (YYYY-MM-DD or '')
+  const dob = dobYear && dobMonth && dobDay
+    ? `${dobYear}-${dobMonth.padStart(2, '0')}-${dobDay.padStart(2, '0')}`
+    : ''
 
   // Unit system — drives all conversions on this page
   const [unitSystem, setUnitSystem] = useState<'metric' | 'imperial'>('metric')
@@ -109,6 +123,21 @@ export default function ProfilePage() {
 
   const supabase = createClient()
 
+  // Live username availability check (debounced, skips if unchanged from saved value)
+  useEffect(() => {
+    if (usernameDebounceRef.current) clearTimeout(usernameDebounceRef.current)
+    if (!username) { setUsernameStatus('idle'); return }
+    if (username === originalUsername) { setUsernameStatus('unchanged'); return }
+    if (!/^[a-z0-9_]{3,20}$/.test(username)) { setUsernameStatus('invalid'); return }
+    setUsernameStatus('checking')
+    usernameDebounceRef.current = setTimeout(async () => {
+      const { data } = await supabase.rpc('is_username_available', { p_username: username })
+      setUsernameStatus(data === true ? 'available' : 'taken')
+    }, 500)
+    return () => { if (usernameDebounceRef.current) clearTimeout(usernameDebounceRef.current) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username])
+
   /** Convert metric DB values to display values for a given unit system */
   function toDisplay(p: ProfileData, units: 'metric' | 'imperial') {
     const imp = units === 'imperial'
@@ -133,7 +162,7 @@ export default function ProfilePage() {
 
       const { data } = await supabase
         .from('profiles')
-        .select('display_name, email, weight_kg, date_of_birth, gender, unit_system, timezone, resting_heart_rate, max_heart_rate, ftp_watts, threshold_pace_swim, threshold_pace_run, height_cm, max_hr_source, lthr_swim, lthr_bike, lthr_run')
+        .select('display_name, username, email, weight_kg, date_of_birth, gender, unit_system, timezone, resting_heart_rate, max_heart_rate, ftp_watts, threshold_pace_swim, threshold_pace_run, height_cm, max_hr_source, lthr_swim, lthr_bike, lthr_run')
         .eq('id', user.id)
         .single()
 
@@ -141,7 +170,14 @@ export default function ProfilePage() {
         const p = data as ProfileData
         setProfile(p)
         setDisplayName(p.display_name || '')
-        setDob(p.date_of_birth || '')
+        setUsername(p.username || '')
+        setOriginalUsername(p.username || '')
+        if (p.date_of_birth) {
+          const [y, m, d] = p.date_of_birth.split('-')
+          setDobYear(y || '')
+          setDobMonth(m ? String(parseInt(m)) : '')
+          setDobDay(d ? String(parseInt(d)) : '')
+        }
         setGender(p.gender || '')
         const units = (p.unit_system || 'metric') as 'metric' | 'imperial'
         setUnitSystem(units)
@@ -223,29 +259,46 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     setSaving(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    setSaveStatus('idle')
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
 
-    // Convert display values back to metric for storage
-    const weightKg = weight ? (isImperial ? lbsToKg(parseFloat(weight)) : parseFloat(weight)) : null
-    const heightCm = height ? (isImperial ? inchesToCm(parseFloat(height)) : parseFloat(height)) : null
+      const weightKg = weight ? (isImperial ? lbsToKg(parseFloat(weight)) : parseFloat(weight)) : null
+      const heightCm = height ? (isImperial ? inchesToCm(parseFloat(height)) : parseFloat(height)) : null
 
-    await supabase.from('profiles').update({
-      display_name: displayName || null,
-      weight_kg: weightKg != null ? Math.round(weightKg * 10) / 10 : null,
-      date_of_birth: dob || null,
-      gender: gender || null,
-      unit_system: unitSystem,
-      height_cm: heightCm != null ? Math.round(heightCm * 10) / 10 : null,
-    }).eq('id', user.id)
+      // Validate username if changed
+      if (username && username !== originalUsername && usernameStatus !== 'available') {
+        throw new Error('Username is not available. Please choose a different one.')
+      }
 
-    setSaving(false)
+      const { error } = await supabase.from('profiles').update({
+        display_name: displayName || null,
+        username: username || null,
+        weight_kg: weightKg != null ? Math.round(weightKg * 10) / 10 : null,
+        date_of_birth: dob || null,
+        gender: gender || null,
+        unit_system: unitSystem,
+        height_cm: heightCm != null ? Math.round(heightCm * 10) / 10 : null,
+      }).eq('id', user.id)
+
+      if (error) throw error
+      setOriginalUsername(username)
+      setUsernameStatus(username ? 'unchanged' : 'idle')
+      setSaveStatus('saved')
+      setTimeout(() => setSaveStatus('idle'), 2500)
+    } catch {
+      setSaveStatus('error')
+      setTimeout(() => setSaveStatus('idle'), 3000)
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleSaveThresholds = async () => {
     setSavingThresholds(true)
+    setSaveThresholdsStatus('idle')
     try {
-      // Convert pace display values back to metric for storage
       const swimSec = parsePaceInput(swimPace)
       const runSec = parsePaceInput(runPace)
 
@@ -260,8 +313,14 @@ export default function ProfilePage() {
         lthr_bike: lthrBike ? parseInt(lthrBike) : null,
         lthr_run: lthrRun ? parseInt(lthrRun) : null,
       })
-    } catch { /* ignore */ }
-    setSavingThresholds(false)
+      setSaveThresholdsStatus('saved')
+      setTimeout(() => setSaveThresholdsStatus('idle'), 2500)
+    } catch {
+      setSaveThresholdsStatus('error')
+      setTimeout(() => setSaveThresholdsStatus('idle'), 3000)
+    } finally {
+      setSavingThresholds(false)
+    }
   }
 
   const handleEstimateMaxHR = () => {
@@ -386,7 +445,29 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
             <label className={LABEL_CLASS}>Display Name</label>
-            <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className={INPUT_CLASS} />
+            <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className={INPUT_CLASS} maxLength={50} />
+          </div>
+          <div>
+            <label className={LABEL_CLASS}>Username</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 dark:text-gray-500 pointer-events-none">@</span>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                className={`${INPUT_CLASS} pl-8 pr-10`}
+                placeholder="yourhandle"
+                maxLength={20}
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm">
+                {usernameStatus === 'checking' && <span className="text-gray-400 animate-pulse">…</span>}
+                {(usernameStatus === 'available') && <span className="text-green-500">✓</span>}
+                {(usernameStatus === 'taken' || usernameStatus === 'invalid') && <span className="text-red-500">✗</span>}
+              </div>
+            </div>
+            {usernameStatus === 'invalid' && <p className="text-xs text-red-500 mt-1">3–20 chars, lowercase letters, numbers, underscores only</p>}
+            {usernameStatus === 'taken' && <p className="text-xs text-red-500 mt-1">That username is already taken</p>}
+            {usernameStatus === 'available' && <p className="text-xs text-green-500 mt-1">@{username} is available</p>}
           </div>
           <div>
             <label className={LABEL_CLASS}>Email</label>
@@ -416,7 +497,41 @@ export default function ProfilePage() {
           </div>
           <div>
             <label className={LABEL_CLASS}>Date of Birth</label>
-            <input type="date" value={dob} onChange={(e) => setDob(e.target.value)} className={INPUT_CLASS} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <select
+                value={dobMonth}
+                onChange={(e) => setDobMonth(e.target.value)}
+                className={`${INPUT_CLASS} col-span-2 sm:col-span-1`}
+                aria-label="Birth month"
+              >
+                <option value="">Month</option>
+                {['January','February','March','April','May','June','July','August','September','October','November','December'].map((name, i) => (
+                  <option key={i + 1} value={String(i + 1)}>{name}</option>
+                ))}
+              </select>
+              <select
+                value={dobDay}
+                onChange={(e) => setDobDay(e.target.value)}
+                className={INPUT_CLASS}
+                aria-label="Birth day"
+              >
+                <option value="">Day</option>
+                {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={String(d)}>{d}</option>
+                ))}
+              </select>
+              <select
+                value={dobYear}
+                onChange={(e) => setDobYear(e.target.value)}
+                className={INPUT_CLASS}
+                aria-label="Birth year"
+              >
+                <option value="">Year</option>
+                {Array.from({ length: 85 }, (_, i) => new Date().getFullYear() - 16 - i).map((y) => (
+                  <option key={y} value={String(y)}>{y}</option>
+                ))}
+              </select>
+            </div>
           </div>
           <div>
             <label className={LABEL_CLASS}>Gender</label>
@@ -429,13 +544,21 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="px-6 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
-        >
-          {saving ? 'Saving...' : 'Save Profile'}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
+              saveStatus === 'saved'
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : saveStatus === 'error'
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
+            {saving ? 'Saving…' : saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'error' ? 'Error — try again' : 'Save Profile'}
+          </button>
+        </div>
       </div>
 
       {/* Training Thresholds */}
@@ -631,13 +754,21 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <button
-          onClick={handleSaveThresholds}
-          disabled={savingThresholds}
-          className="px-6 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
-        >
-          {savingThresholds ? 'Saving...' : 'Save Thresholds'}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSaveThresholds}
+            disabled={savingThresholds}
+            className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
+              saveThresholdsStatus === 'saved'
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : saveThresholdsStatus === 'error'
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
+            {savingThresholds ? 'Saving…' : saveThresholdsStatus === 'saved' ? '✓ Saved' : saveThresholdsStatus === 'error' ? 'Error — try again' : 'Save Thresholds'}
+          </button>
+        </div>
       </div>
 
       {/* Devices */}

@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [info, setInfo] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [resetSent, setResetSent] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
@@ -34,7 +35,8 @@ export default function LoginPage() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setError('Enter your email address above, then click Forgot Password.')
+      setError(null)
+      setInfo('Enter your email address above, then click Forgot Password.')
       return
     }
     setResetLoading(true)
@@ -121,6 +123,11 @@ export default function LoginPage() {
             {error && (
               <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-xl px-4 py-3">
                 {error}
+              </div>
+            )}
+            {info && (
+              <div className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 rounded-xl px-4 py-3">
+                {info}
               </div>
             )}
             {resetSent && (

@@ -109,6 +109,7 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
               value={finish}
               onChange={(e) => setFinish(e.target.value)}
               placeholder="5:30:00"
+              maxLength={9}
               className={inputClass}
             />
           </div>
@@ -117,23 +118,23 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">Swim</label>
-              <input type="text" value={swim} onChange={(e) => setSwim(e.target.value)} placeholder="0:35:00" className={inputClass} />
+              <input type="text" value={swim} onChange={(e) => setSwim(e.target.value)} placeholder="0:35:00" maxLength={9} className={inputClass} />
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">T1</label>
-              <input type="text" value={t1} onChange={(e) => setT1(e.target.value)} placeholder="0:03:00" className={inputClass} />
+              <input type="text" value={t1} onChange={(e) => setT1(e.target.value)} placeholder="0:03:00" maxLength={9} className={inputClass} />
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">Bike</label>
-              <input type="text" value={bike} onChange={(e) => setBike(e.target.value)} placeholder="2:45:00" className={inputClass} />
+              <input type="text" value={bike} onChange={(e) => setBike(e.target.value)} placeholder="2:45:00" maxLength={9} className={inputClass} />
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">T2</label>
-              <input type="text" value={t2} onChange={(e) => setT2(e.target.value)} placeholder="0:02:00" className={inputClass} />
+              <input type="text" value={t2} onChange={(e) => setT2(e.target.value)} placeholder="0:02:00" maxLength={9} className={inputClass} />
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5 block">Run</label>
-              <input type="text" value={run} onChange={(e) => setRun(e.target.value)} placeholder="2:05:00" className={inputClass} />
+              <input type="text" value={run} onChange={(e) => setRun(e.target.value)} placeholder="2:05:00" maxLength={9} className={inputClass} />
             </div>
           </div>
         </>

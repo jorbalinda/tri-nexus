@@ -3,6 +3,7 @@ import { authenticateRequest, validateBody, validateQuery, handleApiError } from
 import { WorkoutCreateSchema, WorkoutQuerySchema } from '@/lib/validation/schemas'
 import { computeDerivedFields, addImperialFields } from '@/lib/api/calculations'
 import type { UnitSystem } from '@/lib/units'
+import { refreshFitnessSnapshot, postActivityToFeed } from '@/lib/social/snapshot'
 
 export async function GET(request: NextRequest) {
   try {
@@ -97,6 +98,12 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) return handleApiError(error)
+
+    // Fire-and-forget social updates (don't block response)
+    Promise.all([
+      refreshFitnessSnapshot(user!.id),
+      postActivityToFeed(data.sport, data.id, user!.id),
+    ]).catch(console.error)
 
     return NextResponse.json(data, { status: 201 })
   } catch (err) {

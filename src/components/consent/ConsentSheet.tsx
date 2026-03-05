@@ -60,9 +60,17 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
             </button>
           </div>
 
-          <p className="text-[10px] text-gray-400 dark:text-gray-500 px-5 pb-2 shrink-0">
-            Version {POLICY_VERSION}
-          </p>
+          <div className="flex items-center justify-between px-5 pb-2 shrink-0">
+            <p className="text-[10px] text-gray-400 dark:text-gray-500">Version {POLICY_VERSION}</p>
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] text-blue-500 hover:underline"
+            >
+              View full policy ↗
+            </a>
+          </div>
 
           <div className="mx-5 h-px bg-gray-100 dark:bg-gray-800 shrink-0" />
 

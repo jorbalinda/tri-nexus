@@ -41,7 +41,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   const [tss, setTss] = useState('')
   const [rpe, setRpe] = useState('')
   const [calories, setCalories] = useState('')
-  const [notes, setNotes] = useState('')
   // Sync local units when profile preference changes
   useEffect(() => {
     setLocalUnits(isImperial ? 'imperial' : 'metric')
@@ -63,7 +62,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
     setTss('')
     setRpe('')
     setCalories('')
-    setNotes('')
   }
 
   const handleSave = async () => {
@@ -91,7 +89,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
         tss: tss ? parseFloat(tss) : null,
         rpe: rpe ? parseFloat(rpe) : null,
         calories: calories ? parseInt(calories) : null,
-        notes: notes || null,
       })
       setOpen(false)
       resetForm()
@@ -182,7 +179,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 min-w-0">
             <div className="col-span-full">
               <label className={LABEL_CLASS}>Title</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} />
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className={INPUT_CLASS} placeholder={`${sport.charAt(0).toUpperCase() + sport.slice(1)} Workout`} maxLength={100} />
             </div>
             <div className="col-span-full">
               <label className={LABEL_CLASS}>Date</label>
@@ -281,10 +278,6 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <label className={LABEL_CLASS}>Calories</label>
               <input type="number" value={calories} onChange={(e) => setCalories(e.target.value)} className={INPUT_CLASS} placeholder="600" />
             </div>
-          </div>
-          <div className="mb-4">
-            <label className={LABEL_CLASS}>Notes</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes..." rows={2} className={`${INPUT_CLASS} resize-none`} />
           </div>
           <div className="flex gap-2">
             <button

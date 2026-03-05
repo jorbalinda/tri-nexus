@@ -2,15 +2,15 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Flag, User, HelpCircle, Sun, Moon } from 'lucide-react'
+import { Home, Flag, User, HelpCircle, Sun, Moon, Users } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: Home, exact: true },
   { label: 'Races', href: '/dashboard/races', icon: Flag },
+  { label: 'Friends', href: '/dashboard/social', icon: Users },
   { label: 'Profile', href: '/dashboard/profile', icon: User },
-  { label: 'How It Works', href: '/dashboard/how-it-works', icon: HelpCircle },
 ]
 
 export default function BottomNav() {

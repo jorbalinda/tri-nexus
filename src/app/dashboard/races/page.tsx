@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react'
 import { useTargetRaces } from '@/hooks/useTargetRaces'
 import RaceCard from '@/components/races/RaceCard'
 import RaceForm from '@/components/races/RaceForm'
+import FitnessTrends from '@/components/dashboard/FitnessTrends'
 import type { TargetRace } from '@/lib/types/target-race'
 
 export default function RacesPage() {
@@ -46,6 +47,9 @@ export default function RacesPage() {
           </button>
         )}
       </div>
+
+      {/* Fitness / Fatigue / Form + Weekly Volume */}
+      <FitnessTrends />
 
       {showForm && (
         <div className="card-squircle p-6 sm:p-8">

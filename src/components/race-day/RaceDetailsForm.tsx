@@ -228,6 +228,7 @@ export default function RaceDetailsForm({
               onChange={(e) => update('race_name', e.target.value)}
               className={inputClass}
               placeholder="Ironman 70.3 Chattanooga"
+              maxLength={100}
               required
             />
           </div>

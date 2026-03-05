@@ -11,7 +11,6 @@ interface DeepDiveCardProps {
   confidence: number
   workoutCount: number
   daysUntilReveal: number
-  notes: string | null
 }
 
 const DIMENSION_LABELS: Record<string, string> = {
@@ -28,11 +27,10 @@ export default function DeepDiveCard({
   confidence,
   workoutCount,
   daysUntilReveal,
-  notes,
 }: DeepDiveCardProps) {
   const [open, setOpen] = useState(false)
 
-  const hasContent = breakdown || projection?.hr_adjustment || projection?.fitness_snapshot || notes
+  const hasContent = breakdown || projection?.hr_adjustment || projection?.fitness_snapshot
 
   if (!hasContent) return null
 
@@ -242,13 +240,6 @@ export default function DeepDiveCard({
             </div>
           </div>
 
-          {/* Notes */}
-          {notes && (
-            <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
-              <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">Notes</p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{notes}</p>
-            </div>
-          )}
         </div>
       )}
     </div>

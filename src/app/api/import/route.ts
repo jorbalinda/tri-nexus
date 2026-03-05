@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authenticateRequest, handleApiError } from '@/lib/api/utils'
 import { computeDerivedFields } from '@/lib/api/calculations'
+import { refreshFitnessSnapshot, postActivityToFeed } from '@/lib/social/snapshot'
 
 export async function POST(request: NextRequest) {
   try {
@@ -95,7 +96,6 @@ export async function POST(request: NextRequest) {
           max_hr: parsed.max_hr,
           calories: parsed.calories,
           rpe: parsed.rpe,
-          notes: parsed.notes,
           pool_length_meters: parsed.pool_length_meters,
           swolf: parsed.swolf,
           avg_power_watts: parsed.avg_power_watts,
@@ -122,6 +122,12 @@ export async function POST(request: NextRequest) {
         createdWorkouts.push(workout)
       }
     }
+
+    // Fire-and-forget social updates for the batch (don't block response)
+    Promise.all([
+      refreshFitnessSnapshot(user!.id),
+      ...createdWorkouts.map((w) => postActivityToFeed(w.sport, w.id, user!.id)),
+    ]).catch(console.error)
 
     return NextResponse.json({
       workouts: createdWorkouts,

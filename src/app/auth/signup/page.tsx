@@ -1,20 +1,45 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Waves, Bike, Footprints, ArrowLeft } from 'lucide-react'
+import { Waves, Bike, Footprints, ArrowLeft, Check, X, Loader2 } from 'lucide-react'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
+  const [username, setUsername] = useState('')
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle')
   const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Live username availability check (debounced 500ms)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (!username) {
+      setUsernameStatus('idle')
+      return
+    }
+    if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+      setUsernameStatus('invalid')
+      return
+    }
+
+    setUsernameStatus('checking')
+    debounceRef.current = setTimeout(async () => {
+      const { data } = await supabase.rpc('is_username_available', { p_username: username })
+      setUsernameStatus(data === true ? 'available' : 'taken')
+    }, 500)
+
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [username])
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,27 +47,36 @@ export default function SignupPage() {
       setError('Please accept the Privacy Policy to continue.')
       return
     }
+    if (usernameStatus !== 'available') {
+      setError('Please choose a valid, available username.')
+      return
+    }
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signUp({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { display_name: displayName } },
+      options: { data: { display_name: displayName, username } },
     })
 
-    if (error) {
-      setError(error.message)
+    if (signUpError) {
+      setError(signUpError.message)
       setLoading(false)
-    } else {
-      fetch('/api/email/welcome', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, displayName }),
-      }).catch(() => {})
-      router.push('/onboarding')
-      router.refresh()
+      return
     }
+
+    // Set username on the profile row (user is signed in after signUp)
+    await supabase.from('profiles').update({ username, display_name: displayName }).eq('id', (await supabase.auth.getUser()).data.user!.id)
+
+    fetch('/api/email/welcome', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, displayName }),
+    }).catch(() => {})
+
+    router.push('/onboarding')
+    router.refresh()
   }
 
   const handleOAuth = async (provider: 'google') => {
@@ -52,6 +86,9 @@ export default function SignupPage() {
     })
     if (error) setError(error.message)
   }
+
+  const inputClass = 'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
+  const labelClass = 'block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5'
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
@@ -120,22 +157,62 @@ export default function SignupPage() {
             )}
 
             <div>
-              <label htmlFor="signup-name" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
-                Display Name
+              <label htmlFor="signup-name" className={labelClass}>
+                Full Name
               </label>
               <input
                 id="signup-name"
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+                className={inputClass}
                 placeholder="Your name"
+                maxLength={50}
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="signup-email" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
+              <label htmlFor="signup-username" className={labelClass}>
+                Username
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 dark:text-gray-500 pointer-events-none">@</span>
+                <input
+                  id="signup-username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => {
+                  const raw = e.target.value.toLowerCase()
+                  const cleaned = raw.replace(/[^a-z0-9_]/g, '')
+                  setUsername(cleaned)
+                  if (raw !== cleaned && cleaned.length > 0) setUsernameStatus('invalid')
+                }}
+                  className={`${inputClass} pl-8 pr-10`}
+                  placeholder="yourhandle"
+                  maxLength={20}
+                  required
+                />
+                {/* Status icon */}
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  {usernameStatus === 'checking' && <Loader2 size={15} className="animate-spin text-gray-400" />}
+                  {usernameStatus === 'available' && <Check size={15} className="text-green-500" />}
+                  {(usernameStatus === 'taken' || usernameStatus === 'invalid') && <X size={15} className="text-red-500" />}
+                </div>
+              </div>
+              {usernameStatus === 'invalid' && (
+                <p className="text-xs text-red-500 mt-1">3–20 chars, lowercase letters, numbers, and underscores only</p>
+              )}
+              {usernameStatus === 'taken' && (
+                <p className="text-xs text-red-500 mt-1">That username is already taken</p>
+              )}
+              {usernameStatus === 'available' && (
+                <p className="text-xs text-green-500 mt-1">@{username} is available</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="signup-email" className={labelClass}>
                 Email
               </label>
               <input
@@ -143,14 +220,15 @@ export default function SignupPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+                className={inputClass}
                 placeholder="you@example.com"
+                maxLength={254}
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="signup-password" className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">
+              <label htmlFor="signup-password" className={labelClass}>
                 Password
               </label>
               <input
@@ -158,9 +236,10 @@ export default function SignupPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+                className={inputClass}
                 placeholder="Min 6 characters"
                 minLength={6}
+                maxLength={128}
                 required
               />
             </div>
@@ -175,7 +254,7 @@ export default function SignupPage() {
               />
               <span className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 I agree to the{' '}
-                <Link href="/dashboard/account/privacy" className="text-blue-500 hover:underline">
+                <Link href="/privacy" className="text-blue-500 hover:underline">
                   Privacy Policy
                 </Link>
                 . Tri Race Day collects your training data to generate race projections.
@@ -184,7 +263,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || usernameStatus !== 'available'}
               className="w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer mt-2"
             >
               {loading ? 'Creating account...' : 'Create Account'}

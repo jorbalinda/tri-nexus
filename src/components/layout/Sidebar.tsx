@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Flag, User, HelpCircle, LogOut, Sun, Moon } from 'lucide-react'
+import { Home, Flag, User, HelpCircle, LogOut, Sun, Moon, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: Home, exact: true },
   { label: 'Races', href: '/dashboard/races', icon: Flag },
+  { label: 'Friends', href: '/dashboard/social', icon: Users },
   { label: 'Profile', href: '/dashboard/profile', icon: User },
   { label: 'How It Works', href: '/dashboard/how-it-works', icon: HelpCircle },
 ]
@@ -43,7 +44,7 @@ export default function Sidebar() {
       <div>
         {/* Branding */}
         <div className="mb-12">
-          <p className="text-[10px] font-bold uppercase tracking-[3px] text-blue-500">
+          <p className="text-[11px] font-bold uppercase tracking-[3px] text-blue-500">
             RACE DAY
           </p>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Know Your Finish Line</p>
