@@ -3,15 +3,24 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { ChevronRight, ChevronLeft, Flag, Watch } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Watch, Search, X } from 'lucide-react'
 
 type RaceDistance = 'sprint' | 'olympic' | '70.3' | '140.6'
+
+interface CatalogueRace {
+  id: string
+  name: string
+  distance: RaceDistance
+  location: string | null
+  race_date: string | null
+}
 
 interface OnboardingData {
   raceName: string
   raceDistance: RaceDistance | null
   raceDate: string
   device: string
+  catalogueRaceId: string | null
 }
 
 const INITIAL_DATA: OnboardingData = {
@@ -19,6 +28,7 @@ const INITIAL_DATA: OnboardingData = {
   raceDistance: null,
   raceDate: '',
   device: '',
+  catalogueRaceId: null,
 }
 
 const RACE_DISTANCES: { value: RaceDistance; label: string; sub: string }[] = [
@@ -42,8 +52,59 @@ export default function OnboardingPage() {
   const [data, setData] = useState<OnboardingData>(INITIAL_DATA)
   const [visible, setVisible] = useState(true)
   const [transitioning, setTransitioning] = useState(false)
+  const [catalogueRaces, setCatalogueRaces] = useState<CatalogueRace[]>([])
+  const [raceSearch, setRaceSearch] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [useCustomRace, setUseCustomRace] = useState(false)
+  const searchRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  // Fetch races catalogue on mount
+  useEffect(() => {
+    supabase
+      .from('races_catalogue')
+      .select('id, name, distance, location, race_date')
+      .order('race_date', { ascending: true })
+      .then(({ data: races }) => {
+        if (races) setCatalogueRaces(races as CatalogueRace[])
+      })
+  }, [])
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const filteredRaces = catalogueRaces.filter((r) =>
+    r.name.toLowerCase().includes(raceSearch.toLowerCase()) ||
+    (r.location ?? '').toLowerCase().includes(raceSearch.toLowerCase())
+  ).slice(0, 8)
+
+  const selectCatalogueRace = (race: CatalogueRace) => {
+    setData((prev) => ({
+      ...prev,
+      raceName: race.name,
+      raceDistance: race.distance,
+      raceDate: race.race_date ?? prev.raceDate,
+      catalogueRaceId: race.id,
+    }))
+    setRaceSearch(race.name)
+    setShowDropdown(false)
+    setUseCustomRace(false)
+  }
+
+  const clearRaceSelection = () => {
+    setData((prev) => ({ ...prev, raceName: '', raceDistance: null, raceDate: '', catalogueRaceId: null }))
+    setRaceSearch('')
+    setUseCustomRace(false)
+  }
 
   const update = useCallback(
     <K extends keyof OnboardingData>(key: K, value: OnboardingData[K]) => {
@@ -110,38 +171,115 @@ export default function OnboardingPage() {
         </p>
       </div>
 
-      <div>
-        <label className={LABEL_CLASS}>Race Name (optional)</label>
-        <input
-          type="text"
-          value={data.raceName}
-          onChange={(e) => update('raceName', e.target.value)}
-          className={INPUT_CLASS}
-          placeholder="e.g. IRONMAN 70.3 Oceanside"
-        />
-      </div>
+      {/* Race search / selection */}
+      <div ref={searchRef}>
+        <label className={LABEL_CLASS}>Find Your Race</label>
 
-      <div>
-        <label className={LABEL_CLASS}>Distance</label>
-        <div className="grid grid-cols-2 gap-3">
-          {RACE_DISTANCES.map((d) => (
-            <button
-              key={d.value}
-              type="button"
-              onClick={() => update('raceDistance', d.value)}
-              className={`px-4 py-4 rounded-xl border text-left transition-all cursor-pointer ${
-                data.raceDistance === d.value
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 ring-2 ring-blue-500/30'
-                  : 'border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
-              }`}
-            >
-              <span className="block text-sm font-semibold text-gray-900 dark:text-gray-100">{d.label}</span>
-              <span className="block text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">{d.sub}</span>
+        {data.catalogueRaceId ? (
+          /* Selected race pill */
+          <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-blue-500 bg-blue-50 dark:bg-blue-950/40 ring-2 ring-blue-500/30">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{data.raceName}</p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 capitalize">
+                {data.raceDistance} · {data.raceDate || 'Date TBD'}
+              </p>
+            </div>
+            <button type="button" onClick={clearRaceSelection} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0">
+              <X size={16} />
             </button>
-          ))}
-        </div>
+          </div>
+        ) : useCustomRace ? (
+          /* Custom race name input */
+          <div className="flex flex-col gap-3">
+            <input
+              type="text"
+              value={data.raceName}
+              onChange={(e) => update('raceName', e.target.value.slice(0, 100))}
+              className={INPUT_CLASS}
+              placeholder="e.g. IRONMAN 70.3 Oceanside"
+              maxLength={100}
+              autoFocus
+            />
+            <button
+              type="button"
+              onClick={() => { setUseCustomRace(false); update('raceName', '') }}
+              className="text-xs text-blue-500 hover:underline text-left"
+            >
+              ← Search catalogue instead
+            </button>
+          </div>
+        ) : (
+          /* Search input + dropdown */
+          <div className="relative">
+            <div className="relative">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={raceSearch}
+                onChange={(e) => { setRaceSearch(e.target.value); setShowDropdown(true) }}
+                onFocus={() => setShowDropdown(true)}
+                className={`${INPUT_CLASS} pl-9`}
+                placeholder="Search races..."
+                maxLength={100}
+              />
+            </div>
+            {showDropdown && (
+              <div className="absolute z-10 w-full mt-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
+                {filteredRaces.length > 0 ? (
+                  filteredRaces.map((race) => (
+                    <button
+                      key={race.id}
+                      type="button"
+                      onMouseDown={() => selectCatalogueRace(race)}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0"
+                    >
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{race.name}</p>
+                      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 capitalize">
+                        {race.distance}{race.location ? ` · ${race.location}` : ''}{race.race_date ? ` · ${race.race_date}` : ''}
+                      </p>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-3 text-sm text-gray-400">No races found</div>
+                )}
+                <button
+                  type="button"
+                  onMouseDown={() => { setShowDropdown(false); setUseCustomRace(true) }}
+                  className="w-full text-left px-4 py-3 text-sm text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 border-t border-gray-100 dark:border-gray-800 font-medium"
+                >
+                  + My race isn&apos;t listed — enter manually
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
+      {/* Distance — hidden if pre-filled from catalogue */}
+      {!data.catalogueRaceId && (
+        <div>
+          <label className={LABEL_CLASS}>Distance</label>
+          <div className="grid grid-cols-2 gap-3">
+            {RACE_DISTANCES.map((d) => (
+              <button
+                key={d.value}
+                type="button"
+                onClick={() => update('raceDistance', d.value)}
+                className={`px-4 py-4 rounded-xl border text-left transition-all cursor-pointer ${
+                  data.raceDistance === d.value
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 ring-2 ring-blue-500/30'
+                    : 'border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
+                }`}
+              >
+                <span className="block text-sm font-semibold text-gray-900 dark:text-gray-100">{d.label}</span>
+                <span className="block text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">{d.sub}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Race date — always shown, pre-filled if from catalogue */}
       <div>
         <label className={LABEL_CLASS}>Race Date</label>
         <input
