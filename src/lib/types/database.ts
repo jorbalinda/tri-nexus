@@ -79,6 +79,7 @@ export interface Workout {
   max_cadence: number | null
   total_descent_meters: number | null
   tss_source: 'device' | 'power' | 'pace' | 'hr' | 'rpe' | null
+  suffer_score: number | null
   created_at: string
 }
 
