@@ -13,7 +13,7 @@ interface CatalogueRace {
   race_distance: RaceDistance
   location_city: string | null
   location_country: string | null
-  typical_race_month: number | null
+  next_race_date: string | null
 }
 
 interface OnboardingData {
@@ -65,7 +65,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     supabase
       .from('race_courses')
-      .select('id, name, race_distance, location_city, location_country, typical_race_month')
+      .select('id, name, race_distance, location_city, location_country, next_race_date')
       .is('user_id', null)
       .order('name', { ascending: true })
       .then(({ data: races }) => {
@@ -95,7 +95,7 @@ export default function OnboardingPage() {
       ...prev,
       raceName: race.name,
       raceDistance: race.race_distance,
-      raceDate: prev.raceDate,
+      raceDate: race.next_race_date ?? prev.raceDate,
       catalogueRaceId: race.id,
     }))
     setRaceSearch(race.name)
