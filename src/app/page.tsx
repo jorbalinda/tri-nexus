@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Flag, Waves, Bike, Footprints, ArrowRight, Timer, TrendingUp, Target } from 'lucide-react'
 
