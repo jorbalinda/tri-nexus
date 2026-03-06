@@ -67,7 +67,7 @@ export default function RaceDetailClient({ initialRace, initialLogs, initialWork
     initialLogs,
   })
   const { workouts } = useWorkouts(undefined, initialWorkouts)
-  const { course, weather, loading: conditionsLoading } = useCourseConditions(initialRace.race_course_id ?? null, raceId, initialCourse, initialWeather)
+  const { course, weather, loading: conditionsLoading } = useCourseConditions(initialRace.race_course_id ?? null, raceId, initialCourse, initialWeather, initialRace.race_date)
 
   const trainingLoad = useMemo(() => {
     if (workouts.length === 0) return null

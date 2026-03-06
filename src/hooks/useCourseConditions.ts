@@ -10,11 +10,21 @@ interface CourseConditionsResult {
   loading: boolean
 }
 
+/** Returns the stale threshold in ms based on how many days until the race. */
+function weatherStaleMs(raceDate: string): number | null {
+  const daysOut = Math.ceil((new Date(raceDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+  if (daysOut > 15) return null          // forecast window — don't bother
+  if (daysOut > 7)  return 12 * 3600_000 // 12 hours
+  if (daysOut > 3)  return  6 * 3600_000 // 6 hours
+  return                     3 * 3600_000 // 3 hours within 3 days
+}
+
 export function useCourseConditions(
   raceCourseId: string | null,
   raceId: string,
   initialCourse?: RaceCourse | null,
   initialWeather?: RaceWeather | null,
+  raceDate?: string,
 ): CourseConditionsResult {
   const [course, setCourse] = useState<RaceCourse | null>(initialCourse ?? null)
   const [weather, setWeather] = useState<RaceWeather | null>(initialWeather ?? null)
@@ -31,8 +41,14 @@ export function useCourseConditions(
     if (hasInitialData.current) {
       hasInitialData.current = false
       // SSR provided course data — skip DB fetch.
-      // Still trigger on-demand weather fetch if weather wasn't in DB.
-      if (!initialWeather) {
+      // Trigger on-demand weather refresh if: no weather exists, or data is stale
+      // relative to how close the race is.
+      const staleMs = raceDate ? weatherStaleMs(raceDate) : null
+      const isStale = initialWeather && staleMs !== null
+        ? Date.now() - new Date(initialWeather.fetched_at).getTime() > staleMs
+        : false
+
+      if (!initialWeather || isStale) {
         fetch(`/api/weather/${raceId}`)
           .then((res) => (res.ok ? res.json() : null))
           .then((data) => { if (data && !data.error) setWeather(data as RaceWeather) })
