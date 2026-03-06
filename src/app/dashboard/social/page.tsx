@@ -1,15 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getSocialFeed, getMyFitnessPercentiles, getPendingFollowRequests } from '@/app/actions/social'
-import dynamic from 'next/dynamic'
-const FitnessFingerprint = dynamic(() => import('@/components/social/FitnessFingerprint'), {
-  ssr: false,
-  loading: () => (
-    <div className="card-squircle p-4 sm:p-6">
-      <div className="h-56 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
-    </div>
-  ),
-})
+import FitnessFingerprint from '@/components/social/FitnessFingerprint'
 import ActivityFeed from '@/components/social/ActivityFeed'
 import UserSearch from '@/components/social/UserSearch'
 import FollowRequests from '@/components/social/FollowRequests'
