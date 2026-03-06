@@ -4,10 +4,11 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Workout } from '@/lib/types/database'
 
-export function useWorkouts(sport?: string) {
-  const [workouts, setWorkouts] = useState<Workout[]>([])
-  const [loading, setLoading] = useState(true)
+export function useWorkouts(sport?: string, initialData?: Workout[]) {
+  const [workouts, setWorkouts] = useState<Workout[]>(initialData ?? [])
+  const [loading, setLoading] = useState(initialData === undefined)
   const supabaseRef = useRef(createClient())
+  const hasInitialData = useRef(initialData !== undefined)
 
   const fetchWorkouts = useCallback(async () => {
     setLoading(true)
@@ -28,6 +29,11 @@ export function useWorkouts(sport?: string) {
   }, [sport])
 
   useEffect(() => {
+    if (hasInitialData.current) {
+      // Skip the initial fetch — use SSR data. Reset so sport changes still trigger refetch.
+      hasInitialData.current = false
+      return
+    }
     fetchWorkouts()
   }, [fetchWorkouts])
 

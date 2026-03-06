@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { RaceCourse, RaceWeather } from '@/lib/types/race-plan'
 
@@ -12,16 +12,32 @@ interface CourseConditionsResult {
 
 export function useCourseConditions(
   raceCourseId: string | null,
-  raceId: string
+  raceId: string,
+  initialCourse?: RaceCourse | null,
+  initialWeather?: RaceWeather | null,
 ): CourseConditionsResult {
-  const [course, setCourse] = useState<RaceCourse | null>(null)
-  const [weather, setWeather] = useState<RaceWeather | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [course, setCourse] = useState<RaceCourse | null>(initialCourse ?? null)
+  const [weather, setWeather] = useState<RaceWeather | null>(initialWeather ?? null)
+  const [loading, setLoading] = useState(initialCourse === undefined)
   const supabase = createClient()
+  const hasInitialData = useRef(initialCourse !== undefined)
 
   useEffect(() => {
     if (!raceId) {
       setLoading(false)
+      return
+    }
+
+    if (hasInitialData.current) {
+      hasInitialData.current = false
+      // SSR provided course data — skip DB fetch.
+      // Still trigger on-demand weather fetch if weather wasn't in DB.
+      if (!initialWeather) {
+        fetch(`/api/weather/${raceId}`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => { if (data && !data.error) setWeather(data as RaceWeather) })
+          .catch(() => {})
+      }
       return
     }
 
@@ -58,7 +74,7 @@ export function useCourseConditions(
     }
 
     fetchData()
-  }, [raceCourseId, raceId, supabase])
+  }, [raceCourseId, raceId, supabase, initialWeather])
 
   return { course, weather, loading }
 }

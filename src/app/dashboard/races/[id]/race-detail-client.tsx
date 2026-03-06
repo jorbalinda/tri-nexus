@@ -4,7 +4,9 @@ import { useMemo } from 'react'
 import { ArrowLeft, Trophy, ChevronRight, ListChecks, Zap } from 'lucide-react'
 import Link from 'next/link'
 import type { TargetRace } from '@/lib/types/target-race'
-import type { ManualLog } from '@/lib/types/database'
+import type { ManualLog, Workout } from '@/lib/types/database'
+import type { RaceProjection } from '@/lib/types/projection'
+import type { RaceCourse, RaceWeather } from '@/lib/types/race-plan'
 import { useProjection } from '@/hooks/useProjection'
 import { useWorkouts } from '@/hooks/useWorkouts'
 import { useCourseConditions } from '@/hooks/useCourseConditions'
@@ -50,13 +52,22 @@ const PRIORITY_STYLES: Record<string, string> = {
 interface Props {
   initialRace: TargetRace
   initialLogs: ManualLog[]
+  initialWorkouts: Workout[]
+  initialProjection: RaceProjection | null
+  initialCourse: RaceCourse | null
+  initialWeather: RaceWeather | null
 }
 
-export default function RaceDetailClient({ initialRace, initialLogs }: Props) {
+export default function RaceDetailClient({ initialRace, initialLogs, initialWorkouts, initialProjection, initialCourse, initialWeather }: Props) {
   const raceId = initialRace.id
-  const { projection, loading: projLoading, sufficiency, tierTransition, dismissTierTransition } = useProjection(raceId)
-  const { workouts } = useWorkouts()
-  const { course, weather, loading: conditionsLoading } = useCourseConditions(initialRace.race_course_id ?? null, raceId)
+  const { projection, loading: projLoading, sufficiency, tierTransition, dismissTierTransition } = useProjection(raceId, {
+    initialProjection,
+    race: initialRace,
+    initialWorkouts,
+    initialLogs,
+  })
+  const { workouts } = useWorkouts(undefined, initialWorkouts)
+  const { course, weather, loading: conditionsLoading } = useCourseConditions(initialRace.race_course_id ?? null, raceId, initialCourse, initialWeather)
 
   const trainingLoad = useMemo(() => {
     if (workouts.length === 0) return null

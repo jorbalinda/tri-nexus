@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { RaceProjection } from '@/lib/types/projection'
 import type { TargetRace } from '@/lib/types/target-race'
@@ -8,6 +8,13 @@ import { isProjectionStale, isRevealEligible } from '@/lib/analytics/projection-
 import { generateProjection } from '@/lib/analytics/projection-engine'
 import { evaluateSufficiencyFromWorkouts, type SufficiencyResult } from '@/lib/analytics/data-sufficiency'
 import type { Workout, ManualLog, SessionMetric } from '@/lib/types/database'
+
+interface ProjectionOptions {
+  initialProjection?: RaceProjection | null
+  race?: TargetRace
+  initialWorkouts?: Workout[]
+  initialLogs?: ManualLog[]
+}
 
 export interface TierTransition {
   from: number
@@ -23,9 +30,12 @@ function getTierDismissKey(raceId: string, from: number, to: number): string {
   return `tier-transition-dismissed-${raceId}-${from}-${to}`
 }
 
-export function useProjection(raceId: string) {
-  const [projection, setProjection] = useState<RaceProjection | null>(null)
-  const [loading, setLoading] = useState(true)
+export function useProjection(raceId: string, options?: ProjectionOptions) {
+  const initialDataRef = useRef(options)
+  const [projection, setProjection] = useState<RaceProjection | null>(
+    options?.initialProjection !== undefined ? options.initialProjection : null
+  )
+  const [loading, setLoading] = useState(options?.initialProjection === undefined)
   const [recalculating, setRecalculating] = useState(false)
   const [sufficiency, setSufficiency] = useState<SufficiencyResult | null>(null)
   const [tierTransition, setTierTransition] = useState<TierTransition | null>(null)
@@ -172,31 +182,44 @@ export function useProjection(raceId: string) {
 
   useEffect(() => {
     async function init() {
-      setLoading(true)
+      const opts = initialDataRef.current
 
-      // Get latest projection
-      const latest = await fetchLatestProjection()
+      // Only show loading state if we have no initial projection to display
+      if (opts?.initialProjection === undefined) {
+        setLoading(true)
+      }
+
+      // Get latest projection — skip if provided via SSR
+      const latest = opts?.initialProjection !== undefined
+        ? opts.initialProjection
+        : await fetchLatestProjection()
       setProjection(latest)
 
-      // Get the race to check staleness
-      const { data: race } = await supabase
-        .from('target_races')
-        .select('*')
-        .eq('id', raceId)
-        .single()
+      // Get the race to check staleness — skip if provided via SSR
+      const raceData: TargetRace | null = opts?.race
+        ?? (await supabase.from('target_races').select('*').eq('id', raceId).single()).data as TargetRace | null
 
-      if (race && isProjectionStale(latest, race.race_date)) {
-        await recalculate(race as TargetRace)
-      } else if (race) {
-        // Even if projection isn't stale, evaluate sufficiency for display
-        const [{ data: workouts }, { data: logs }] = await Promise.all([
-          supabase.from('workouts').select('*').is('deleted_at', null).order('date'),
-          supabase.from('manual_logs').select('*'),
-        ])
+      if (raceData && isProjectionStale(latest, raceData.race_date)) {
+        await recalculate(raceData)
+      } else if (raceData) {
+        // Even if projection isn't stale, evaluate sufficiency for display.
+        // Skip workouts/logs fetch if provided via SSR.
+        let typedWorkouts: Workout[]
+        let typedLogs: ManualLog[]
 
-        const typedWorkouts = (workouts as Workout[]) || []
-        const typedLogs = (logs as ManualLog[]) || []
-        const suff = evaluateSufficiencyFromWorkouts(typedWorkouts, typedLogs, race as TargetRace)
+        if (opts?.initialWorkouts !== undefined && opts?.initialLogs !== undefined) {
+          typedWorkouts = opts.initialWorkouts
+          typedLogs = opts.initialLogs
+        } else {
+          const [{ data: workouts }, { data: logs }] = await Promise.all([
+            supabase.from('workouts').select('*').is('deleted_at', null).order('date'),
+            supabase.from('manual_logs').select('*'),
+          ])
+          typedWorkouts = (workouts as Workout[]) || []
+          typedLogs = (logs as ManualLog[]) || []
+        }
+
+        const suff = evaluateSufficiencyFromWorkouts(typedWorkouts, typedLogs, raceData)
 
         // Load previous tier and detect transitions
         const previousTierStr = typeof window !== 'undefined'
