@@ -228,6 +228,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-6 text-sm text-gray-400 dark:text-gray-500">
             <Link href="/auth/login" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Sign In</Link>
             <Link href="/auth/signup" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Get Started</Link>
+            <Link href="/privacy" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </footer>
