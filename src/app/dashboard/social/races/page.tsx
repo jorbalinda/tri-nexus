@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
@@ -229,7 +230,7 @@ export default async function RacesLeaderboardPage() {
 
                       <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 text-xs font-semibold text-blue-600 dark:text-blue-400 overflow-hidden">
                         {entry.avatar_url
-                          ? <img src={entry.avatar_url} alt={entry.display_name} className="w-full h-full object-cover" />
+                          ? <Image src={entry.avatar_url} alt={entry.display_name} width={32} height={32} className="w-full h-full object-cover" unoptimized />
                           : entry.display_name.charAt(0).toUpperCase()
                         }
                       </div>

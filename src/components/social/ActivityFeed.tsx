@@ -1,7 +1,21 @@
-'use client'
-
-import { formatDistanceToNow } from 'date-fns'
+import Image from 'next/image'
 import type { FeedItem } from '@/lib/types/social'
+
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const seconds = Math.floor(diff / 1000)
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+  if (seconds < 60) return rtf.format(-seconds, 'second')
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return rtf.format(-minutes, 'minute')
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return rtf.format(-hours, 'hour')
+  const days = Math.floor(hours / 24)
+  if (days < 30) return rtf.format(-days, 'day')
+  const months = Math.floor(days / 30)
+  if (months < 12) return rtf.format(-months, 'month')
+  return rtf.format(-Math.floor(months / 12), 'year')
+}
 
 const SPORT_EMOJI: Record<string, string> = {
   swim: '🏊',
@@ -50,7 +64,7 @@ export default function ActivityFeed({ items }: Props) {
           const name = item.profile?.display_name ?? 'Athlete'
           const emoji = SPORT_EMOJI[item.activity_type] ?? '🏅'
           const label = SPORT_LABEL[item.activity_type] ?? item.activity_type
-          const time = formatDistanceToNow(new Date(item.created_at), { addSuffix: true })
+          const time = relativeTime(item.created_at)
 
           // Extract metadata fields if present
           const meta = item.metadata as {
@@ -66,10 +80,13 @@ export default function ActivityFeed({ items }: Props) {
             >
               {/* Avatar */}
               {item.profile?.avatar_url ? (
-                <img
+                <Image
                   src={item.profile.avatar_url}
                   alt={name}
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5"
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover flex-shrink-0 mt-0.5"
+                  unoptimized
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mt-0.5">

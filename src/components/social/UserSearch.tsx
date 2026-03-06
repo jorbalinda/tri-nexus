@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useTransition } from 'react'
 import { Search, Loader2 } from 'lucide-react'
 import { searchUsers } from '@/app/actions/social'
@@ -66,7 +67,7 @@ export default function UserSearch() {
             <div key={r.user_id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/50 dark:bg-gray-800/30">
               <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-blue-600 dark:text-blue-400 overflow-hidden">
                 {r.avatar_url
-                  ? <img src={r.avatar_url} alt={r.display_name} className="w-full h-full object-cover" />
+                  ? <Image src={r.avatar_url} alt={r.display_name} width={36} height={36} className="w-full h-full object-cover" unoptimized />
                   : r.display_name.charAt(0).toUpperCase()
                 }
               </div>

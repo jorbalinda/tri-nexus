@@ -5,7 +5,16 @@ import { Plus } from 'lucide-react'
 import { useTargetRaces } from '@/hooks/useTargetRaces'
 import RaceCard from '@/components/races/RaceCard'
 import RaceForm from '@/components/races/RaceForm'
-import FitnessTrends from '@/components/dashboard/FitnessTrends'
+import dynamic from 'next/dynamic'
+const FitnessTrends = dynamic(() => import('@/components/dashboard/FitnessTrends'), {
+  ssr: false,
+  loading: () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="card-squircle p-5"><div className="h-56 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" /></div>
+      <div className="card-squircle p-5"><div className="h-56 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" /></div>
+    </div>
+  ),
+})
 import type { TargetRace } from '@/lib/types/target-race'
 
 export default function RacesPage() {

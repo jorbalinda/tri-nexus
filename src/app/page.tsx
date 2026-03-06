@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 import { Flag, Waves, Bike, Footprints, ArrowRight, Timer, TrendingUp, Target } from 'lucide-react'
 
@@ -189,7 +187,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Dashboard & fitness trends</li>
                 <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Projection progress indicator</li>
                 <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Race week finish time reveal</li>
-                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Full race day plan + PDF export</li>
+                <li className="flex items-center gap-2"><span className="text-green-500">&#10003;</span> Full race day plan</li>
               </ul>
               <Link
                 href="/auth/signup"

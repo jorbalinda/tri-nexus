@@ -1,5 +1,3 @@
-'use client'
-
 import Sidebar from '@/components/layout/Sidebar'
 import BottomNav from '@/components/layout/BottomNav'
 import { UnitProvider } from '@/hooks/useUnits'
