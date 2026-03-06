@@ -11,9 +11,13 @@ export function useTargetRaces() {
 
   const fetch = useCallback(async () => {
     setLoading(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setLoading(false); return }
+
     const { data } = await supabase
       .from('target_races')
       .select('id, user_id, race_name, race_date, race_distance, priority, status, goal_time_seconds, race_course_id, race_type, water_type, wetsuit, expected_temp_f, gun_start_time, notes')
+      .eq('user_id', user.id)
       .order('race_date', { ascending: true })
       .limit(50)
 
