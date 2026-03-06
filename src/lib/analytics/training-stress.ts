@@ -355,7 +355,11 @@ function calculateEWMASeries(workouts: Workout[], period: number, thresholds?: A
 
   const dates = Array.from(dailyTSS.keys()).sort()
   const startDate = new Date(dates[0])
-  const endDate = new Date(dates[dates.length - 1])
+  // Extend through today so ATL/CTL keep decaying during rest days
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const lastWorkout = new Date(dates[dates.length - 1])
+  const endDate = today > lastWorkout ? today : lastWorkout
 
   // Standard PMC decay: 1/period
   const alpha = 1 / period
