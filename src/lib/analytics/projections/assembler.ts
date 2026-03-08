@@ -108,8 +108,8 @@ export function generateProjectionV2(
   // Derive fitness metrics — profile thresholds are authoritative when set
   const maxHR = deriveMaxHR(workouts)
   const restingHR = deriveRestingHR(logs)
-  const ftp = estimateFTPFromWorkouts(workouts) ?? profileThresholds?.ftp_watts
-  const css = estimateCSSFromWorkouts(workouts, maxHR) ?? profileThresholds?.threshold_pace_swim
+  const ftp = estimateFTPFromWorkouts(workouts) ?? profileThresholds?.ftp_watts ?? null
+  const css = estimateCSSFromWorkouts(workouts, maxHR) ?? profileThresholds?.threshold_pace_swim ?? null
   const lthrBike = estimateLTHR(workouts, 'bike')
   const lthrRun = estimateLTHR(workouts, 'run')
 
