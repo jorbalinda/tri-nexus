@@ -7,7 +7,7 @@ import ParticleBurst from '@/components/ui/ParticleBurst'
 import { useUnits } from '@/hooks/useUnits'
 import { secPerKmToSecPerMile, secPerMileToSecPerKm, secPer100mToSecPer100yd, secPer100ydToSecPer100m } from '@/lib/units'
 
-const INPUT_CLASS = 'w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all'
+const INPUT_CLASS = 'w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4361ee]/30 transition-all'
 const LABEL_CLASS = 'block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1'
 
 function formatPace(sec: number | null): string {
@@ -103,31 +103,31 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
       <div className="card-squircle p-4 sm:p-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={15} className="text-green-500" />
+            <CheckCircle2 size={15} className="text-[#4cc9a0]" />
             <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
               Thresholds Set
             </p>
           </div>
           <button
             onClick={() => setEditing(true)}
-            className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="flex items-center gap-1 text-xs text-[#57a2ea] hover:text-[#7ab8f0] transition-colors"
           >
             <Pencil size={11} /> Update
           </button>
         </div>
         <div className="grid grid-cols-3 gap-2">
-          <div className="p-2.5 rounded-xl bg-orange-50/50 dark:bg-orange-950/20 text-center">
-            <Zap size={13} className="text-orange-500 mx-auto mb-1" />
+          <div className="p-2.5 rounded-xl bg-[#fb8500]/8 text-center">
+            <Zap size={13} className="text-[#fb8500] mx-auto mb-1" />
             <p className="text-xs font-bold text-gray-900 dark:text-gray-100">{thresholds.ftp_watts}W</p>
             <p className="text-[10px] text-gray-400 dark:text-gray-500">FTP</p>
           </div>
-          <div className="p-2.5 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 text-center">
-            <Waves size={13} className="text-blue-500 mx-auto mb-1" />
+          <div className="p-2.5 rounded-xl bg-[#219ebc]/8 text-center">
+            <Waves size={13} className="text-[#219ebc] mx-auto mb-1" />
             <p className="text-xs font-bold text-gray-900 dark:text-gray-100">{formatPace(cssDisplay)}</p>
             <p className="text-[10px] text-gray-400 dark:text-gray-500">CSS / 100{isImperial ? 'yd' : 'm'}</p>
           </div>
-          <div className="p-2.5 rounded-xl bg-green-50/50 dark:bg-green-950/20 text-center">
-            <Footprints size={13} className="text-green-500 mx-auto mb-1" />
+          <div className="p-2.5 rounded-xl bg-[#4cc9a0]/8 text-center">
+            <Footprints size={13} className="text-[#4cc9a0] mx-auto mb-1" />
             <p className="text-xs font-bold text-gray-900 dark:text-gray-100">{formatPace(runDisplay)}</p>
             <p className="text-[10px] text-gray-400 dark:text-gray-500">Run / {isImperial ? 'mi' : 'km'}</p>
           </div>
@@ -140,7 +140,7 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
   return (
     <div className="card-squircle p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-1">
-        <Zap size={15} className="text-purple-500" />
+        <Zap size={15} className="text-[#4361ee]" />
         <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
           Set Your Thresholds
         </p>
