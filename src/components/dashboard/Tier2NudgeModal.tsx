@@ -94,7 +94,7 @@ export default function Tier2NudgeModal() {
         stubRace
       )
 
-      if (result.tier === 2) setOpen(true)
+      if (result.tier >= 1 && result.tier < 3) setOpen(true)
     }
 
     check()
