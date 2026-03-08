@@ -344,7 +344,7 @@ export default function ProjectionHero({
         <div className="flex items-center gap-1.5 shrink-0">
           {/* HR-Enhanced badge */}
           {hrActive && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#219ebc]/10 text-[#219ebc] text-[10px] font-bold">
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#d62828]/10 text-[#d62828] text-[10px] font-bold">
               <Activity size={10} />
               HR
             </span>

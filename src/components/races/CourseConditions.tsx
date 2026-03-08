@@ -22,10 +22,10 @@ const PROFILE_LABELS: Record<string, string> = {
 }
 
 const QUALITY_LABELS: Record<string, { label: string; color: string }> = {
-  excellent: { label: 'Excellent', color: 'text-green-600 dark:text-green-400' },
-  good: { label: 'Good', color: 'text-blue-600 dark:text-blue-400' },
-  fair: { label: 'Fair', color: 'text-orange-600 dark:text-orange-400' },
-  poor: { label: 'Poor', color: 'text-red-600 dark:text-red-400' },
+  excellent: { label: 'Excellent', color: 'text-[#4cc9a0]' },
+  good: { label: 'Good', color: 'text-[#57a2ea]' },
+  fair: { label: 'Fair', color: 'text-[#e2622c]' },
+  poor: { label: 'Poor', color: 'text-[#d62828]' },
 }
 
 function windCompass(deg: number): string {
@@ -71,7 +71,7 @@ export default function CourseConditions({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
         <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center gap-2 mb-1">
-            <Waves size={12} className="text-blue-500" />
+            <Waves size={12} className="text-[#219ebc]" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Swim</span>
           </div>
           <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -80,7 +80,7 @@ export default function CourseConditions({
         </div>
         <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center gap-2 mb-1">
-            <Bike size={12} className="text-orange-500" />
+            <Bike size={12} className="text-[#fb8500]" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Bike</span>
           </div>
           <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -89,7 +89,7 @@ export default function CourseConditions({
         </div>
         <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center gap-2 mb-1">
-            <PersonStanding size={12} className="text-green-500" />
+            <PersonStanding size={12} className="text-[#4cc9a0]" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Run</span>
           </div>
           <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -101,7 +101,7 @@ export default function CourseConditions({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
         <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center gap-2 mb-1">
-            <Mountain size={12} className="text-amber-500" />
+            <Mountain size={12} className="text-[#fb8500]" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Elevation</span>
           </div>
           <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -110,7 +110,7 @@ export default function CourseConditions({
         </div>
         <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center gap-2 mb-1">
-            <Route size={12} className="text-purple-500" />
+            <Route size={12} className="text-[#4361ee]" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Profile</span>
           </div>
           <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -145,7 +145,7 @@ export default function CourseConditions({
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <Thermometer size={12} className="text-red-500" />
+                <Thermometer size={12} className="text-[#d62828]" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Temperature</span>
               </div>
               <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -154,7 +154,7 @@ export default function CourseConditions({
             </div>
             <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <Droplets size={12} className="text-blue-500" />
+                <Droplets size={12} className="text-[#219ebc]" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Humidity</span>
               </div>
               <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -163,7 +163,7 @@ export default function CourseConditions({
             </div>
             <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <Wind size={12} className="text-teal-500" />
+                <Wind size={12} className="text-[#2a9d8f]" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Wind</span>
               </div>
               <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -179,7 +179,7 @@ export default function CourseConditions({
             </div>
             <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
               <div className="flex items-center gap-2 mb-1">
-                <ThermometerSun size={12} className="text-cyan-500" />
+                <ThermometerSun size={12} className="text-[#219ebc]" />
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Water Temp</span>
               </div>
               <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
@@ -219,10 +219,10 @@ export default function CourseConditions({
         </div>
       ) : (
         /* Within 15 days but weather hasn't been fetched yet */
-        <div className="p-4 rounded-xl bg-orange-50/50 dark:bg-orange-950/10 border border-orange-200 dark:border-orange-900/30">
+        <div className="p-4 rounded-xl bg-[#fb8500]/5 border border-[#fb8500]/20">
           <div className="flex items-start gap-2">
-            <Info size={14} className="text-orange-500 mt-0.5 shrink-0" />
-            <p className="text-xs text-orange-600 dark:text-orange-400">
+            <Info size={14} className="text-[#fb8500] mt-0.5 shrink-0" />
+            <p className="text-xs text-[#fb8500]/80">
               Weather data is being fetched. Check back shortly.
             </p>
           </div>
