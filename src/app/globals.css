@@ -104,7 +104,7 @@ body {
 }
 
 .dark [data-section="dashboard"] .card-squircle {
-  background: linear-gradient(145deg, #0e3f80 0%, #010611 100%);
+  background: linear-gradient(145deg, #052d5c 0%, #010b1e 100%);
   border-color: rgba(87, 162, 234, 0.2);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 8px 32px rgba(0, 0, 0, 0.45);
 }
