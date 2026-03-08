@@ -13,6 +13,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: 'cover',
+  themeColor: '#023047',
 }
 
 export const metadata: Metadata = {
@@ -23,14 +24,14 @@ export const metadata: Metadata = {
     description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
     url: "https://triraceday.com",
     siteName: "Tri Race Day",
-    images: [{ url: "/icon.png", width: 512, height: 512 }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
     type: "website",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Race Day | Know Your Finish Line",
     description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
-    images: ["/icon.png"],
+    images: ["/opengraph-image"],
   },
 };
 
