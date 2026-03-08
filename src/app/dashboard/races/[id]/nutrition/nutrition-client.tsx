@@ -124,7 +124,7 @@ export default function NutritionClient({ race, profile }: Props) {
           <button
             onClick={handleGenerate}
             disabled={generating || !profile?.weight_kg}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
           >
             <Zap size={16} />
             {generating ? 'Generating...' : 'Generate Nutrition Plan'}

@@ -19,10 +19,10 @@ interface FullWorkout extends Workout {
 }
 
 const SPORT_LABELS: Record<string, { label: string; icon: typeof Waves; color: string }> = {
-  swim: { label: 'Swim', icon: Waves, color: 'text-blue-600' },
-  bike: { label: 'Bike', icon: Bike, color: 'text-orange-600' },
-  run: { label: 'Run', icon: Footprints, color: 'text-green-600' },
-  brick: { label: 'Brick', icon: Bike, color: 'text-purple-600' },
+  swim: { label: 'Swim', icon: Waves, color: 'text-swim' },
+  bike: { label: 'Bike', icon: Bike, color: 'text-bike' },
+  run: { label: 'Run', icon: Footprints, color: 'text-run' },
+  brick: { label: 'Brick', icon: Bike, color: 'text-brick' },
 }
 
 const ZONE_COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#f97316', '#ef4444', '#dc2626', '#991b1b']

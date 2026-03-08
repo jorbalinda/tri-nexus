@@ -552,7 +552,7 @@ export default function RaceDetailsForm({
         <button
           type="submit"
           disabled={generating || !form.race_name}
-          className="w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+          className="w-full py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
         >
           {generating ? 'Generating Plan...' : 'Generate Race Plan'}
         </button>

@@ -40,7 +40,7 @@ export function estimateLT(maxHR: number, restingHR: number): LTEstimate {
       name: 'Recovery',
       minHR: restingHR,
       maxHR: z1Ceil,
-      color: '#22c55e',
+      color: '#219ebc',
       description: 'Easy effort, active recovery',
     },
     {
@@ -48,7 +48,7 @@ export function estimateLT(maxHR: number, restingHR: number): LTEstimate {
       name: 'Aerobic Base',
       minHR: z1Ceil + 1,
       maxHR: lt1,
-      color: '#3b82f6',
+      color: '#2a9d8f',
       description: 'Endurance building, fat oxidation',
     },
     {
@@ -56,7 +56,7 @@ export function estimateLT(maxHR: number, restingHR: number): LTEstimate {
       name: 'Tempo',
       minHR: lt1 + 1,
       maxHR: lt2,
-      color: '#f59e0b',
+      color: '#fb8500',
       description: 'Between thresholds, moderate intensity',
     },
     {
@@ -64,7 +64,7 @@ export function estimateLT(maxHR: number, restingHR: number): LTEstimate {
       name: 'Threshold',
       minHR: lt2 + 1,
       maxHR: z4Ceil,
-      color: '#f97316',
+      color: '#e2622c',
       description: 'Above LT2, sustained hard effort',
     },
     {
@@ -72,7 +72,7 @@ export function estimateLT(maxHR: number, restingHR: number): LTEstimate {
       name: 'VO2max',
       minHR: z4Ceil + 1,
       maxHR: maxHR,
-      color: '#ef4444',
+      color: '#d62828',
       description: 'Max effort, short intervals',
     },
   ]

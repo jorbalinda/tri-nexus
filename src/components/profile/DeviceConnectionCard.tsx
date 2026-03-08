@@ -63,7 +63,7 @@ export default function DeviceConnectionCard() {
             <div
               className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-colors ${
                 consent?.consented
-                  ? 'bg-green-50/50 dark:bg-green-950/10 border-green-100 dark:border-green-900/30'
+                  ? 'bg-[#ffb703]/5 dark:bg-[#ffb703]/5 border-[#ffb703]/20 dark:border-[#ffb703]/20'
                   : 'bg-amber-50/50 dark:bg-amber-950/10 border-amber-100 dark:border-amber-900/30 hover:bg-amber-50 dark:hover:bg-amber-950/20'
               }`}
               onClick={() => !consent?.consented && setShowConsentSheet(true)}
@@ -71,7 +71,7 @@ export default function DeviceConnectionCard() {
               <div className="flex items-center gap-3">
                 <Shield
                   size={18}
-                  className={consent?.consented ? 'text-green-500' : 'text-amber-500'}
+                  className={consent?.consented ? 'text-[#ffb703]' : 'text-amber-500'}
                 />
                 <div>
                   <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Privacy Policy</p>
@@ -83,7 +83,7 @@ export default function DeviceConnectionCard() {
                 </div>
               </div>
               {consent?.consented ? (
-                <CheckCircle2 size={18} className="text-green-500 shrink-0" />
+                <CheckCircle2 size={18} className="text-[#ffb703] shrink-0" />
               ) : (
                 <div className="flex items-center gap-1">
                   <span className="text-xs font-semibold text-amber-600 dark:text-amber-400">Review & Accept</span>

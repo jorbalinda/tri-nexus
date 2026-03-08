@@ -34,7 +34,7 @@ function formatTimeShort(seconds: number): string {
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
-  a: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  a: 'bg-[#e76f51]/15 text-[#e76f51] dark:bg-[#e76f51]/20 dark:text-[#e76f51]',
   b: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
   c: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
 }

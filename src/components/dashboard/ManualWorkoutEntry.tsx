@@ -149,24 +149,24 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
         className="card-squircle p-5 flex flex-col w-full cursor-pointer group hover:shadow-md transition-all text-left"
       >
         <div className="flex items-center gap-2 mb-4">
-          <Plus size={16} className="text-blue-600" />
+          <Plus size={16} style={{ color: '#4361ee' }} />
           <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
             Add Workout
           </p>
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center py-3">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600 group-hover:bg-blue-700 flex items-center justify-center transition-all shadow-lg shadow-blue-600/20 group-hover:shadow-blue-600/30">
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-lg" style={{ backgroundColor: '#4361ee', boxShadow: '0 10px 15px -3px rgba(67,97,238,0.2)' }}>
             <Plus size={24} className="text-white" />
           </div>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">Log a manual workout</p>
         </div>
 
         <div className="flex justify-center gap-4 pt-3 border-t border-gray-100 dark:border-gray-800">
-          <span className="text-[10px] font-medium text-blue-500 flex items-center gap-1"><Waves size={12} /> Swim</span>
-          <span className="text-[10px] font-medium text-orange-500 flex items-center gap-1"><Bike size={12} /> Bike</span>
-          <span className="text-[10px] font-medium text-green-500 flex items-center gap-1"><Footprints size={12} /> Run</span>
-          <span className="text-[10px] font-medium text-purple-500 flex items-center gap-1"><Zap size={12} /> Threshold</span>
+          <span className="text-[10px] font-medium text-swim flex items-center gap-1"><Waves size={12} /> Swim</span>
+          <span className="text-[10px] font-medium text-bike flex items-center gap-1"><Bike size={12} /> Bike</span>
+          <span className="text-[10px] font-medium text-run flex items-center gap-1"><Footprints size={12} /> Run</span>
+          <span className="text-[10px] font-medium text-brick flex items-center gap-1"><Zap size={12} /> Threshold</span>
         </div>
       </button>
     )
@@ -195,7 +195,10 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
                   onClick={() => setSport(s)}
                   className={`px-2 py-2.5 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                     sport === s
-                      ? s === 'threshold' ? 'bg-purple-600 text-white' : 'bg-blue-600 text-white'
+                      ? s === 'swim' ? 'bg-swim text-white'
+                        : s === 'bike' ? 'bg-bike text-white'
+                        : s === 'run' ? 'bg-run text-white'
+                        : 'bg-brick text-white'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
                   }`}
                 >
@@ -215,7 +218,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
           </div>
           <button
             onClick={() => setStep(2)}
-            className="w-full flex items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-1 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-all cursor-pointer"
           >
             Next <ChevronRight size={16} />
           </button>
@@ -311,7 +314,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
             </button>
             <button
               onClick={() => setStep(3)}
-              className="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover transition-all cursor-pointer"
             >
               Next <ChevronRight size={16} />
             </button>
@@ -371,7 +374,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
               >
                 {saving ? 'Saving...' : 'Save Workout'}
               </button>

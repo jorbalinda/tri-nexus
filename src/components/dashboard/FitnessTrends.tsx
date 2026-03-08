@@ -142,7 +142,7 @@ export default function FitnessTrends() {
                 onClick={() => setSportFilter(opt.value)}
                 className={`px-2.5 py-1 rounded-full text-[10px] font-semibold transition-colors ${
                   sportFilter === opt.value
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-accent text-white'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
@@ -154,19 +154,19 @@ export default function FitnessTrends() {
           {/* Legend */}
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm inline-block bg-blue-200 dark:bg-blue-900" />
+              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: 'rgba(251,133,0,0.4)' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">TSS</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 rounded-full bg-blue-500 inline-block" />
+              <span className="w-3 rounded-full inline-block" style={{ height: 2, background: '#219ebc' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">CTL</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 rounded-full bg-orange-500 inline-block" />
+              <span className="w-3 rounded-full inline-block" style={{ height: 2, background: '#e63946' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">ATL</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 rounded-full bg-green-500 inline-block border-dashed" style={{ borderTop: '2px dashed #22c55e', height: 0, background: 'none' }} />
+              <span className="w-3 inline-block" style={{ borderTop: '2px dashed #4cc9a0', height: 0 }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">TSB</span>
             </div>
           </div>
@@ -200,10 +200,10 @@ export default function FitnessTrends() {
                     fontSize: '12px',
                   }}
                 />
-                <Bar yAxisId="right" dataKey="TSS" fill="#93c5fd" opacity={0.35} name="Daily TSS" className="dark:fill-blue-800" />
-                <Line yAxisId="left" type="monotone" dataKey="CTL" stroke="#3b82f6" strokeWidth={2} dot={false} name="Fitness (CTL)" />
-                <Line yAxisId="left" type="monotone" dataKey="ATL" stroke="#f97316" strokeWidth={2} dot={false} name="Fatigue (ATL)" />
-                <Line yAxisId="left" type="monotone" dataKey="TSB" stroke="#22c55e" strokeWidth={1.5} dot={false} name="Form (TSB)" strokeDasharray="4 2" />
+                <Bar yAxisId="right" dataKey="TSS" fill="#fb8500" opacity={0.35} name="Daily TSS" />
+                <Line yAxisId="left" type="monotone" dataKey="CTL" stroke="#219ebc" strokeWidth={2} dot={false} name="Fitness (CTL)" />
+                <Line yAxisId="left" type="monotone" dataKey="ATL" stroke="#e63946" strokeWidth={2} dot={false} name="Fatigue (ATL)" />
+                <Line yAxisId="left" type="monotone" dataKey="TSB" stroke="#4cc9a0" strokeWidth={1.5} dot={false} name="Form (TSB)" strokeDasharray="4 2" />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -218,15 +218,15 @@ export default function FitnessTrends() {
           </p>
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: '#219ebc' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Swim</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-orange-500 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: '#fb8500' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Bike</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-green-500 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-sm bg-run inline-block" />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Run</span>
             </div>
           </div>
@@ -248,9 +248,9 @@ export default function FitnessTrends() {
                     fontSize: '12px',
                   }}
                 />
-                <Bar dataKey="swim" stackId="a" fill="#3b82f6" radius={[0, 0, 0, 0]} name="Swim" />
-                <Bar dataKey="bike" stackId="a" fill="#f97316" radius={[0, 0, 0, 0]} name="Bike" />
-                <Bar dataKey="run" stackId="a" fill="#22c55e" radius={[4, 4, 0, 0]} name="Run" />
+                <Bar dataKey="swim" stackId="a" fill="#219ebc" radius={[0, 0, 0, 0]} name="Swim" />
+                <Bar dataKey="bike" stackId="a" fill="#fb8500" radius={[0, 0, 0, 0]} name="Bike" />
+                <Bar dataKey="run" stackId="a" fill="#4cc9a0" radius={[4, 4, 0, 0]} name="Run" />
               </BarChart>
             </ResponsiveContainer>
           </div>

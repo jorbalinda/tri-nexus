@@ -9,9 +9,9 @@ interface DataQualityCardProps {
 }
 
 const SPORT_COLORS: Record<string, string> = {
-  swim: 'text-blue-500',
-  bike: 'text-orange-500',
-  run: 'text-green-500',
+  swim: 'text-swim',
+  bike: 'text-bike',
+  run: 'text-run',
 }
 
 const SPORT_LABELS: Record<string, string> = {

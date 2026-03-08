@@ -23,6 +23,21 @@ type RadarEntry = {
 
 const EMPTY_VALUE = 0
 
+const SPORT_COLORS: Record<string, string> = {
+  Swim: '#219ebc',
+  Bike: '#fb8500',
+  Run:  '#4cc9a0',
+}
+
+function ColoredTick({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) {
+  const color = SPORT_COLORS[payload?.value ?? ''] ?? '#9ca3af'
+  return (
+    <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize={12} fill={color} fontWeight={600}>
+      {payload?.value}
+    </text>
+  )
+}
+
 export default function FitnessFingerprint({ percentiles, displayName }: Props) {
   const data: RadarEntry[] = [
     {
@@ -72,15 +87,14 @@ export default function FitnessFingerprint({ percentiles, displayName }: Props) 
               />
               <PolarAngleAxis
                 dataKey="subject"
-                tick={{ fontSize: 12, fill: 'currentColor' }}
-                className="text-gray-600 dark:text-gray-400"
+                tick={<ColoredTick />}
               />
               <Radar
                 name="Percentile"
                 dataKey="value"
-                stroke="#3b82f6"
-                fill="#3b82f6"
-                fillOpacity={0.3}
+                stroke="#57a2ea"
+                fill="#57a2ea"
+                fillOpacity={0.25}
                 strokeWidth={2}
               />
               <Tooltip
@@ -100,7 +114,7 @@ export default function FitnessFingerprint({ percentiles, displayName }: Props) 
             {data.map((d) => (
               <div key={d.subject} className="text-center">
                 <p className="text-xs text-gray-500 dark:text-gray-400">{d.subject}</p>
-                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                <p className="text-sm font-semibold" style={{ color: SPORT_COLORS[d.subject] }}>
                   {d.value > 0 ? `${d.value}th` : '—'}
                 </p>
               </div>

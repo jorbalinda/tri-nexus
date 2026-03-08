@@ -79,8 +79,8 @@ export default function PrivacyPage() {
       {/* Export card */}
       <div className="card-squircle p-5">
         <div className="flex items-start gap-3 mb-4">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center shrink-0">
-            <Download size={15} className="text-blue-500" />
+          <div className="w-8 h-8 rounded-xl bg-[#4361ee]/10 dark:bg-[#4361ee]/15 flex items-center justify-center shrink-0">
+            <Download size={15} className="text-[#4361ee]" />
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Export Your Data</p>
@@ -94,7 +94,7 @@ export default function PrivacyPage() {
         <button
           onClick={handleExport}
           disabled={exporting}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50"
         >
           {exporting ? (
             <Loader2 size={13} className="animate-spin" />
@@ -108,15 +108,15 @@ export default function PrivacyPage() {
 
         <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-3">
           We respond to data requests within 45 days per the Utah Consumer Privacy Act.
-          Questions? Email <span className="text-blue-500">privacy@triraceday.com</span>
+          Questions? Email <span className="text-[#57a2ea]">privacy@triraceday.com</span>
         </p>
       </div>
 
       {/* Delete card */}
-      <div className="card-squircle p-5 border border-red-100 dark:border-red-900/30">
+      <div className="card-squircle p-5 border border-[#d62828]/20 dark:border-[#d62828]/25">
         <div className="flex items-start gap-3 mb-4">
-          <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center shrink-0">
-            <Trash2 size={15} className="text-red-500" />
+          <div className="w-8 h-8 rounded-xl bg-[#d62828]/10 dark:bg-[#d62828]/15 flex items-center justify-center shrink-0">
+            <Trash2 size={15} className="text-[#d62828]" />
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Delete Account</p>
@@ -130,16 +130,16 @@ export default function PrivacyPage() {
         {!deleteOpen ? (
           <button
             onClick={() => setDeleteOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/20 active:scale-[0.98] transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#d62828]/30 dark:border-[#d62828]/40 text-[#d62828] text-xs font-semibold hover:bg-[#d62828]/5 dark:hover:bg-[#d62828]/10 active:scale-[0.98] transition-all"
           >
             <Trash2 size={13} />
             Delete My Account
           </button>
         ) : (
           <div className="space-y-3">
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30">
-              <AlertTriangle size={14} className="text-red-500 shrink-0 mt-0.5" />
-              <p className="text-xs text-red-700 dark:text-red-300 leading-relaxed">
+            <div className="flex items-start gap-2 p-3 rounded-xl bg-[#d62828]/5 dark:bg-[#d62828]/10 border border-[#d62828]/15 dark:border-[#d62828]/20">
+              <AlertTriangle size={14} className="text-[#d62828] shrink-0 mt-0.5" />
+              <p className="text-xs text-[#d62828] dark:text-[#e2622c] leading-relaxed">
                 All your data will be permanently deleted — workouts, races, plans, and your profile.
                 Consent audit records are retained as required by law.
               </p>
@@ -154,12 +154,12 @@ export default function PrivacyPage() {
                 value={confirmText}
                 onChange={e => setConfirmText(e.target.value)}
                 placeholder="DELETE"
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#d62828]/20 focus:border-[#d62828]/50"
               />
             </div>
 
             {deleteError && (
-              <p className="text-xs text-red-600 dark:text-red-400">{deleteError}</p>
+              <p className="text-xs text-[#d62828]">{deleteError}</p>
             )}
 
             <div className="flex items-center gap-2">
@@ -172,7 +172,7 @@ export default function PrivacyPage() {
               <button
                 onClick={handleDelete}
                 disabled={confirmText !== 'DELETE' || deleting}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#d62828] text-white text-xs font-semibold hover:bg-[#b52222] active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {deleting && <Loader2 size={12} className="animate-spin" />}
                 {deleting ? 'Deleting...' : 'Permanently Delete'}

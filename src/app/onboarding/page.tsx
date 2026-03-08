@@ -341,7 +341,7 @@ export default function OnboardingPage() {
           type="button"
           onClick={handleComplete}
           disabled={transitioning}
-          className="flex items-center gap-1.5 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-6 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all cursor-pointer"
         >
           Get Started
           <ChevronRight size={16} />
@@ -369,7 +369,7 @@ export default function OnboardingPage() {
         </div>
         <div className="h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
           <div
-            className="h-full rounded-full bg-blue-600 dark:bg-blue-500 transition-all duration-500 ease-out"
+            className="h-full rounded-full bg-primary dark:bg-blue-500 transition-all duration-500 ease-out"
             style={{ width: `${(step / 2) * 100}%` }}
           />
         </div>
@@ -406,7 +406,7 @@ export default function OnboardingPage() {
               type="button"
               onClick={() => animateTransition(2)}
               disabled={!canAdvance || transitioning}
-              className="flex items-center gap-1.5 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-40 cursor-pointer"
+              className="flex items-center gap-1.5 px-6 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-40 cursor-pointer"
             >
               Next
               <ChevronRight size={16} />

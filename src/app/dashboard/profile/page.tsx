@@ -44,8 +44,8 @@ interface ProfileData {
 const INPUT_CLASS = 'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
 const LABEL_CLASS = 'block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5'
 
-const ZONE_COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#f97316', '#ef4444']
-const POWER_ZONE_COLORS = ['#94a3b8', '#22c55e', '#3b82f6', '#f59e0b', '#f97316', '#ef4444', '#991b1b']
+const ZONE_COLORS = ['#219ebc', '#2a9d8f', '#fb8500', '#e2622c', '#d62828']
+const POWER_ZONE_COLORS = ['#94a3b8', '#219ebc', '#2a9d8f', '#fb8500', '#e2622c', '#d62828', '#991b1b']
 const POWER_ZONE_NAMES = ['Active Recovery', 'Endurance', 'Tempo', 'Threshold', 'VO2max', 'Anaerobic', 'Neuromuscular']
 
 /** Format total seconds into MM:SS string for input display */
@@ -622,7 +622,7 @@ export default function ProfilePage() {
                   ? 'bg-green-600 text-white hover:bg-green-700'
                   : saveStatus === 'error'
                   ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-primary text-white hover:bg-primary-hover'
               }`}
             >
               {saving ? 'Saving…' : saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'error' ? 'Error — try again' : 'Save Profile'}
@@ -758,7 +758,7 @@ export default function ProfilePage() {
                   ? 'bg-green-600 text-white hover:bg-green-700'
                   : saveThresholdsStatus === 'error'
                   ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-primary text-white hover:bg-primary-hover'
               }`}
             >
               {savingThresholds ? 'Saving…' : saveThresholdsStatus === 'saved' ? '✓ Saved' : saveThresholdsStatus === 'error' ? 'Error — try again' : 'Save Thresholds'}

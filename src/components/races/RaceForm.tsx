@@ -252,7 +252,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
                       onClick={() => setCourseSort('date')}
                       className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                         courseSort === 'date'
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-primary text-white'
                           : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
                       }`}
                     >
@@ -263,7 +263,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
                       onClick={() => setCourseSort('name')}
                       className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                         courseSort === 'name'
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-primary text-white'
                           : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
                       }`}
                     >
@@ -606,7 +606,7 @@ export default function RaceForm({ initialData, onSubmit, onCancel, submitLabel 
         <button
           type="submit"
           disabled={saving || !raceName || !raceDate}
-          className="flex-1 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+          className="flex-1 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
         >
           {saving ? 'Saving...' : submitLabel}
         </button>

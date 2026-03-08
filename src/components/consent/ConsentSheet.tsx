@@ -231,7 +231,7 @@ export default function ConsentSheet({ onAccept, onClose }: ConsentSheetProps) {
             <button
               onClick={handleAgree}
               disabled={agreeing}
-              className="w-full py-3.5 rounded-xl bg-blue-600 text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:bg-blue-700 active:scale-[0.98]"
+              className="w-full py-3.5 rounded-xl bg-primary text-white text-sm font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-hover active:scale-[0.98]"
             >
               {agreeing ? 'Saving...' : 'I Agree'}
             </button>

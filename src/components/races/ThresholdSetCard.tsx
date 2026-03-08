@@ -217,7 +217,7 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
           <button
             onClick={handleSave}
             disabled={saving || (!ftp && !css && !runPace)}
-            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+            className="w-full py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors disabled:opacity-50"
           >
             {saving ? 'Saving…' : 'Save Thresholds'}
           </button>

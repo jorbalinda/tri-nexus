@@ -45,7 +45,7 @@ const DISTANCE_LABELS: Record<string, string> = {
 }
 
 const PRIORITY_STYLES: Record<string, string> = {
-  a: 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400',
+  a: 'bg-[#e76f51]/15 text-[#e76f51] dark:bg-[#e76f51]/20 dark:text-[#e76f51]',
   b: 'bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400',
   c: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
 }

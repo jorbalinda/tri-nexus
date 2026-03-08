@@ -3,46 +3,46 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #FBFBFD;
-  --foreground: #1d1d1f;
-  --accent: #007AFF;
-  --accent-hover: #0056CC;
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --card-bg: white;
-  --card-border: rgba(0, 0, 0, 0.04);
-  --card-shadow: rgba(0, 0, 0, 0.04);
+  --background: #f7f5f3;
+  --foreground: #05123e;
+  --accent: #0f4da9;
+  --accent-hover: #05123e;
+  --glass-bg: rgba(247, 245, 243, 0.85);
+  --glass-border: rgba(15, 77, 169, 0.12);
+  --card-bg: #ffffff;
+  --card-border: rgba(5, 18, 62, 0.06);
+  --card-shadow: rgba(5, 18, 62, 0.06);
   --card-radius: 1.25rem;
   --sidebar-width: 280px;
-  --chart-gradient-from: #f8f9ff;
-  --chart-gradient-to: #f0f4ff;
-  --grid-stroke: rgba(0, 0, 0, 0.05);
-  --tooltip-bg: white;
-  --tooltip-border: #e5e7eb;
-  --scrollbar-thumb: rgba(0, 0, 0, 0.1);
-  --scrollbar-hover: rgba(0, 0, 0, 0.2);
+  --chart-gradient-from: #eef4fd;
+  --chart-gradient-to: #e4eefb;
+  --grid-stroke: rgba(5, 18, 62, 0.06);
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #d4e6f9;
+  --scrollbar-thumb: rgba(15, 77, 169, 0.15);
+  --scrollbar-hover: rgba(15, 77, 169, 0.3);
   --bottom-nav-height: 4rem;
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-top: env(safe-area-inset-top, 0px);
 }
 
 .dark {
-  --background: #0f0f11;
-  --foreground: #e5e5e7;
-  --accent: #0A84FF;
-  --accent-hover: #3399FF;
-  --glass-bg: rgba(30, 30, 35, 0.85);
-  --glass-border: rgba(80, 80, 95, 0.4);
-  --card-bg: #1c1c1e;
-  --card-border: rgba(255, 255, 255, 0.06);
-  --card-shadow: rgba(0, 0, 0, 0.3);
-  --chart-gradient-from: #1a1a2e;
-  --chart-gradient-to: #16162a;
-  --grid-stroke: rgba(255, 255, 255, 0.06);
-  --tooltip-bg: #1c1c1e;
-  --tooltip-border: #2c2c2e;
-  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
-  --scrollbar-hover: rgba(255, 255, 255, 0.25);
+  --background: #023047;
+  --foreground: #f7f5f3;
+  --accent: #57a2ea;
+  --accent-hover: #7ab8f0;
+  --glass-bg: rgba(2, 48, 71, 0.92);
+  --glass-border: rgba(87, 162, 234, 0.18);
+  --card-bg: #03405f;
+  --card-border: rgba(87, 162, 234, 0.1);
+  --card-shadow: rgba(0, 0, 0, 0.45);
+  --chart-gradient-from: #022538;
+  --chart-gradient-to: #03405f;
+  --grid-stroke: rgba(87, 162, 234, 0.08);
+  --tooltip-bg: #03405f;
+  --tooltip-border: #055a80;
+  --scrollbar-thumb: rgba(87, 162, 234, 0.2);
+  --scrollbar-hover: rgba(87, 162, 234, 0.35);
 }
 
 @theme inline {
@@ -50,6 +50,29 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Remap Tailwind blue scale to match the new palette */
+  --color-blue-50: #eef4fd;
+  --color-blue-100: #d4e6f9;
+  --color-blue-200: #a9cdf4;
+  --color-blue-300: #7db4ee;
+  --color-blue-400: #57a2ea;
+  --color-blue-500: #3a85d8;
+  --color-blue-600: #0f4da9;
+  --color-blue-700: #0d3e88;
+  --color-blue-800: #0a2f67;
+  --color-blue-900: #082046;
+  --color-blue-950: #05123e;
+
+  /* Primary action color */
+  --color-primary: #4361ee;
+  --color-primary-hover: #3451d1;
+
+  /* Sport / fitness accent palette */
+  --color-swim: #219ebc;
+  --color-bike: #fb8500;
+  --color-run:  #4cc9a0;
+  --color-brick: #e63946;
 }
 
 html, body {

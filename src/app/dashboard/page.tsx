@@ -105,7 +105,7 @@ export default function DashboardPage() {
           {!showRaceForm && (
             <button
               onClick={() => setShowRaceForm(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all cursor-pointer"
             >
               <Plus size={13} />
               Add Race
@@ -157,7 +157,7 @@ export default function DashboardPage() {
                 </p>
                 <button
                   onClick={() => setShowRaceForm(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Plus size={15} />
                   Add Your First Race

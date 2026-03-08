@@ -177,7 +177,7 @@ function PhaseDevice({
           ) : (
             <button
               onClick={onConnectGarmin}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer shrink-0"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all cursor-pointer shrink-0"
             >
               <Shield size={12} />
               Connect Garmin
@@ -190,7 +190,7 @@ function PhaseDevice({
       <div className="flex flex-col gap-2">
         <button
           onClick={onImport}
-          className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer"
+          className="w-full flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all cursor-pointer"
         >
           Import Past Workouts
           <ChevronRight size={16} />

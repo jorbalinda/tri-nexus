@@ -33,7 +33,7 @@ export default function LogWorkoutBar() {
         className="card-squircle px-6 py-4 flex items-center justify-between w-full cursor-pointer group hover:shadow-md transition-all"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
             <Plus size={16} className="text-white" />
           </div>
           <div className="text-left">
@@ -45,7 +45,7 @@ export default function LogWorkoutBar() {
             </p>
           </div>
         </div>
-        <span className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold group-hover:bg-blue-700 transition-colors">
+        <span className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold group-hover:bg-primary-hover transition-colors">
           Log
         </span>
       </button>

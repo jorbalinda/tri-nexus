@@ -94,7 +94,7 @@ export default function LTEstimatorCard({
       {/* Estimate button */}
       <button
         onClick={handleEstimate}
-        className="w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer"
+        className="w-full py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all cursor-pointer"
       >
         Estimate Zones
       </button>

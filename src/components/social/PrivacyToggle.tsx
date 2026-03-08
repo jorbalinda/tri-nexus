@@ -29,19 +29,19 @@ export default function PrivacyToggle({ isPublic }: Props) {
       className="flex items-center gap-2 min-h-[44px] min-w-[44px] group"
     >
       {/* Icon */}
-      <span className={`transition-colors ${pub ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`}>
+      <span className={`transition-colors ${pub ? 'text-[#2a9d8f]' : 'text-gray-400 dark:text-gray-500'}`}>
         {pub ? <Globe size={14} /> : <Lock size={14} />}
       </span>
 
       {/* Label */}
-      <span className={`text-xs font-medium transition-colors ${pub ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+      <span className={`text-xs font-medium transition-colors ${pub ? 'text-[#2a9d8f]' : 'text-gray-500 dark:text-gray-400'}`}>
         {pub ? 'Public' : 'Private'}
       </span>
 
       {/* Toggle pill */}
       <span className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
         isPending ? 'opacity-50' : ''
-      } ${pub ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+      } ${pub ? 'bg-[#2a9d8f]' : 'bg-gray-300 dark:bg-gray-600'}`}>
         <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out ${
           pub ? 'translate-x-5' : 'translate-x-0'
         }`} />

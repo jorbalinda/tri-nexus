@@ -25,9 +25,9 @@ interface ProjectionHeroProps {
 }
 
 const SPORT_COLORS: Record<string, string> = {
-  swim: 'text-blue-500',
-  bike: 'text-orange-500',
-  run: 'text-green-500',
+  swim: 'text-swim',
+  bike: 'text-bike',
+  run: 'text-run',
 }
 
 const SPORT_LABELS: Record<string, string> = {
@@ -360,7 +360,7 @@ export default function ProjectionHero({
 
       {/* HERO: Total realistic finish time — largest number on screen */}
       <div className="text-center mb-2">
-        <p className="text-6xl font-bold text-blue-600 dark:text-blue-400 tracking-tight leading-none">
+        <p className="text-6xl font-bold text-accent tracking-tight leading-none">
           {formatTimeShort(projection.realistic_seconds)}
         </p>
       </div>
@@ -381,22 +381,22 @@ export default function ProjectionHero({
       {/* Split cards with integrated pacing targets — race flow order */}
       <div className="grid grid-cols-3 gap-2 text-center mb-5">
         {/* Swim */}
-        <div className="p-2.5 rounded-xl bg-blue-50/40 dark:bg-blue-950/15 border border-blue-100/60 dark:border-blue-900/30">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-blue-500 mb-1">Swim</p>
-          <p className="text-sm font-bold text-blue-600 dark:text-blue-400">{formatTime(projection.swim_seconds)}</p>
+        <div className="p-2.5 rounded-xl bg-swim/8 dark:bg-swim/15 border border-swim/20 dark:border-swim/25">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-swim mb-1">Swim</p>
+          <p className="text-sm font-bold text-swim">{formatTime(projection.swim_seconds)}</p>
           {swimPace && (
-            <p className="text-[10px] font-semibold text-blue-500/80 mt-1">{swimPace}</p>
+            <p className="text-[10px] font-semibold text-swim/70 mt-1">{swimPace}</p>
           )}
         </div>
         {/* Bike */}
-        <div className="p-2.5 rounded-xl bg-orange-50/40 dark:bg-orange-950/15 border border-orange-100/60 dark:border-orange-900/30">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-orange-500 mb-1">Bike</p>
+        <div className="p-2.5 rounded-xl bg-bike/8 dark:bg-bike/15 border border-bike/20 dark:border-bike/25">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-bike mb-1">Bike</p>
           <div className="flex items-center justify-center gap-1">
-            <p className="text-sm font-bold text-orange-600 dark:text-orange-400">{formatTime(projection.bike_seconds)}</p>
+            <p className="text-sm font-bold text-bike">{formatTime(projection.bike_seconds)}</p>
             {windAdjSec > 0 && (
               <button
                 onClick={() => setWindTooltipOpen(o => !o)}
-                className="text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                className="text-gray-400 dark:text-gray-500 hover:text-accent dark:hover:text-accent transition-colors"
                 aria-label="Wind adjustment info"
               >
                 <Info size={10} />
@@ -404,20 +404,20 @@ export default function ProjectionHero({
             )}
           </div>
           {bikePower && (
-            <p className="text-[10px] font-semibold text-orange-500/80 mt-1">{bikePower}</p>
+            <p className="text-[10px] font-semibold text-bike/70 mt-1">{bikePower}</p>
           )}
           {windAdjSec > 0 && windTooltipOpen && (
-            <p className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 mt-1">
+            <p className="text-[10px] font-semibold text-accent mt-1">
               {windSpeedMph != null ? `${windSpeedMph.toFixed(1)} mph` : 'Wind'} · +{Math.round(windAdjSec / 60)} min
             </p>
           )}
         </div>
         {/* Run */}
-        <div className="p-2.5 rounded-xl bg-green-50/40 dark:bg-green-950/15 border border-green-100/60 dark:border-green-900/30">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-green-500 mb-1">Run</p>
-          <p className="text-sm font-bold text-green-600 dark:text-green-400">{formatTime(projection.run_seconds)}</p>
+        <div className="p-2.5 rounded-xl bg-run/8 dark:bg-run/15 border border-run/20 dark:border-run/25">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-run mb-1">Run</p>
+          <p className="text-sm font-bold text-run">{formatTime(projection.run_seconds)}</p>
           {runPace && (
-            <p className="text-[10px] font-semibold text-green-500/80 mt-1">{runPace}</p>
+            <p className="text-[10px] font-semibold text-run/70 mt-1">{runPace}</p>
           )}
         </div>
       </div>

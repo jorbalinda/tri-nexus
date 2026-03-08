@@ -8,10 +8,10 @@ import { useUnits } from '@/hooks/useUnits'
 import WorkoutDetailModal from './WorkoutDetailModal'
 
 const SPORT_CONFIG: Record<string, { icon: typeof Waves; color: string; bg: string }> = {
-  swim: { icon: Waves, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/30' },
-  bike: { icon: Bike, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950/30' },
-  run: { icon: Footprints, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30' },
-  brick: { icon: Bike, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950/30' },
+  swim: { icon: Waves, color: 'text-swim', bg: 'bg-swim/8 dark:bg-swim/20' },
+  bike: { icon: Bike, color: 'text-bike', bg: 'bg-bike/10 dark:bg-bike/20' },
+  run: { icon: Footprints, color: 'text-run', bg: 'bg-run/10 dark:bg-run/20' },
+  brick: { icon: Bike, color: 'text-brick', bg: 'bg-brick/10 dark:bg-brick/20' },
 }
 
 const SOURCE_BADGES: Record<string, string> = {
@@ -81,7 +81,7 @@ export default function ActivityFeed() {
               onClick={() => setSportFilter(s)}
               className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                 sportFilter === s
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
               }`}
             >

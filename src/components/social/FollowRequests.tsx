@@ -22,7 +22,7 @@ export default function FollowRequests({ requests }: Props) {
     <div className="card-squircle p-4 sm:p-6 space-y-3">
       <div className="flex items-center gap-2">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Follow Requests</h3>
-        <span className="text-xs font-bold bg-blue-600 text-white rounded-full px-2 py-0.5">
+        <span className="text-xs font-bold bg-primary text-white rounded-full px-2 py-0.5">
           {requests.length}
         </span>
       </div>
@@ -54,7 +54,7 @@ function RequestRow({ request }: { request: Request }) {
         <button
           disabled={isPending}
           onClick={() => startTransition(async () => { await acceptFollowRequest(request.follower_id) })}
-          className="w-9 h-9 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-colors disabled:opacity-50"
+          className="w-9 h-9 rounded-xl bg-primary hover:bg-primary-hover text-white flex items-center justify-center transition-colors disabled:opacity-50"
           aria-label="Accept"
         >
           <Check size={15} />

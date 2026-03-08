@@ -11,16 +11,16 @@ export default function PrivacyPage() {
   const lines = POLICY_TEXT.split('\n')
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-gray-100 dark:border-gray-800 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase tracking-[3px] text-blue-500">RACE DAY</span>
+          <span className="text-xs font-bold uppercase tracking-[5px] text-[#4361ee]">RACE DAY</span>
           <span className="text-xs text-gray-400">Know Your Finish Line</span>
         </Link>
         <Link
           href="/auth/login"
-          className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+          className="text-sm font-medium text-[#57a2ea] hover:text-[#7ab8f0] transition-colors"
         >
           Sign in →
         </Link>
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
             if (line.startsWith('•')) {
               return (
                 <div key={i} className="flex gap-3 pl-2">
-                  <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                  <span className="text-[#219ebc] mt-0.5 flex-shrink-0">•</span>
                   <span>{line.slice(1).trim()}</span>
                 </div>
               )
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
         <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Questions about this policy?{' '}
-            <a href="mailto:privacy@triraceday.com" className="text-blue-600 hover:underline">
+            <a href="mailto:privacy@triraceday.com" className="text-[#57a2ea] hover:underline">
               privacy@triraceday.com
             </a>
           </p>

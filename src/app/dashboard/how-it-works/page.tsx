@@ -29,7 +29,7 @@ function Item({
   icon: Icon,
   label,
   children,
-  color = 'text-blue-600',
+  color = 'text-[#4361ee]',
 }: {
   icon: React.ElementType
   label: string
@@ -73,7 +73,7 @@ function Tier({
         <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">{confidence}</span>
       </div>
       <p className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-0.5">{label}</p>
-      <p className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 mb-1.5">{band}</p>
+      <p className="text-[11px] font-semibold text-[#57a2ea] mb-1.5">{band}</p>
       <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{description}</p>
     </div>
   )
@@ -104,18 +104,18 @@ export default function HowItWorksPage() {
 
       {/* Adding Workouts */}
       <Section title="Adding Workouts">
-        <Item icon={Upload} label="Upload a .FIT file" color="text-blue-600">
+        <Item icon={Upload} label="Upload a .FIT file" color="text-[#4361ee]">
           Drag and drop a .FIT file from your Garmin, Wahoo, or other GPS device onto the Import
           card on your dashboard. Race Day reads your pace, power, heart rate, cadence, distance,
           and elevation automatically. You can import any number of past files at once.
         </Item>
-        <Item icon={Plus} label="Log a manual workout" color="text-green-600">
+        <Item icon={Plus} label="Log a manual workout" color="text-[#2a9d8f]">
           Tap the Add Workout card to open the 3-step form. Step 1 picks your sport (swim, bike, or
           run). Step 2 captures the date, duration, distance, and whether it was indoors. Step 3 lets
           you add optional performance data like average HR, max HR, power, cadence, elevation gain,
           RPE, calories, and notes. Only sport, date, and duration are required.
         </Item>
-        <Item icon={Activity} label="Both methods feed the same engine" color="text-orange-500">
+        <Item icon={Activity} label="Both methods feed the same engine" color="text-[#fb8500]">
           Uploaded files and manual entries are treated identically once saved. The richer the data
           you provide, the more accurate your TSS and projections will be.
         </Item>
@@ -128,21 +128,21 @@ export default function HowItWorksPage() {
           when you do not enter one manually. It works through a 5-level priority waterfall:
         </p>
         <div className="flex flex-col gap-3">
-          <Item icon={Zap} label="1. Device TSS" color="text-blue-600">
+          <Item icon={Zap} label="1. Device TSS" color="text-[#4361ee]">
             If your file already contains a TSS value (common with Garmin, Wahoo, and most GPS device exports),
             that number is used directly and treated as the most accurate source.
           </Item>
-          <Item icon={Target} label="2. Power or Pace" color="text-purple-600">
+          <Item icon={Target} label="2. Power or Pace" color="text-[#fb8500]">
             For bike, your normalized power is divided by your FTP to get an Intensity Factor. For
             swim and run, your average pace is compared against your threshold pace (CSS or run
             threshold). TSS is then calculated from duration multiplied by IF squared.
           </Item>
-          <Item icon={Heart} label="3. Heart Rate" color="text-red-500">
+          <Item icon={Heart} label="3. Heart Rate" color="text-[#d62828]">
             If pace or power data is unavailable but you wore a HR monitor, Race Day estimates
             your HR-based Intensity Factor using your resting and max HR. Set these in your Profile
             for best results.
           </Item>
-          <Item icon={TrendingUp} label="4. RPE" color="text-orange-500">
+          <Item icon={TrendingUp} label="4. RPE" color="text-[#e2622c]">
             If you logged a perceived effort (RPE 1-10), Race Day maps that to a standard IF. An
             RPE of 5 maps to a moderate 0.75 IF, for example.
           </Item>
@@ -153,7 +153,7 @@ export default function HowItWorksPage() {
           </Item>
         </div>
         <div className="rounded-xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-4">
-          <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+          <p className="text-xs text-[#57a2ea] leading-relaxed">
             <strong>Tip:</strong> The best way to improve TSS accuracy is to set your FTP, CSS
             (critical swim speed), and run threshold pace in your Profile. Once those are set,
             pace-based TSS is extremely close to a power meter reading.
@@ -169,24 +169,24 @@ export default function HowItWorksPage() {
           sports scientists worldwide.
         </p>
         <div className="flex flex-col gap-3">
-          <Item icon={Activity} label="TSS (Today)" color="text-gray-500">
+          <Item icon={Activity} label="TSS (Today)" color="text-[#fb8500]">
             Training Stress Score is the raw load from your workouts on a given day. One hour at
             your threshold effort equals 100 TSS. Easier or shorter sessions score lower. Harder
             or longer sessions score higher. On a rest day TSS is zero, which is intentional.
           </Item>
-          <Item icon={Activity} label="CTL (Fitness)" color="text-blue-600">
+          <Item icon={Activity} label="CTL (Fitness)" color="text-[#4361ee]">
             Chronic Training Load is a 42-day exponentially weighted average of your daily TSS.
             Each day, your existing CTL decays by a factor of e to the power of negative one over
             42, and today's TSS is added in proportion to what remains. This means fitness builds
             slowly over months of consistent work and fades gradually during rest. A higher CTL
             generally correlates with a faster race.
           </Item>
-          <Item icon={AlertCircle} label="ATL (Fatigue)" color="text-orange-500">
+          <Item icon={AlertCircle} label="ATL (Fatigue)" color="text-[#e2622c]">
             Acute Training Load is the same calculation with a 7-day time constant instead of 42.
             Because the window is much shorter, ATL responds quickly. A hard training block drives
             it up within days. A recovery week brings it back down just as fast.
           </Item>
-          <Item icon={TrendingUp} label="TSB (Form)" color="text-green-600">
+          <Item icon={TrendingUp} label="TSB (Form)" color="text-[#2a9d8f]">
             Training Stress Balance is CTL minus ATL. A positive number means you are fresher than
             your fitness baseline, which is the target state for race day. A negative number means
             you are carrying more fatigue than your fitness baseline, which is normal during hard
@@ -198,11 +198,11 @@ export default function HowItWorksPage() {
           <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
             TSB Form States
           </p>
-          <TsbRow range="+25 and above" label="Very Fresh" color="text-blue-500" />
-          <TsbRow range="+10 to +24" label="Fresh" color="text-green-500" />
+          <TsbRow range="+25 and above" label="Very Fresh" color="text-[#219ebc]" />
+          <TsbRow range="+10 to +24" label="Fresh" color="text-[#2a9d8f]" />
           <TsbRow range="-10 to +9" label="Neutral" color="text-gray-500" />
-          <TsbRow range="-25 to -11" label="Tired" color="text-orange-500" />
-          <TsbRow range="Below -25" label="Fatigued" color="text-red-500" />
+          <TsbRow range="-25 to -11" label="Tired" color="text-[#e2622c]" />
+          <TsbRow range="Below -25" label="Fatigued" color="text-[#d62828]" />
         </div>
 
         <div className="rounded-xl bg-orange-50/60 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 p-4">
@@ -221,7 +221,7 @@ export default function HowItWorksPage() {
           each metric is calculated the way it is.
         </p>
         <div className="flex flex-col gap-3">
-          <Item icon={Zap} label="Why true exponential decay and not a simple average" color="text-blue-600">
+          <Item icon={Zap} label="Why true exponential decay and not a simple average" color="text-[#4361ee]">
             A simple rolling average treats every day in the window equally and then drops off a
             cliff when a day falls out of range. True exponential decay gives the most recent days
             the most weight and gradually reduces the influence of older sessions rather than
@@ -231,7 +231,7 @@ export default function HowItWorksPage() {
             it is e to the power of negative one over 7. These constants were established in
             Banister's impulse response model and refined for endurance sport by Andrew Coggan.
           </Item>
-          <Item icon={Activity} label="Why 42 days for CTL and 7 days for ATL" color="text-orange-500">
+          <Item icon={Activity} label="Why 42 days for CTL and 7 days for ATL" color="text-[#e2622c]">
             The 42-day window for fitness reflects how long it takes aerobic adaptations to
             accumulate and stabilize. Building meaningful cardiovascular fitness is a months-long
             process. The 7-day window for fatigue reflects how quickly acute stress accumulates
@@ -239,20 +239,20 @@ export default function HowItWorksPage() {
             and recover within five to seven. Using different time constants for fitness and fatigue
             is what makes TSB a useful race day indicator rather than just a smoothed training log.
           </Item>
-          <Item icon={TrendingUp} label="Why TSB is the form metric instead of something simpler" color="text-green-600">
+          <Item icon={TrendingUp} label="Why TSB is the form metric instead of something simpler" color="text-[#2a9d8f]">
             TSB captures the relationship between what you have built and what you are currently
             carrying. A high CTL with a high ATL means you are fit but tired. A high CTL with a
             low ATL means you are fit and fresh, which is the ideal race day state. A simple
             weekly load number cannot tell you both things at once. TSB can.
           </Item>
-          <Item icon={Target} label="Why TSS uses IF squared and not IF directly" color="text-purple-600">
+          <Item icon={Target} label="Why TSS uses IF squared and not IF directly" color="text-[#fb8500]">
             The squared term in the TSS formula reflects the non-linear relationship between
             intensity and physiological cost. Going slightly harder than threshold is
             disproportionately more stressful than going slightly easier. Squaring the Intensity
             Factor captures this curve so that a hard two-hour ride scores appropriately higher
             than two easy one-hour rides with the same total duration.
           </Item>
-          <Item icon={Heart} label="Why rest days show zero TSS but CTL does not drop to zero" color="text-red-500">
+          <Item icon={Heart} label="Why rest days show zero TSS but CTL does not drop to zero" color="text-[#d62828]">
             TSS is a measure of what you did today. Zero training means zero stress, and that is
             accurate. CTL and ATL do not drop to zero because they are running averages weighted
             by all prior days. A single rest day contributes zero to the numerator but the
@@ -278,9 +278,9 @@ export default function HowItWorksPage() {
             label: 'Tier 1 — Rough Estimate',
             color: 'border-orange-100 dark:border-orange-900/30 bg-orange-50/40 dark:bg-orange-950/10',
             rows: [
-              { icon: Waves, sport: 'Swim', req: '2 swims, 10+ min each', color: 'text-blue-500' },
-              { icon: Bike, sport: 'Bike', req: '3 rides, 20+ min each', color: 'text-orange-500' },
-              { icon: Footprints, sport: 'Run', req: '3 runs, 20+ min each', color: 'text-green-500' },
+              { icon: Waves, sport: 'Swim', req: '2 swims, 10+ min each', color: 'text-[#219ebc]' },
+              { icon: Bike, sport: 'Bike', req: '3 rides, 20+ min each', color: 'text-[#fb8500]' },
+              { icon: Footprints, sport: 'Run', req: '3 runs, 20+ min each', color: 'text-[#4cc9a0]' },
             ],
           },
           {
@@ -288,9 +288,9 @@ export default function HowItWorksPage() {
             label: 'Tier 2 — Standard',
             color: 'border-blue-100 dark:border-blue-900/30 bg-blue-50/40 dark:bg-blue-950/10',
             rows: [
-              { icon: Waves, sport: 'Swim', req: '2 swims, 20+ min each', color: 'text-blue-500' },
-              { icon: Bike, sport: 'Bike', req: '3 rides, 30+ min each', color: 'text-orange-500' },
-              { icon: Footprints, sport: 'Run', req: '3 runs, 30+ min each', color: 'text-green-500' },
+              { icon: Waves, sport: 'Swim', req: '2 swims, 20+ min each', color: 'text-[#219ebc]' },
+              { icon: Bike, sport: 'Bike', req: '3 rides, 30+ min each', color: 'text-[#fb8500]' },
+              { icon: Footprints, sport: 'Run', req: '3 runs, 30+ min each', color: 'text-[#4cc9a0]' },
             ],
           },
           {
@@ -298,9 +298,9 @@ export default function HowItWorksPage() {
             label: 'Tier 3 — Refined',
             color: 'border-green-100 dark:border-green-900/30 bg-green-50/40 dark:bg-green-950/10',
             rows: [
-              { icon: Waves, sport: 'Swim', req: '2 swims, 20+ min each + 2 of 30+ min', color: 'text-blue-500' },
-              { icon: Bike, sport: 'Bike', req: '3 rides, 30+ min each + 2 of 60+ min', color: 'text-orange-500' },
-              { icon: Footprints, sport: 'Run', req: '3 runs, 30+ min each + 2 of 45+ min', color: 'text-green-500' },
+              { icon: Waves, sport: 'Swim', req: '2 swims, 20+ min each + 2 of 30+ min', color: 'text-[#219ebc]' },
+              { icon: Bike, sport: 'Bike', req: '3 rides, 30+ min each + 2 of 60+ min', color: 'text-[#fb8500]' },
+              { icon: Footprints, sport: 'Run', req: '3 runs, 30+ min each + 2 of 45+ min', color: 'text-[#4cc9a0]' },
             ],
           },
         ].map(({ tier, label, color, rows }) => (
@@ -396,27 +396,27 @@ export default function HowItWorksPage() {
       {/* Missing and Incomplete Data */}
       <Section title="What Happens With Missing or Incomplete Data">
         <div className="flex flex-col gap-3">
-          <Item icon={CheckCircle2} label="Missing a single field" color="text-green-600">
+          <Item icon={CheckCircle2} label="Missing a single field" color="text-[#2a9d8f]">
             Race Day will estimate or skip that field rather than breaking. A workout without pace
             data still contributes to TSS via HR or RPE. A workout without HR still contributes
             via pace or power.
           </Item>
-          <Item icon={AlertCircle} label="No threshold data set" color="text-orange-500">
+          <Item icon={AlertCircle} label="No threshold data set" color="text-[#e2622c]">
             Without FTP, CSS, or run threshold pace in your Profile, TSS falls back to heart rate
             or RPE. Your confidence score will be lower and the prediction band will be wider.
             Setting your thresholds in Profile is the single fastest way to improve accuracy.
           </Item>
-          <Item icon={Info} label="Not enough qualifying workouts" color="text-blue-600">
+          <Item icon={Info} label="Not enough qualifying workouts" color="text-[#57a2ea]">
             If a discipline has fewer than 5 qualifying workouts in the last 8 weeks, that sport
             is not gated and its time cannot be projected. Race Day will tell you exactly how many
             more workouts you need and will show the specific sport that is blocking you.
           </Item>
-          <Item icon={AlertCircle} label="Fewer than 2 disciplines gated" color="text-red-500">
+          <Item icon={AlertCircle} label="Fewer than 2 disciplines gated" color="text-[#d62828]">
             If fewer than 2 of the 3 sports have passed their gate, Race Day cannot generate any
             race prediction. You will see Tier 0 on your race card with a step-by-step list of
             what to do next.
           </Item>
-          <Item icon={Activity} label="Very recent data only" color="text-purple-600">
+          <Item icon={Activity} label="Very recent data only" color="text-[#4361ee]">
             Workouts older than 8 weeks do not count toward the gate but still affect your CTL
             since CTL uses a 42-day window. Older training still influences your fitness baseline
             even if it does not count toward prediction eligibility.
@@ -431,15 +431,15 @@ export default function HowItWorksPage() {
           each leg and the overall race. Here is what goes into each projection:
         </p>
         <div className="flex flex-col gap-3">
-          <Item icon={Waves} label="Swim projection" color="text-blue-500">
+          <Item icon={Waves} label="Swim projection" color="text-[#219ebc]">
             Derived from your CSS (critical swim speed) or average pace across recent swim sessions,
             adjusted for open water versus pool conditions and your current fitness level.
           </Item>
-          <Item icon={Bike} label="Bike projection" color="text-orange-500">
+          <Item icon={Bike} label="Bike projection" color="text-[#fb8500]">
             Based on your FTP, average normalized power, and heart rate trends from recent rides.
             The model accounts for race distance and typical pacing strategies.
           </Item>
-          <Item icon={Footprints} label="Run projection" color="text-green-500">
+          <Item icon={Footprints} label="Run projection" color="text-[#4cc9a0]">
             Derived from your run threshold pace and recent long run data, then adjusted downward
             for the cumulative fatigue of swimming and biking before the run leg.
           </Item>
@@ -447,7 +447,7 @@ export default function HowItWorksPage() {
             T1 and T2 are estimated using standard benchmarks for your race distance and adjusted
             based on your race experience level if you have logged previous race results.
           </Item>
-          <Item icon={TrendingUp} label="Race day form projection" color="text-purple-600">
+          <Item icon={TrendingUp} label="Race day form projection" color="text-[#2a9d8f]">
             Race Day projects your TSB forward to race day assuming your current training load
             continues. It shows whether you will arrive fresh, neutral, or fatigued based on
             your current training trajectory.
@@ -462,20 +462,20 @@ export default function HowItWorksPage() {
           these values manually or let Race Day detect them from your workout files.
         </p>
         <div className="flex flex-col gap-3">
-          <Item icon={Zap} label="FTP (Functional Threshold Power)" color="text-orange-500">
+          <Item icon={Zap} label="FTP (Functional Threshold Power)" color="text-[#fb8500]">
             Your 60-minute average power in watts. This is used to calculate bike TSS and pacing.
             A common test: 95% of your best 20-minute power output. Set this in Profile under
             Bike Thresholds.
           </Item>
-          <Item icon={Waves} label="CSS (Critical Swim Speed)" color="text-blue-500">
+          <Item icon={Waves} label="CSS (Critical Swim Speed)" color="text-[#219ebc]">
             Your pace per 100 meters at threshold effort. A common test: swim 400m and 200m all-out
             and calculate CSS from the difference. Set this in Profile under Swim Thresholds.
           </Item>
-          <Item icon={Footprints} label="Run Threshold Pace" color="text-green-500">
+          <Item icon={Footprints} label="Run Threshold Pace" color="text-[#4cc9a0]">
             Your pace per kilometer at threshold effort. Typically your best 30-60 minute race pace
             or the result of a standard lactate threshold test. Set this in Profile under Run Thresholds.
           </Item>
-          <Item icon={Heart} label="Resting and Max Heart Rate" color="text-red-500">
+          <Item icon={Heart} label="Resting and Max Heart Rate" color="text-[#d62828]">
             Used as a fallback to calculate TSS when pace and power are not available. More importantly,
             resting HR is used with max HR to estimate LTHR (lactate threshold HR) for HR-based
             intensity calculations.
@@ -485,21 +485,21 @@ export default function HowItWorksPage() {
 
       {/* Races Page */}
       <Section title="The Races Page">
-        <Item icon={Flag} label="Adding a race" color="text-blue-600">
+        <Item icon={Flag} label="Adding a race" color="text-[#4361ee]">
           Tap the add button on the Races page and enter your race name, distance type (sprint,
           Olympic, 70.3, full Ironman, or custom), and race date. That is all that is required.
         </Item>
-        <Item icon={BarChart3} label="Race detail view" color="text-purple-600">
+        <Item icon={BarChart3} label="Race detail view" color="text-[#57a2ea]">
           Tapping a race opens the full deep-dive: your predicted finish time with a confidence band,
           per-leg time breakdowns, fitness and form trends projected to race day, a readiness score,
           and the top actions to improve your prediction.
         </Item>
-        <Item icon={TrendingUp} label="Projection updates automatically" color="text-green-600">
+        <Item icon={TrendingUp} label="Projection updates automatically" color="text-[#2a9d8f]">
           Every time you log a workout, your projections update. You do not need to do anything
           manually. Add more swims and watch your swim projection sharpen. Hit a new power peak
           and watch your bike time improve.
         </Item>
-        <Item icon={CheckCircle2} label="Multiple races" color="text-orange-500">
+        <Item icon={CheckCircle2} label="Multiple races" color="text-[#fb8500]">
           You can add as many races as you want. Each race gets its own prediction based on your
           current data. The race card on your dashboard shows your nearest upcoming event.
         </Item>
@@ -507,20 +507,20 @@ export default function HowItWorksPage() {
 
       {/* Dashboard overview */}
       <Section title="Dashboard Overview">
-        <Item icon={Activity} label="Weekly Calendar" color="text-blue-600">
+        <Item icon={Activity} label="Weekly Calendar" color="text-[#4361ee]">
           The top of your dashboard shows the current week. You can swipe left and right to browse
           past and future weeks. Each day shows your logged workouts as color-coded pills by sport.
           Tap any workout to see full details.
         </Item>
-        <Item icon={BarChart3} label="Weekly Volume" color="text-purple-600">
+        <Item icon={BarChart3} label="Weekly Volume" color="text-[#57a2ea]">
           Below the action row you will see your swim, bike, run, and total volume for the current
           week in distance and time.
         </Item>
-        <Item icon={TrendingUp} label="Fitness Trends chart" color="text-green-600">
+        <Item icon={TrendingUp} label="Fitness Trends chart" color="text-[#2a9d8f]">
           The chart below your volume summary plots your CTL, ATL, and TSB over time so you can
           visualize your training load progression and plan your taper.
         </Item>
-        <Item icon={Flag} label="Upcoming Race card" color="text-orange-500">
+        <Item icon={Flag} label="Upcoming Race card" color="text-[#fb8500]">
           Your next race is shown below Fitness Trends with your current prediction tier, confidence
           score, and predicted finish time. Tap it to open the full race detail page.
         </Item>

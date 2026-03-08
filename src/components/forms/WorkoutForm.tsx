@@ -102,11 +102,11 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
     }
   }
 
-  const sportButtons: { key: Sport; label: string; color: string }[] = [
-    { key: 'swim', label: 'Swim', color: 'blue' },
-    { key: 'bike', label: 'Bike', color: 'orange' },
-    { key: 'run', label: 'Run', color: 'green' },
-    { key: 'brick', label: 'Brick', color: 'purple' },
+  const sportButtons: { key: Sport; label: string }[] = [
+    { key: 'swim', label: 'Swim' },
+    { key: 'bike', label: 'Bike' },
+    { key: 'run', label: 'Run' },
+    { key: 'brick', label: 'Brick' },
   ]
 
   const inputClass =
@@ -165,7 +165,10 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
               onClick={() => setSport(key)}
               className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                 sport === key
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? key === 'swim' ? 'bg-swim text-white shadow-sm'
+                    : key === 'bike' ? 'bg-bike text-white shadow-sm'
+                    : key === 'run' ? 'bg-run text-white shadow-sm'
+                    : 'bg-brick text-white shadow-sm'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
@@ -373,7 +376,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+            className="w-full py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
           >
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Log Workout'}
           </button>

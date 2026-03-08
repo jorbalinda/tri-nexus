@@ -129,7 +129,7 @@ export default function DeepDiveCard({
                   {(['swim', 'bike', 'run'] as const).map((sport) => {
                     const disc = hrAdj[sport]
                     const netAdj = ((disc.multiplier - 1) * 100)
-                    const sportColor = { swim: 'text-blue-500', bike: 'text-orange-500', run: 'text-green-500' }[sport]
+                    const sportColor = { swim: 'text-swim', bike: 'text-bike', run: 'text-run' }[sport]
                     return (
                       <div key={sport} className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                         <div className="flex items-center justify-between mb-1.5">

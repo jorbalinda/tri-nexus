@@ -194,7 +194,7 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
               onClick={() => setSport(key)}
               className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                 sport === key
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-primary text-white shadow-sm'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
@@ -436,7 +436,7 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+            className="flex-1 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
           >
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Workout'}
           </button>

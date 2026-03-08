@@ -26,8 +26,8 @@ function formatGoalTime(seconds: number | null): string {
 
 const PRIORITY_STYLES: Record<string, { badge: string; accent: string }> = {
   a: {
-    badge: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    accent: 'border-l-red-500',
+    badge: 'bg-[#e76f51]/15 text-[#e76f51] dark:bg-[#e76f51]/20 dark:text-[#e76f51]',
+    accent: 'border-l-[#e76f51]',
   },
   b: {
     badge: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',

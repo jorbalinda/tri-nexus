@@ -162,7 +162,7 @@ export default function FitUploadDropzone({ onUploaded }: FitUploadDropzoneProps
         {stravaConnected === null ? (
           <span className="text-sm text-gray-400">Checking Strava...</span>
         ) : isStravaActive ? (
-          <span className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 font-medium">
+          <span className="flex items-center gap-2 text-sm font-medium" style={{ color: '#4cc9a0' }}>
             <CheckCircle2 size={16} />
             Strava synced
           </span>

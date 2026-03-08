@@ -211,7 +211,7 @@ export default function TimelineClient({ race, course }: Props) {
           <button
             onClick={handleSetGunTime}
             disabled={settingGunTime || !gunTimeOnly || (showQuickSetup && enabledCount === 0)}
-            className="px-5 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
+            className="px-5 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
           >
             {settingGunTime ? 'Generating...' : events.length > 0 ? 'Regenerate' : showQuickSetup ? `Create Timeline (${enabledCount})` : 'Generate Timeline'}
           </button>
@@ -255,7 +255,7 @@ export default function TimelineClient({ race, course }: Props) {
                   <option value="nutrition">Nutrition</option>
                 </select>
               </div>
-              <button onClick={handleAddCustomEvent} disabled={!newEventName.trim() || !newEventTime} className="px-4 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-30 cursor-pointer shrink-0">Add</button>
+              <button onClick={handleAddCustomEvent} disabled={!newEventName.trim() || !newEventTime} className="px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-30 cursor-pointer shrink-0">Add</button>
             </div>
           </div>
         </div>
@@ -274,7 +274,7 @@ export default function TimelineClient({ race, course }: Props) {
               if (!state) return null
               return (
                 <div key={activity.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${state.enabled ? 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50' : 'border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30 opacity-50'}`}>
-                  <button onClick={() => toggleActivity(activity.id)} className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer ${state.enabled ? 'bg-blue-600 border-blue-600' : 'border-gray-300 dark:border-gray-600'}`}>
+                  <button onClick={() => toggleActivity(activity.id)} className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer ${state.enabled ? 'bg-primary border-blue-600' : 'border-gray-300 dark:border-gray-600'}`}>
                     {state.enabled && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                   </button>
                   <div className="flex-1 min-w-0">

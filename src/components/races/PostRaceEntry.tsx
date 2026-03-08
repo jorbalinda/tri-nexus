@@ -147,7 +147,7 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50"
+          className="w-full py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Results'}
         </button>

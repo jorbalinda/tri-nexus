@@ -16,10 +16,10 @@ const DAY_LABELS = [
 ]
 
 const SPORT_COLORS: Record<string, { bg: string; text: string; icon: typeof Waves }> = {
-  swim: { bg: 'bg-blue-100 dark:bg-blue-900/40', text: 'text-blue-700 dark:text-blue-300', icon: Waves },
-  bike: { bg: 'bg-orange-100 dark:bg-orange-900/40', text: 'text-orange-700 dark:text-orange-300', icon: Bike },
-  run: { bg: 'bg-green-100 dark:bg-green-900/40', text: 'text-green-700 dark:text-green-300', icon: Footprints },
-  brick: { bg: 'bg-purple-100 dark:bg-purple-900/40', text: 'text-purple-700 dark:text-purple-300', icon: Bike },
+  swim: { bg: 'bg-swim/10 dark:bg-swim/20', text: 'text-swim', icon: Waves },
+  bike: { bg: 'bg-bike/10 dark:bg-bike/20', text: 'text-bike', icon: Bike },
+  run: { bg: 'bg-run/10 dark:bg-run/20', text: 'text-run', icon: Footprints },
+  brick: { bg: 'bg-brick/10 dark:bg-brick/20', text: 'text-brick', icon: Bike },
 }
 
 function formatDuration(seconds: number | null): string {

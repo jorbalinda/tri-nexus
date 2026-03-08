@@ -59,7 +59,7 @@ export default function CalendarDayCell({
           onClick={() => onDayClick(dateKey, workouts)}
           className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full cursor-pointer transition-all hover:ring-2 hover:ring-blue-500/30 ${
             isToday
-              ? 'bg-blue-600 text-white'
+              ? 'bg-primary text-white'
               : !isCurrentMonth
               ? 'text-gray-400 opacity-40'
               : 'text-gray-600 dark:text-gray-400'

@@ -188,7 +188,7 @@ export default function Tier2NudgeModal() {
             <button
               ref={btnRef}
               onClick={dismiss}
-              className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
+              className="w-full py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors"
             >
               Got it
             </button>

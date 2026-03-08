@@ -51,7 +51,7 @@ export default function UserSearch() {
         <button
           onClick={handleSearch}
           disabled={isPending || query.trim().length < 2}
-          className="px-4 py-3 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-all disabled:opacity-40 flex items-center gap-2 min-h-[48px]"
+          className="px-4 py-3 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all disabled:opacity-40 flex items-center gap-2 min-h-[48px]"
         >
           {isPending ? <Loader2 size={15} className="animate-spin" /> : 'Search'}
         </button>

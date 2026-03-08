@@ -140,7 +140,7 @@ export default function RacePlanView({
           <button
             onClick={onRegenerate}
             disabled={regenerating}
-            className="px-4 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+            className="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
           >
             {regenerating ? 'Regenerating...' : 'Regenerate'}
           </button>

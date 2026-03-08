@@ -99,23 +99,23 @@ export default function RaceReadinessCard({ trainingLoad, daysUntilRace }: RaceR
 
       {/* 3-column: CTL / ATL / TSB */}
       <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="p-2 sm:p-3 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-blue-500 mb-0.5">CTL</p>
+        <div className="p-2 sm:p-3 rounded-xl text-center" style={{ background: 'rgba(33, 158, 188, 0.10)', border: '1px solid rgba(33, 158, 188, 0.20)' }}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: '#2a9d8f' }}>CTL</p>
           <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{ctl}</p>
           <p className="text-[11px] text-gray-400 dark:text-gray-500">Fitness</p>
         </div>
-        <div className="p-2 sm:p-3 rounded-xl bg-orange-50/50 dark:bg-orange-950/20 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-orange-500 mb-0.5">ATL</p>
+        <div className="p-2 sm:p-3 rounded-xl text-center" style={{ background: 'rgba(230, 57, 70, 0.10)', border: '1px solid rgba(230, 57, 70, 0.20)' }}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: '#e63946' }}>ATL</p>
           <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{atl}</p>
           <p className="text-[11px] text-gray-400 dark:text-gray-500">Fatigue</p>
         </div>
-        <div className="p-2 sm:p-3 rounded-xl bg-green-50/50 dark:bg-green-950/20 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-green-500 mb-0.5">TSB</p>
+        <div className="p-2 sm:p-3 rounded-xl text-center" style={{ background: 'rgba(76, 201, 160, 0.10)', border: '1px solid rgba(76, 201, 160, 0.20)' }}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: '#4cc9a0' }}>TSB</p>
           <div className="flex items-center justify-center gap-1">
-            <p className={`text-xl font-bold ${tsb >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+            <p className="text-xl font-bold" style={{ color: tsb >= 0 ? '#4cc9a0' : '#ef4444' }}>
               {tsb > 0 ? '+' : ''}{tsb}
             </p>
-            <TsbIcon size={14} className={tsb >= 0 ? 'text-green-500' : 'text-red-400'} />
+            <TsbIcon size={14} style={{ color: tsb >= 0 ? '#4cc9a0' : '#ef4444' }} />
           </div>
           <p className="text-[11px] text-gray-400 dark:text-gray-500">Form</p>
         </div>

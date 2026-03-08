@@ -44,7 +44,7 @@ export default function FollowButton({ targetUserId, initialStatus }: Props) {
           ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-400'
           : status === 'pending'
           ? 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-400'
-          : 'bg-blue-600 text-white hover:bg-blue-700'
+          : 'bg-primary text-white hover:bg-primary-hover'
       }`}
     >
       {isPending ? (

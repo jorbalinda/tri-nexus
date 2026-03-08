@@ -277,7 +277,7 @@ export default function TimelinePage() {
           <button
             onClick={handleSetGunTime}
             disabled={settingGunTime || !gunTimeOnly || (showQuickSetup && enabledCount === 0)}
-            className="px-5 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
+            className="px-5 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer whitespace-nowrap"
           >
             {settingGunTime ? 'Generating...' : events.length > 0 ? 'Regenerate' : showQuickSetup ? `Create Timeline (${enabledCount})` : 'Generate Timeline'}
           </button>
@@ -342,7 +342,7 @@ export default function TimelinePage() {
               <button
                 onClick={handleAddCustomEvent}
                 disabled={!newEventName.trim() || !newEventTime}
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-30 cursor-pointer shrink-0"
+                className="px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-30 cursor-pointer shrink-0"
               >
                 Add
               </button>
@@ -381,7 +381,7 @@ export default function TimelinePage() {
                     onClick={() => toggleActivity(activity.id)}
                     className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer ${
                       state.enabled
-                        ? 'bg-blue-600 border-blue-600'
+                        ? 'bg-primary border-blue-600'
                         : 'border-gray-300 dark:border-gray-600'
                     }`}
                   >
