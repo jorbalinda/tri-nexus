@@ -10,18 +10,18 @@ import TimeCombobox from '@/components/timeline/TimeCombobox'
 import type { TargetRace } from '@/lib/types/target-race'
 import type { RaceCourse } from '@/lib/types/race-plan'
 
-const INPUT_CLASS = 'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all'
+const INPUT_CLASS = 'w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4361ee]/30 focus:border-[#4361ee] transition-all'
 
 const TYPE_COLORS: Record<string, string> = {
-  logistics: 'bg-blue-500',
-  nutrition: 'bg-orange-500',
-  action: 'bg-green-500',
+  logistics: 'bg-[#4361ee]',
+  nutrition: 'bg-[#fb8500]',
+  action: 'bg-[#4cc9a0]',
 }
 
 const TYPE_BADGES: Record<string, string> = {
-  logistics: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400',
-  nutrition: 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400',
-  action: 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400',
+  logistics: 'bg-[#4361ee]/10 text-[#4361ee]',
+  nutrition: 'bg-[#fb8500]/10 text-[#fb8500]',
+  action: 'bg-[#4cc9a0]/10 text-[#4cc9a0]',
 }
 
 function formatTime(dateStr: string): string {
@@ -185,7 +185,7 @@ export default function TimelineClient({ race, course }: Props) {
 
       <div className="card-squircle p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Clock size={18} className="text-blue-600" />
+          <Clock size={18} className="text-[#4361ee]" />
           <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Gun Start Time</h2>
         </div>
         {race.race_date && (
@@ -218,13 +218,13 @@ export default function TimelineClient({ race, course }: Props) {
         </div>
         {suggestedFromCourse && course?.typical_start_time && (
           <div className="flex items-center gap-2 mt-2">
-            <MapPin size={12} className="text-blue-500 shrink-0" />
-            <p className="text-[11px] text-blue-600 dark:text-blue-400">
+            <MapPin size={12} className="text-[#57a2ea] shrink-0" />
+            <p className="text-[11px] text-[#57a2ea]">
               Pre-filled from {course.name} typical start ({course.typical_start_time} {course.timezone ?? 'local'})
             </p>
           </div>
         )}
-        <button onClick={() => setShowQuickSetup((prev) => !prev)} className="mt-3 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer transition-colors">
+        <button onClick={() => setShowQuickSetup((prev) => !prev)} className="mt-3 text-xs font-medium text-[#57a2ea] hover:text-[#7ab8f0] cursor-pointer transition-colors">
           {showQuickSetup ? 'Use default template instead' : 'Customize activities & timing'}
         </button>
       </div>
@@ -242,14 +242,14 @@ export default function TimelineClient({ race, course }: Props) {
                 onKeyDown={(e) => { if (e.key === 'Enter') handleAddCustomEvent() }}
                 placeholder="Event name"
                 maxLength={100}
-                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4361ee]/30 focus:border-[#4361ee] transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div className="flex items-center gap-2 pl-[22px]">
-              <input type="time" value={newEventTime} onChange={(e) => setNewEventTime(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAddCustomEvent() }} className="w-[120px] shrink-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all" />
+              <input type="time" value={newEventTime} onChange={(e) => setNewEventTime(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') handleAddCustomEvent() }} className="w-[120px] shrink-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4361ee]/30 focus:border-[#4361ee] transition-all" />
               <div className="flex items-center gap-1.5 flex-1 min-w-0">
                 <div className={`w-2 h-2 rounded-full shrink-0 ${TYPE_COLORS[newEventType]}`} />
-                <select value={newEventType} onChange={(e) => setNewEventType(e.target.value as 'logistics' | 'nutrition' | 'action')} className="flex-1 min-w-0 px-2 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all">
+                <select value={newEventType} onChange={(e) => setNewEventType(e.target.value as 'logistics' | 'nutrition' | 'action')} className="flex-1 min-w-0 px-2 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4361ee]/30 focus:border-[#4361ee] transition-all">
                   <option value="action">Action</option>
                   <option value="logistics">Logistics</option>
                   <option value="nutrition">Nutrition</option>
@@ -265,7 +265,7 @@ export default function TimelineClient({ race, course }: Props) {
         <div className="card-squircle p-6">
           <div className="flex items-center gap-3 mb-4">
             <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Race Morning Activities</h2>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-medium">Quick Setup</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#4361ee]/10 text-[#4361ee] font-medium">Quick Setup</span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">Toggle activities on/off and set the time for each.</p>
           <div className="flex flex-col gap-2">
@@ -274,7 +274,7 @@ export default function TimelineClient({ race, course }: Props) {
               if (!state) return null
               return (
                 <div key={activity.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${state.enabled ? 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50' : 'border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30 opacity-50'}`}>
-                  <button onClick={() => toggleActivity(activity.id)} className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer ${state.enabled ? 'bg-primary border-blue-600' : 'border-gray-300 dark:border-gray-600'}`}>
+                  <button onClick={() => toggleActivity(activity.id)} className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer ${state.enabled ? 'bg-primary border-primary' : 'border-gray-300 dark:border-gray-600'}`}>
                     {state.enabled && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                   </button>
                   <div className="flex-1 min-w-0">
@@ -309,10 +309,10 @@ export default function TimelineClient({ race, course }: Props) {
                     <span className={`text-sm flex-1 ${event.is_completed ? 'text-gray-400 line-through' : 'text-gray-800 dark:text-gray-200'}`}>{event.event_name}</span>
                     {event.event_type && <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${TYPE_BADGES[event.event_type]}`}>{event.event_type}</span>}
                     <button onClick={() => toggleCompleted(event.id)} className="cursor-pointer flex-shrink-0">
-                      {event.is_completed ? <CheckCircle2 size={18} className="text-green-500" /> : <Circle size={18} className="text-gray-300 dark:text-gray-600" />}
+                      {event.is_completed ? <CheckCircle2 size={18} className="text-[#4cc9a0]" /> : <Circle size={18} className="text-gray-300 dark:text-gray-600" />}
                     </button>
                     <button onClick={() => removeEvent(event.id)} className="opacity-0 group-hover:opacity-100 p-1 cursor-pointer">
-                      <Trash2 size={14} className="text-gray-400 hover:text-red-500 transition-colors" />
+                      <Trash2 size={14} className="text-gray-400 hover:text-[#d62828] transition-colors" />
                     </button>
                   </div>
                 ))}
