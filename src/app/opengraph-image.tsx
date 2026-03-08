@@ -14,9 +14,9 @@ export default function OgImage() {
           height: '630px',
           background: 'linear-gradient(135deg, #05123e 0%, #023047 40%, #0a5c8a 70%, #219ebc 100%)',
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
+          flexDirection: 'row',
+          alignItems: 'stretch',
+          justifyContent: 'flex-start',
           fontFamily: 'sans-serif',
           position: 'relative',
           overflow: 'hidden',
@@ -59,88 +59,92 @@ export default function OgImage() {
           }}
         />
 
-        {/* Wordmark */}
+        {/* Left column — logo */}
         <div
           style={{
-            fontSize: '14px',
-            fontWeight: 700,
-            letterSpacing: '6px',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.6)',
-            marginBottom: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            width: '340px',
+            paddingLeft: '80px',
+            paddingRight: '60px',
+            borderRight: '1px solid rgba(255,255,255,0.08)',
+            height: '100%',
           }}
         >
-          RACE DAY
+          {/* Logo mark */}
+          <div
+            style={{
+              width: '72px',
+              height: '72px',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, #219ebc, #4cc9a0)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            <div style={{ fontSize: '28px', fontWeight: 900, color: '#ffffff', letterSpacing: '-1px' }}>TR</div>
+          </div>
+
+          <div style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '5px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>
+            RACE DAY
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.5px' }}>
+            triraceday.com
+          </div>
+
+          {/* Sport pills */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '36px' }}>
+            {[
+              { label: 'Swim', color: '#219ebc' },
+              { label: 'Bike', color: '#fb8500' },
+              { label: 'Run',  color: '#4cc9a0' },
+            ].map(({ label, color }) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, flexShrink: 0 }} />
+                <span style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color }}>
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Headline */}
+        {/* Right column — headline */}
         <div
           style={{
-            fontSize: '72px',
-            fontWeight: 800,
-            color: '#ffffff',
-            textAlign: 'center',
-            lineHeight: 1.1,
-            marginBottom: '24px',
-            maxWidth: '900px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            flex: 1,
+            paddingLeft: '72px',
+            paddingRight: '80px',
           }}
         >
-          Know Your Finish Time.
-        </div>
-
-        {/* Subline */}
-        <div
-          style={{
-            fontSize: '24px',
-            color: 'rgba(255,255,255,0.55)',
-            textAlign: 'center',
-            maxWidth: '680px',
-            lineHeight: 1.4,
-            marginBottom: '48px',
-          }}
-        >
-          Train, project, race, compare.
-        </div>
-
-        {/* Sport pills */}
-        <div style={{ display: 'flex', gap: '16px' }}>
-          {[
-            { label: 'Swim', color: '#219ebc' },
-            { label: 'Bike', color: '#fb8500' },
-            { label: 'Run',  color: '#4cc9a0' },
-          ].map(({ label, color }) => (
-            <div
-              key={label}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 20px',
-                borderRadius: '999px',
-                border: `1.5px solid ${color}`,
-                background: `rgba(255,255,255,0.05)`,
-              }}
-            >
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }} />
-              <span style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color }}>
-                {label}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Domain */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '24px',
-            right: '40px',
-            fontSize: '14px',
-            color: 'rgba(255,255,255,0.35)',
-            letterSpacing: '1px',
-          }}
-        >
-          triraceday.com
+          <div
+            style={{
+              fontSize: '62px',
+              fontWeight: 800,
+              color: '#ffffff',
+              lineHeight: 1.1,
+              marginBottom: '20px',
+            }}
+          >
+            Know Your<br />Finish Time.
+          </div>
+          <div
+            style={{
+              fontSize: '22px',
+              color: 'rgba(255,255,255,0.5)',
+              lineHeight: 1.5,
+            }}
+          >
+            Train, project, race, compare.<br />Your finish time — before the start line.
+          </div>
         </div>
       </div>
     ),
