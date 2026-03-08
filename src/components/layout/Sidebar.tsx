@@ -42,7 +42,7 @@ export default function Sidebar() {
       <div>
         {/* Branding */}
         <div className="mb-12">
-          <p className="text-[11px] font-bold uppercase tracking-[3px] text-blue-500">
+          <p className="text-xs font-bold uppercase tracking-[5px] text-[#4361ee]">
             RACE DAY
           </p>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Know Your Finish Line</p>

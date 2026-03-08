@@ -355,7 +355,7 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="flex items-center justify-center pt-8 pb-4 px-6">
-        <p className="text-xs font-bold uppercase tracking-[4px] text-blue-500">RACE DAY</p>
+        <p className="text-xs font-bold uppercase tracking-[5px] text-[#4361ee]">RACE DAY</p>
       </header>
 
       <div className="px-6 pt-2 pb-6 max-w-lg mx-auto w-full">
