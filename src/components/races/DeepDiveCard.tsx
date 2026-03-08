@@ -61,10 +61,10 @@ export default function DeepDiveCard({
               </p>
               <div className="space-y-3">
                 {[
-                  { label: 'Volume & Recency', value: breakdown.volume, max: 25, color: 'bg-blue-500' },
-                  { label: 'Discipline Balance', value: breakdown.discipline, max: 25, color: 'bg-purple-500' },
-                  { label: 'Threshold Quality', value: breakdown.thresholds, max: 25, color: 'bg-orange-500' },
-                  { label: 'Data Completeness', value: breakdown.completeness, max: 25, color: 'bg-cyan-500' },
+                  { label: 'Volume & Recency', value: breakdown.volume, max: 25, color: 'bg-[#4361ee]' },
+                  { label: 'Discipline Balance', value: breakdown.discipline, max: 25, color: 'bg-[#2a9d8f]' },
+                  { label: 'Threshold Quality', value: breakdown.thresholds, max: 25, color: 'bg-[#fb8500]' },
+                  { label: 'Data Completeness', value: breakdown.completeness, max: 25, color: 'bg-[#219ebc]' },
                 ].map((dim) => (
                   <div key={dim.label}>
                     <div className="flex items-center justify-between mb-0.5">
@@ -93,17 +93,17 @@ export default function DeepDiveCard({
           {projection?.hr_adjustment && projection.hr_adjustment.overallConfidence !== 'none' && (() => {
             const hrAdj = projection.hr_adjustment as HRAdjustmentResult
             const confidenceBadge = {
-              high: { bg: 'bg-green-100 dark:bg-green-950/30', text: 'text-green-600 dark:text-green-400', label: 'High confidence' },
-              moderate: { bg: 'bg-amber-100 dark:bg-amber-950/30', text: 'text-amber-600 dark:text-amber-400', label: 'Moderate confidence' },
+              high: { bg: 'bg-[#4cc9a0]/10', text: 'text-[#4cc9a0]', label: 'High confidence' },
+              moderate: { bg: 'bg-[#fb8500]/10', text: 'text-[#fb8500]', label: 'Moderate confidence' },
               low: { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500 dark:text-gray-400', label: 'Low confidence' },
               none: { bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-500 dark:text-gray-400', label: 'None' },
             }[hrAdj.overallConfidence]
 
             const factorDotColor = (adjustment: number, weight: number) => {
               if (weight === 0) return 'bg-gray-300 dark:bg-gray-600'
-              if (adjustment < -0.005) return 'bg-green-500'
-              if (adjustment > 0.01) return 'bg-red-500'
-              if (adjustment > 0.003) return 'bg-amber-500'
+              if (adjustment < -0.005) return 'bg-[#4cc9a0]'
+              if (adjustment > 0.01) return 'bg-[#d62828]'
+              if (adjustment > 0.003) return 'bg-[#e2622c]'
               return 'bg-gray-400'
             }
 
@@ -117,7 +117,7 @@ export default function DeepDiveCard({
             return (
               <div className="border-t border-gray-100 dark:border-gray-800 py-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Activity size={12} className="text-pink-500" />
+                  <Activity size={12} className="text-[#219ebc]" />
                   <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
                     Heart Rate Analysis
                   </p>
@@ -134,7 +134,7 @@ export default function DeepDiveCard({
                       <div key={sport} className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                         <div className="flex items-center justify-between mb-1.5">
                           <span className={`text-xs font-semibold capitalize ${sportColor}`}>{sport}</span>
-                          <span className={`text-xs font-bold ${netAdj > 0.05 ? 'text-red-500' : netAdj < -0.05 ? 'text-green-600' : 'text-gray-500'}`}>
+                          <span className={`text-xs font-bold ${netAdj > 0.05 ? 'text-[#d62828]' : netAdj < -0.05 ? 'text-[#4cc9a0]' : 'text-gray-500'}`}>
                             {netAdj >= 0 ? '+' : ''}{netAdj.toFixed(1)}% {netAdj > 0.05 ? '(slower)' : netAdj < -0.05 ? '(faster)' : '(neutral)'}
                           </span>
                         </div>
@@ -178,7 +178,7 @@ export default function DeepDiveCard({
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                 <div className="flex items-center gap-2 mb-1">
-                  <Database size={12} className="text-blue-500" />
+                  <Database size={12} className="text-[#4361ee]" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Data Points</span>
                 </div>
                 <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{projection?.data_points_used ?? workoutCount}</p>
@@ -186,7 +186,7 @@ export default function DeepDiveCard({
               </div>
               <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                 <div className="flex items-center gap-2 mb-1">
-                  <Calendar size={12} className="text-orange-500" />
+                  <Calendar size={12} className="text-[#fb8500]" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Reveal In</span>
                 </div>
                 <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
@@ -205,17 +205,17 @@ export default function DeepDiveCard({
               </p>
               <div className="flex flex-wrap gap-2 text-xs">
                 {projection.fitness_snapshot.estimatedFTP && (
-                  <span className="px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 font-medium">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#fb8500]/10 text-[#fb8500] font-medium">
                     FTP: {projection.fitness_snapshot.estimatedFTP}W
                   </span>
                 )}
                 {projection.fitness_snapshot.estimatedCSS && (
-                  <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 font-medium">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#219ebc]/10 text-[#219ebc] font-medium">
                     CSS: {Math.floor(projection.fitness_snapshot.estimatedCSS / 60)}:{(projection.fitness_snapshot.estimatedCSS % 60).toString().padStart(2, '0')}/100m
                   </span>
                 )}
                 {projection.fitness_snapshot.weeklyVolumeHours && (
-                  <span className="px-2.5 py-1 rounded-lg bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 font-medium">
+                  <span className="px-2.5 py-1 rounded-lg bg-[#4cc9a0]/10 text-[#4cc9a0] font-medium">
                     {projection.fitness_snapshot.weeklyVolumeHours}h/week
                   </span>
                 )}
@@ -225,8 +225,8 @@ export default function DeepDiveCard({
 
           {/* Guidance */}
           <div className="border-t border-gray-100 dark:border-gray-800 py-4">
-            <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/20">
-              <p className="text-xs text-blue-600/80 dark:text-blue-400/80">
+            <div className="p-3 rounded-xl bg-[#4361ee]/5 border border-[#4361ee]/15">
+              <p className="text-xs text-[#57a2ea]/90 dark:text-[#57a2ea]/80">
                 {confidence < 30
                   ? 'Insufficient data. Projection is a rough guess. Keep logging workouts across all three disciplines.'
                   : confidence < 50

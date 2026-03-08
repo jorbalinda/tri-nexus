@@ -50,12 +50,12 @@ function formatTimeShort(seconds: number): string {
 }
 
 function getTsbBadge(tsb: number): { label: string; color: string; bg: string } | null {
-  if (tsb >= 10 && tsb <= 25) return { label: 'Race Ready', color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-950/30' }
-  if (tsb > 0 && tsb < 10) return { label: 'Fresh', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-950/30' }
-  if (tsb >= -10 && tsb <= 0) return { label: 'Training', color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-100 dark:bg-yellow-950/30' }
-  if (tsb < -10 && tsb >= -20) return { label: 'Fatigued', color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-950/30' }
-  if (tsb < -20) return { label: 'Overtrained', color: 'text-red-600 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-950/30' }
-  return { label: 'Rested', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-950/30' }
+  if (tsb >= 10 && tsb <= 25) return { label: 'Race Ready', color: 'text-[#4cc9a0]', bg: 'bg-[#4cc9a0]/10' }
+  if (tsb > 0 && tsb < 10) return { label: 'Fresh', color: 'text-[#57a2ea]', bg: 'bg-[#57a2ea]/10' }
+  if (tsb >= -10 && tsb <= 0) return { label: 'Training', color: 'text-[#fb8500]', bg: 'bg-[#fb8500]/10' }
+  if (tsb < -10 && tsb >= -20) return { label: 'Fatigued', color: 'text-[#e2622c]', bg: 'bg-[#e2622c]/10' }
+  if (tsb < -20) return { label: 'Overtrained', color: 'text-[#d62828]', bg: 'bg-[#d62828]/10' }
+  return { label: 'Rested', color: 'text-[#ffb703]', bg: 'bg-[#ffb703]/10' }
 }
 
 export default function ProjectionHero({
@@ -163,7 +163,7 @@ export default function ProjectionHero({
           </div>
           <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full bg-blue-500 transition-all duration-500"
+              className="h-full rounded-full bg-primary transition-all duration-500"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -174,7 +174,7 @@ export default function ProjectionHero({
           {checklistItems.map((item, i) => (
             <div key={i} className="flex items-center gap-2.5">
               {item.done ? (
-                <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                <CheckCircle2 size={16} className="text-[#4cc9a0] shrink-0" />
               ) : (
                 <Circle size={16} className="text-gray-300 dark:text-gray-600 shrink-0" />
               )}
@@ -192,7 +192,7 @@ export default function ProjectionHero({
               key={gate.sport}
               className={`p-3 rounded-xl border-2 border-dashed text-center ${
                 gate.passed
-                  ? 'border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-950/10'
+                  ? 'border-[#4cc9a0]/40 bg-[#4cc9a0]/5'
                   : 'border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/20'
               }`}
             >
@@ -200,7 +200,7 @@ export default function ProjectionHero({
                 {SPORT_LABELS[gate.sport]}
               </p>
               {gate.passed ? (
-                <CheckCircle2 size={14} className="text-green-500 mx-auto mb-1" />
+                <CheckCircle2 size={14} className="text-[#4cc9a0] mx-auto mb-1" />
               ) : (
                 <p className="text-lg font-bold text-gray-200 dark:text-gray-700 mb-1">——</p>
               )}
@@ -217,12 +217,12 @@ export default function ProjectionHero({
             {sufficiency.nextActions.slice(0, 2).map((action, i) => (
               <div
                 key={i}
-                className="flex items-start gap-2.5 p-2.5 rounded-xl bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/20"
+                className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#4361ee]/5 dark:bg-[#4361ee]/5 border border-[#4361ee]/15 dark:border-[#4361ee]/10"
               >
-                <ArrowRight size={12} className="text-blue-500 shrink-0 mt-0.5" />
+                <ArrowRight size={12} className="text-[#4361ee] shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-medium text-gray-900 dark:text-gray-100">{action.action}</p>
-                  <p className="text-[10px] text-blue-600/70 dark:text-blue-400/70">{action.impact}</p>
+                  <p className="text-[10px] text-[#57a2ea]/80">{action.impact}</p>
                 </div>
               </div>
             ))}
@@ -238,7 +238,7 @@ export default function ProjectionHero({
       <div className="card-squircle p-4 sm:p-6 lg:p-8">
         {/* Top bar: badge + confidence */}
         <div className="flex items-center justify-between mb-6">
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-orange-100 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 text-xs font-bold uppercase tracking-wider">
+          <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#e2622c]/10 text-[#e2622c] text-xs font-bold uppercase tracking-wider">
             Early Estimate
           </span>
           <div className="flex items-center gap-2">
@@ -280,7 +280,7 @@ export default function ProjectionHero({
             <div className="space-y-1.5">
               {sufficiency.nextActions.slice(0, 3).map((action, i) => (
                 <div key={i} className="flex items-start gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/30">
-                  <ArrowRight size={11} className="text-blue-500 shrink-0 mt-0.5" />
+                  <ArrowRight size={11} className="text-[#4361ee] shrink-0 mt-0.5" />
                   <p className="text-xs text-gray-600 dark:text-gray-400">{action.action}</p>
                 </div>
               ))}
@@ -292,7 +292,7 @@ export default function ProjectionHero({
         <div className="pt-3 border-t border-gray-100 dark:border-gray-800">
           <Link
             href={`/dashboard/races/${race.id}/reveal`}
-            className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            className="text-xs font-medium text-[#57a2ea] hover:text-[#7ab8f0] transition-colors"
           >
             View Full Projection &rarr;
           </Link>
@@ -344,7 +344,7 @@ export default function ProjectionHero({
         <div className="flex items-center gap-1.5 shrink-0">
           {/* HR-Enhanced badge */}
           {hrActive && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-pink-100 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 text-[10px] font-bold">
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#219ebc]/10 text-[#219ebc] text-[10px] font-bold">
               <Activity size={10} />
               HR
             </span>
@@ -430,8 +430,8 @@ export default function ProjectionHero({
           </p>
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 ${
             tier === 3
-              ? 'bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400'
-              : 'bg-blue-100 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400'
+              ? 'bg-[#4cc9a0]/10 text-[#4cc9a0]'
+              : 'bg-[#57a2ea]/10 text-[#57a2ea]'
           }`}>
             {tier === 3 && <Shield size={9} />}
             {sufficiency?.tierLabel ?? 'Standard'}
@@ -470,7 +470,7 @@ function GoalComparison({ goalSeconds, realisticSeconds }: { goalSeconds: number
   const isUnder = diffSeconds < 0
 
   return (
-    <p className={`text-xs font-medium text-center ${isUnder ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
+    <p className={`text-xs font-medium text-center ${isUnder ? 'text-[#4cc9a0]' : 'text-[#e2622c]'}`}>
       {isUnder
         ? `${diffMin} min under goal`
         : diffMin === 0
