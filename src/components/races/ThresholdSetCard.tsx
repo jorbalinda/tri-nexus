@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { Zap, Waves, Footprints, CheckCircle2, Pencil } from 'lucide-react'
 import { apiGet, apiPatch } from '@/lib/api/client'
 import ParticleBurst from '@/components/ui/ParticleBurst'
@@ -77,6 +78,7 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
         ...(runVal !== null && { threshold_pace_run: runVal }),
       })
       setThresholds({ ftp_watts: ftpVal, threshold_pace_swim: cssVal, threshold_pace_run: runVal })
+      toast.success('Thresholds saved')
       setShowBurst(true)
       setEditing(false)
       onSaved?.()

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import Card from '@/components/ui/Card'
 import ParticleBurst from '@/components/ui/ParticleBurst'
 import { createClient } from '@/lib/supabase/client'
@@ -98,6 +99,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
     if (!error) {
       setSaved(true)
       setShowBurst(true)
+      toast.success('Workout logged')
       setTimeout(() => setSaved(false), 3000)
     }
   }

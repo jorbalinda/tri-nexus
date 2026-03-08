@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { toast } from 'sonner'
 import { Upload, FileCheck, Loader2, AlertCircle, X, CheckCircle2 } from 'lucide-react'
 
 interface FitUploadDropzoneProps {
@@ -73,6 +74,7 @@ export default function FitUploadDropzone({ onUploaded }: FitUploadDropzoneProps
         setError(`Parsed ${data.parsed_count} workouts but insert failed: ${data.insert_errors[0]}`)
       } else {
         setResult({ count: data.count })
+        toast.success(`${data.count} workout${data.count !== 1 ? 's' : ''} imported`)
         onUploaded?.()
       }
     } catch {

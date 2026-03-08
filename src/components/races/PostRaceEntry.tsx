@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import type { TargetRace } from '@/lib/types/target-race'
 import ParticleBurst from '@/components/ui/ParticleBurst'
 
@@ -62,6 +63,7 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
         actual_t1_seconds: parseTimeInput(t1),
         actual_t2_seconds: parseTimeInput(t2),
       })
+      toast.success('Race results saved')
       setShowBurst(true)
     } finally {
       setSaving(false)

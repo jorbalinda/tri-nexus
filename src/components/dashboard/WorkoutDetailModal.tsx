@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { X, ExternalLink, Waves, Bike, Footprints, Clock, Heart, Zap, MapPin, Trash2, Cloud } from 'lucide-react'
 import type { Workout, WorkoutHRZone, WorkoutPowerZone, WorkoutLap } from '@/lib/types/database'
 import { apiGet, apiDelete } from '@/lib/api/client'
@@ -55,6 +56,7 @@ export default function WorkoutDetailModal({ workout, onClose, onDeleted }: Work
     setDeleting(true)
     try {
       await apiDelete(`/api/workouts/${workout.id}`)
+      toast.success('Workout deleted')
       onDeleted?.()
       onClose()
     } catch { /* ignore */ }

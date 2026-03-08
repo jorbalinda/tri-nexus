@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
+import { toast } from 'sonner'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { LogOut } from 'lucide-react'
@@ -315,6 +316,7 @@ export default function ProfilePage() {
       }
       setSaveStatus('saved')
       setShowBurst(true)
+      toast.success('Profile saved')
       setTimeout(() => setSaveStatus('idle'), 2500)
     } catch {
       setSaveStatus('error')
@@ -344,6 +346,7 @@ export default function ProfilePage() {
       })
       setSaveThresholdsStatus('saved')
       setShowThresholdBurst(true)
+      toast.success('Performance data saved')
       setTimeout(() => setSaveThresholdsStatus('idle'), 2500)
     } catch {
       setSaveThresholdsStatus('error')

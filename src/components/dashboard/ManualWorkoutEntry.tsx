@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { Plus, X, ChevronRight, ChevronLeft, Waves, Bike, Footprints, Zap } from 'lucide-react'
 import { apiPost, apiPatch } from '@/lib/api/client'
 import ParticleBurst from '@/components/ui/ParticleBurst'
@@ -99,6 +100,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
           ...(rawCss !== null && { threshold_pace_swim: localImperial ? secPer100ydToSecPer100m(rawCss) : rawCss }),
           ...(rawRun !== null && { threshold_pace_run: localImperial ? secPerMileToSecPerKm(rawRun) : rawRun }),
         })
+        toast.success('Thresholds saved')
         setShowBurst(true)
         setTimeout(() => { setOpen(false); resetForm(); onSaved() }, 700)
       } catch { /* ignore */ }
@@ -130,6 +132,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
         rpe: rpe ? parseFloat(rpe) : null,
         calories: calories ? parseInt(calories) : null,
       })
+      toast.success('Workout logged')
       setShowBurst(true)
       setTimeout(() => { setOpen(false); resetForm(); onSaved() }, 700)
     } catch { /* ignore */ }

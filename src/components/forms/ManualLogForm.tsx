@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import Card from '@/components/ui/Card'
 import { createClient } from '@/lib/supabase/client'
 
@@ -62,6 +63,7 @@ export default function ManualLogForm() {
     setSaving(false)
     setSaved(true)
     setValues({})
+    toast.success('Data logged')
     setTimeout(() => setSaved(false), 3000)
   }
 

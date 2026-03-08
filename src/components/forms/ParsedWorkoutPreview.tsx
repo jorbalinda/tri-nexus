@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { ParsedWorkout } from '@/lib/parsers'
 import { FileText } from 'lucide-react'
@@ -149,6 +150,7 @@ export default function ParsedWorkoutPreview({ workout, onSaved, onDiscard }: Pa
       setSaveError(error.message)
     } else {
       setSaved(true)
+      toast.success('Workout saved')
       setTimeout(() => onSaved(), 1000)
     }
   }
