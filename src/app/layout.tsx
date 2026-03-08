@@ -19,17 +19,6 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Race Day | Know Your Finish Line",
   description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
-  icons: {
-    icon: [
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-    ],
-    apple: '/apple-touch-icon.png',
-    other: [
-      { rel: 'manifest', url: '/site.webmanifest' },
-    ],
-  },
   openGraph: {
     title: "Race Day | Know Your Finish Line",
     description: "Know your finish time before the race starts. Train, track, and get your projected race day result.",
