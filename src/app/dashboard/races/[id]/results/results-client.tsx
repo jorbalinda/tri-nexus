@@ -68,7 +68,7 @@ export default function ResultsClient({ initialRace }: { initialRace: TargetRace
       </Link>
 
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[2px] text-green-500 mb-2">Post-Race Results</p>
+        <p className="text-[10px] font-bold uppercase tracking-[2px] text-[#4361ee] mb-2">Post-Race Results</p>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{race.race_name}</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{race.race_date}</p>
       </div>
@@ -80,7 +80,7 @@ export default function ResultsClient({ initialRace }: { initialRace: TargetRace
       {hasResults && !projection && (
         <div className="card-squircle p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Trophy size={16} className="text-amber-500" />
+            <Trophy size={16} className="text-[#ffb703]" />
             <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500">
               Race Results
             </p>
@@ -95,11 +95,11 @@ export default function ResultsClient({ initialRace }: { initialRace: TargetRace
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 text-center">
             {[
-              { label: 'Swim', time: race.actual_swim_seconds, color: 'text-blue-600' },
+              { label: 'Swim', time: race.actual_swim_seconds, color: 'text-[#219ebc]' },
               { label: 'T1', time: race.actual_t1_seconds, color: 'text-gray-500' },
-              { label: 'Bike', time: race.actual_bike_seconds, color: 'text-orange-600' },
+              { label: 'Bike', time: race.actual_bike_seconds, color: 'text-[#fb8500]' },
               { label: 'T2', time: race.actual_t2_seconds, color: 'text-gray-500' },
-              { label: 'Run', time: race.actual_run_seconds, color: 'text-green-600' },
+              { label: 'Run', time: race.actual_run_seconds, color: 'text-[#4cc9a0]' },
             ].map(({ label, time, color }) => (
               <div key={label} className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">{label}</p>

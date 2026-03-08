@@ -69,7 +69,7 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
   }
 
   const inputClass =
-    'w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none'
+    'w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#4361ee]/30 focus:border-transparent outline-none'
 
   return (
     <form onSubmit={handleSubmit} className="card-squircle p-6">
@@ -89,8 +89,8 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
               className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 status === s
                   ? s === 'completed'
-                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                    : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                    ? 'bg-[#4cc9a0]/15 text-[#4cc9a0]'
+                    : 'bg-[#d62828]/10 text-[#d62828]'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'
               }`}
             >
