@@ -335,6 +335,18 @@ export default function OnboardingPage() {
           </p>
         </div>
       )}
+
+      <div className="flex justify-end pt-2">
+        <button
+          type="button"
+          onClick={handleComplete}
+          disabled={transitioning}
+          className="flex items-center gap-1.5 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer"
+        >
+          Get Started
+          <ChevronRight size={16} />
+        </button>
+      </div>
     </div>
   )
 
@@ -389,7 +401,7 @@ export default function OnboardingPage() {
             <div />
           )}
 
-          {step === 1 ? (
+          {step === 1 && (
             <button
               type="button"
               onClick={() => animateTransition(2)}
@@ -397,16 +409,6 @@ export default function OnboardingPage() {
               className="flex items-center gap-1.5 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-40 cursor-pointer"
             >
               Next
-              <ChevronRight size={16} />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleComplete}
-              disabled={transitioning}
-              className="flex items-center gap-1.5 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all cursor-pointer"
-            >
-              Get Started
               <ChevronRight size={16} />
             </button>
           )}
