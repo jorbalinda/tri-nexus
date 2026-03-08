@@ -156,11 +156,7 @@ export default function OnboardingPage() {
       // Non-critical
     }
 
-    if (data.device === 'garmin') {
-      router.push('/dashboard/profile')
-    } else {
-      router.push('/dashboard')
-    }
+    router.push('/dashboard/profile?onboarding=true')
     router.refresh()
   }, [data, supabase, router])
 

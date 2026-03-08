@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { apiPatch } from '@/lib/api/client'
@@ -76,6 +76,8 @@ function roundDisplay(val: number): string {
 
 export default function ProfilePage() {
   const { setUnits: setGlobalUnits } = useUnits()
+  const searchParams = useSearchParams()
+  const isOnboarding = searchParams.get('onboarding') === 'true'
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -273,6 +275,8 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
+      if (!displayName.trim()) throw new Error('Display name is required.')
+
       const weightKg = weight ? (isImperial ? lbsToKg(parseFloat(weight)) : parseFloat(weight)) : null
       const heightCm = height ? (isImperial ? inchesToCm(parseFloat(height)) : parseFloat(height)) : null
 
@@ -294,6 +298,10 @@ export default function ProfilePage() {
       if (error) throw error
       setOriginalUsername(username)
       setUsernameStatus(username ? 'unchanged' : 'idle')
+      if (isOnboarding) {
+        router.push('/dashboard')
+        return
+      }
       setSaveStatus('saved')
       setTimeout(() => setSaveStatus('idle'), 2500)
     } catch {
@@ -402,6 +410,15 @@ export default function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-6">
+      {isOnboarding && (
+        <div className="rounded-2xl bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 px-5 py-4">
+          <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">One last step — set up your profile</p>
+          <p className="text-xs text-blue-600/80 dark:text-blue-400/80 mt-0.5">
+            Add your name and a few details so we can personalize your predictions. Hit Save when you're done.
+          </p>
+        </div>
+      )}
+
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
           Profile
