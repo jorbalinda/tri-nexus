@@ -200,7 +200,7 @@ export default function FitnessTrends() {
                     fontSize: '12px',
                   }}
                 />
-                <Bar yAxisId="right" dataKey="TSS" fill="#fb8500" opacity={0.35} name="Daily TSS" />
+                <Bar yAxisId="right" dataKey="TSS" fill="#fb8500" opacity={0.55} name="Daily TSS" />
                 <Line yAxisId="left" type="monotone" dataKey="CTL" stroke="#219ebc" strokeWidth={2} dot={false} name="Fitness (CTL)" />
                 <Line yAxisId="left" type="monotone" dataKey="ATL" stroke="#e63946" strokeWidth={2} dot={false} name="Fatigue (ATL)" />
                 <Line yAxisId="left" type="monotone" dataKey="TSB" stroke="#4cc9a0" strokeWidth={1.5} dot={false} name="Form (TSB)" strokeDasharray="4 2" />
