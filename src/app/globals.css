@@ -97,6 +97,18 @@ body {
   transition: box-shadow 0.2s ease;
 }
 
+/* Dashboard-only card gradient — scoped to [data-section="dashboard"] */
+[data-section="dashboard"] .card-squircle {
+  background: linear-gradient(145deg, #ffffff 0%, #eef4fd 100%);
+  box-shadow: 0 2px 8px rgba(5, 18, 62, 0.07), 0 8px 28px rgba(5, 18, 62, 0.05);
+}
+
+.dark [data-section="dashboard"] .card-squircle {
+  background: linear-gradient(145deg, #052d5c 0%, #010b1e 100%);
+  border-color: rgba(87, 162, 234, 0.14);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
 /* Glass effect */
 .glass {
   background: var(--glass-bg);
