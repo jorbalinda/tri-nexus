@@ -25,6 +25,29 @@ export function calculateCSS(time400s: number, time200s: number): number {
   return (time400s - time200s) / 2
 }
 
+function median(arr: number[]): number {
+  const sorted = [...arr].sort((a, b) => a - b)
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+}
+
+export function estimateSwimPaceCV(workouts: Workout[], maxHR: number | null): number | null {
+  const swims = workouts
+    .filter((w) => w.sport === 'swim' && w.distance_meters && w.duration_seconds)
+    .filter((w) => {
+      if (!maxHR || !w.avg_hr) return true
+      return w.avg_hr >= maxHR * 0.85 && (w.duration_seconds || 0) >= 600
+    })
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 5)
+
+  if (swims.length < 2) return null
+  const paces = swims.map((w) => (w.duration_seconds || 0) / ((w.distance_meters || 1) / 100))
+  const mean = paces.reduce((a, b) => a + b, 0) / paces.length
+  const variance = paces.reduce((s, p) => s + (p - mean) ** 2, 0) / paces.length
+  return Math.sqrt(variance) / mean
+}
+
 export function estimateCSSFromWorkouts(workouts: Workout[], maxHR: number | null): number | null {
   const swims = workouts
     .filter((w) => w.sport === 'swim' && w.distance_meters && w.duration_seconds)
@@ -37,7 +60,7 @@ export function estimateCSSFromWorkouts(workouts: Workout[], maxHR: number | nul
 
   if (swims.length === 0) return null
   const paces = swims.map((w) => (w.duration_seconds || 0) / ((w.distance_meters || 1) / 100))
-  return paces.reduce((a, b) => a + b, 0) / paces.length
+  return paces.length <= 3 ? median(paces) : paces.reduce((a, b) => a + b, 0) / paces.length
 }
 
 export function calculateFTP(best20minPower: number): number {
@@ -51,7 +74,8 @@ export function estimateFTPFromWorkouts(workouts: Workout[]): number | null {
     .slice(0, 5)
 
   if (bikeWithPower.length === 0) return null
-  const avgPower = bikeWithPower.reduce((a, w) => a + (w.normalized_power || 0), 0) / bikeWithPower.length
+  const powers = bikeWithPower.map((w) => w.normalized_power || 0)
+  const avgPower = powers.length <= 3 ? median(powers) : powers.reduce((a, b) => a + b, 0) / powers.length
   return calculateFTP(avgPower)
 }
 

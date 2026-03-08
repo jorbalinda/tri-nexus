@@ -99,6 +99,29 @@ export function welcomeEmail(displayName: string): { subject: string; html: stri
 }
 
 // ---------------------------------------------------------------------------
+// New follower notification
+// ---------------------------------------------------------------------------
+export function newFollowerEmail(
+  recipientName: string,
+  followerName: string,
+  isPending: boolean
+): { subject: string; html: string } {
+  return {
+    subject: isPending
+      ? `${followerName} requested to follow you on Tri Race Day`
+      : `${followerName} started following you on Tri Race Day`,
+    html: wrapper(`
+      <h1 style="${headingStyle}">${isPending ? 'New follow request.' : 'You have a new follower.'}</h1>
+      <p style="${bodyStyle}">
+        <strong>${followerName}</strong> ${isPending ? 'has requested to follow you' : 'is now following you'} on Tri Race Day.
+      </p>
+      ${isPending ? `<p style="${bodyStyle}">Head to the social page to approve or decline the request.</p>` : ''}
+      <a href="${BASE_URL}/dashboard/social" style="${buttonStyle}">${isPending ? 'Review Request' : 'View Social'}</a>
+    `),
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Race week reminder (7 days out)
 // ---------------------------------------------------------------------------
 export function raceWeekEmail(

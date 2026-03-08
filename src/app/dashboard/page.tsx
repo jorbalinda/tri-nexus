@@ -17,9 +17,12 @@ const FitnessTrends = dynamic(() => import('@/components/dashboard/FitnessTrends
 import ManualWorkoutEntry from '@/components/dashboard/ManualWorkoutEntry'
 import ActivityFeed from '@/components/dashboard/ActivityFeed'
 import FitUploadDropzone from '@/components/dashboard/FitUploadDropzone'
+import GettingStartedCard, { computeOnboardingGate } from '@/components/dashboard/GettingStartedCard'
+import Tier2NudgeModal from '@/components/dashboard/Tier2NudgeModal'
 import RaceCard from '@/components/races/RaceCard'
 import RaceForm from '@/components/races/RaceForm'
 import { useWeekWorkouts } from '@/hooks/useWeekWorkouts'
+import { useWorkouts } from '@/hooks/useWorkouts'
 import { useTargetRaces } from '@/hooks/useTargetRaces'
 import type { TargetRace } from '@/lib/types/target-race'
 
@@ -27,11 +30,15 @@ export default function DashboardPage() {
   const [weekOffset, setWeekOffset] = useState(0)
   const [savedCount, setSavedCount] = useState(0)
   const { workoutsByDay, loading, refetch, monday } = useWeekWorkouts(weekOffset)
+  const { workouts: allWorkouts, loading: allLoading, refetch: refetchAll } = useWorkouts()
   const { races, loading: racesLoading, create, remove } = useTargetRaces()
   const [showRaceForm, setShowRaceForm] = useState(false)
 
+  const showGettingStarted = !allLoading && computeOnboardingGate(allWorkouts)
+
   const handleWorkoutSaved = () => {
     refetch()
+    refetchAll()
     setSavedCount((c) => c + 1)
   }
 
@@ -49,6 +56,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Tier2NudgeModal />
       {/* Header */}
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[2px] text-gray-400 dark:text-gray-500 mb-2">
@@ -59,21 +67,30 @@ export default function DashboardPage() {
         </h1>
       </div>
 
-      {/* Calendar — full width */}
-      <WeeklyCalendar
-        workoutsByDay={workoutsByDay}
-        monday={monday}
-        weekOffset={weekOffset}
-        onWeekChange={setWeekOffset}
-        loading={loading}
-      />
+      {/* Onboarding (Tier 0) or normal calendar + action row */}
+      {allLoading ? (
+        <div className="card-squircle h-64 animate-pulse bg-gray-100 dark:bg-gray-800" />
+      ) : showGettingStarted ? (
+        <GettingStartedCard workouts={allWorkouts} onWorkoutSaved={handleWorkoutSaved} />
+      ) : (
+        <>
+          {/* Calendar — full width */}
+          <WeeklyCalendar
+            workoutsByDay={workoutsByDay}
+            monday={monday}
+            weekOffset={weekOffset}
+            onWeekChange={setWeekOffset}
+            loading={loading}
+          />
 
-      {/* Action row — training load, add workout, import */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <TrainingLoadCard refreshKey={savedCount} />
-        <ManualWorkoutEntry onSaved={handleWorkoutSaved} />
-        <FitUploadDropzone onUploaded={handleWorkoutSaved} />
-      </div>
+          {/* Action row — training load, add workout, import */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <TrainingLoadCard refreshKey={savedCount} />
+            <ManualWorkoutEntry onSaved={handleWorkoutSaved} />
+            <FitUploadDropzone onUploaded={handleWorkoutSaved} />
+          </div>
+        </>
+      )}
 
       {/* Fitness / Fatigue / Form + Weekly Volume */}
       <FitnessTrends />

@@ -11,8 +11,8 @@
  * Tier | Label           | Confidence | Per-Discipline Gate          | Band Profile
  * -----|-----------------|-----------|------------------------------|------------------
  *  0   | No Prediction   | < 20      | < 2 disciplines pass         | — (nothing shown)
- *  1   | Rough Estimate  | 20–44     | ≥ 2 disciplines pass         | wide: ×0.90/×1.15
- *  2   | Standard        | 45–69     | all 3 pass                   | standard: ×0.96/×1.06
+ *  1   | Rough Estimate  | 20–44     | ≥ 2 disciplines pass         | wide: ×0.90/×1.40
+ *  2   | Standard        | 45–69     | all 3 pass                   | standard: ×0.94/×1.18
  *  3   | Refined         | ≥ 70      | all 3 pass + thresholds set  | tight: ×0.97/×1.03
  */
 
@@ -27,10 +27,17 @@ import { calculateCTL, calculateTSB } from './training-stress'
 
 export interface DisciplineGate {
   sport: 'swim' | 'bike' | 'run'
-  passed: boolean
-  workoutCount: number
+  passed: boolean        // tier 1 gate
+  tier2Passed: boolean   // tier 2 gate
+  tier3Passed: boolean   // tier 3 gate
+  workoutCount: number   // qualifying count at tier 1 minimum
+  tier2WorkoutCount: number
+  longWorkoutCount: number
   required: number
-  minDuration: number // seconds
+  minDuration: number          // tier 1 min duration
+  tier2MinDuration: number
+  tier3LongRequired: number
+  tier3LongMinDuration: number
   hasThreshold: boolean
 }
 
@@ -67,16 +74,44 @@ const EIGHT_WEEKS_MS = 8 * 7 * 86_400_000
 
 const DISCIPLINE_REQUIREMENTS: Record<
   'swim' | 'bike' | 'run',
-  { required: number; minDuration: number }
+  {
+    required: number
+    tier1MinDuration: number  // Tier 1: base qualifying duration
+    tier2MinDuration: number  // Tier 2: elevated qualifying duration
+    tier3MinDuration: number  // Tier 3: same base as tier 2
+    tier3LongRequired: number // Tier 3: number of additional long workouts
+    tier3LongMinDuration: number // Tier 3: duration for long workouts
+  }
 > = {
-  swim: { required: 10, minDuration: 600 }, // 10 min
-  bike: { required: 10, minDuration: 1200 }, // 20 min
-  run: { required: 10, minDuration: 1200 }, // 20 min
+  swim: {
+    required: 2,
+    tier1MinDuration: 600,        // 10 min
+    tier2MinDuration: 1200,       // 20 min
+    tier3MinDuration: 1200,       // 20 min
+    tier3LongRequired: 2,
+    tier3LongMinDuration: 1800,   // 30 min
+  },
+  bike: {
+    required: 3,
+    tier1MinDuration: 1200,       // 20 min
+    tier2MinDuration: 1800,       // 30 min
+    tier3MinDuration: 1800,       // 30 min
+    tier3LongRequired: 2,
+    tier3LongMinDuration: 3600,   // 60 min
+  },
+  run: {
+    required: 3,
+    tier1MinDuration: 1200,       // 20 min
+    tier2MinDuration: 1800,       // 30 min
+    tier3MinDuration: 1800,       // 30 min
+    tier3LongRequired: 2,
+    tier3LongMinDuration: 2700,   // 45 min
+  },
 }
 
 const BAND_PROFILES: Record<1 | 2 | 3, { low: number; high: number }> = {
-  1: { low: 0.9, high: 1.15 },
-  2: { low: 0.96, high: 1.06 },
+  1: { low: 0.9, high: 1.40 },
+  2: { low: 0.94, high: 1.18 },
   3: { low: 0.97, high: 1.03 },
 }
 
@@ -96,14 +131,20 @@ function evaluateGate(
   workouts: Workout[],
   cutoffMs: number
 ): DisciplineGate {
-  const { required, minDuration } = DISCIPLINE_REQUIREMENTS[sport]
-
-  const qualifying = workouts.filter(
-    (w) =>
-      w.sport === sport &&
-      (w.duration_seconds || 0) >= minDuration &&
-      new Date(w.date).getTime() >= cutoffMs
+  const req = DISCIPLINE_REQUIREMENTS[sport]
+  const recent = workouts.filter(
+    (w) => w.sport === sport && new Date(w.date).getTime() >= cutoffMs
   )
+
+  // Count qualifying workouts at each tier's minimum duration
+  const tier1Count = recent.filter((w) => (w.duration_seconds || 0) >= req.tier1MinDuration).length
+  const tier2Count = recent.filter((w) => (w.duration_seconds || 0) >= req.tier2MinDuration).length
+  // Long workouts count toward the 5 qualifying AND toward the 2 long requirement
+  const longCount = recent.filter((w) => (w.duration_seconds || 0) >= req.tier3LongMinDuration).length
+
+  const tier1Passed = tier1Count >= req.required
+  const tier2Passed = tier2Count >= req.required
+  const tier3Passed = tier2Passed && longCount >= req.tier3LongRequired
 
   // Threshold detection per sport
   let hasThreshold = false
@@ -133,10 +174,17 @@ function evaluateGate(
 
   return {
     sport,
-    passed: qualifying.length >= required,
-    workoutCount: qualifying.length,
-    required,
-    minDuration,
+    passed: tier1Passed,
+    tier2Passed,
+    tier3Passed,
+    workoutCount: tier1Count,
+    tier2WorkoutCount: tier2Count,
+    longWorkoutCount: longCount,
+    required: req.required,
+    minDuration: req.tier1MinDuration,
+    tier2MinDuration: req.tier2MinDuration,
+    tier3LongRequired: req.tier3LongRequired,
+    tier3LongMinDuration: req.tier3LongMinDuration,
     hasThreshold,
   }
 }
@@ -149,17 +197,19 @@ function determineTier(
   confidenceScore: number,
   gates: DisciplineGate[]
 ): SufficiencyTier {
-  const passing = gates.filter((g) => g.passed).length
+  const tier1Passing = gates.filter((g) => g.passed).length
+  const tier2Passing = gates.filter((g) => g.tier2Passed).length
+  const tier3Passing = gates.filter((g) => g.tier3Passed).length
   const allThresholds = gates.every((g) => g.hasThreshold)
 
-  // Tier 3: ≥ 70 confidence, all 3 pass, all thresholds set
-  if (confidenceScore >= 70 && passing === 3 && allThresholds) return 3
+  // Tier 3: all 3 pass tier 3 gate, all thresholds set, confidence >= 70
+  if (confidenceScore >= 70 && tier3Passing === 3 && allThresholds) return 3
 
-  // Tier 2: 45–69 confidence, all 3 pass
-  if (confidenceScore >= 45 && passing === 3) return 2
+  // Tier 2: all 3 pass tier 2 gate, confidence 45-69
+  if (confidenceScore >= 45 && tier2Passing === 3) return 2
 
-  // Tier 1: 20–44 confidence, ≥ 2 disciplines pass
-  if (confidenceScore >= 20 && passing >= 2) return 1
+  // Tier 1: 2+ pass tier 1 gate, confidence 20-44
+  if (confidenceScore >= 20 && tier1Passing >= 2) return 1
 
   // Tier 0: everything else
   return 0
@@ -176,17 +226,40 @@ function generateNextActions(
 ): NextAction[] {
   const actions: NextAction[] = []
 
-  // 1. Failing discipline gates
+  // 1. Failing discipline gates — report the most actionable next step per sport
   for (const gate of gates) {
-    if (!gate.passed) {
-      const remaining = gate.required - gate.workoutCount
-      const minMinutes = Math.round(gate.minDuration / 60)
-      actions.push({
-        priority: 1,
-        action: `Log ${remaining} more ${gate.sport} workout${remaining > 1 ? 's' : ''} (${minMinutes}+ min each)`,
-        impact: `Unlocks ${gate.sport} predictions`,
-        category: 'workout',
-      })
+    if (!gate.tier3Passed) {
+      if (!gate.passed) {
+        // Not yet at Tier 1
+        const remaining = gate.required - gate.workoutCount
+        const minMinutes = Math.round(gate.minDuration / 60)
+        actions.push({
+          priority: 1,
+          action: `Log ${remaining} more ${gate.sport} workout${remaining > 1 ? 's' : ''} (${minMinutes}+ min each)`,
+          impact: `Unlocks ${gate.sport} predictions`,
+          category: 'workout',
+        })
+      } else if (!gate.tier2Passed) {
+        // At Tier 1, working toward Tier 2
+        const remaining = gate.required - gate.tier2WorkoutCount
+        const minMinutes = Math.round(gate.tier2MinDuration / 60)
+        actions.push({
+          priority: 2,
+          action: `Log ${remaining} more ${gate.sport} workout${remaining > 1 ? 's' : ''} (${minMinutes}+ min each)`,
+          impact: `Improves ${gate.sport} prediction accuracy`,
+          category: 'workout',
+        })
+      } else {
+        // At Tier 2, working toward Tier 3 long workouts
+        const remaining = gate.tier3LongRequired - gate.longWorkoutCount
+        const minMinutes = Math.round(gate.tier3LongMinDuration / 60)
+        actions.push({
+          priority: 2,
+          action: `Log ${remaining} more ${gate.sport} workout${remaining > 1 ? 's' : ''} (${minMinutes}+ min each)`,
+          impact: `Unlocks Refined ${gate.sport} prediction`,
+          category: 'workout',
+        })
+      }
     }
   }
 

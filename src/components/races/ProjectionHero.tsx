@@ -133,7 +133,7 @@ export default function ProjectionHero({
     const checklistItems = [
       { label: 'Set a target race', done: true },
       { label: 'Log your first workout', done: workouts.length > 0 },
-      { label: 'Log 10+ workouts across swim, bike, and run', done: gatesPassed >= 3 },
+      { label: 'Log 2+ swims, 3+ bikes, and 3+ runs', done: gatesPassed >= 3 },
       { label: 'Set threshold data (FTP, CSS, or LT pace)', done: sufficiency?.gates.some(g => g.hasThreshold) ?? false },
     ]
     const completedCount = checklistItems.filter(c => c.done).length
@@ -187,7 +187,7 @@ export default function ProjectionHero({
 
         {/* Ghost discipline split cards */}
         <div className="grid grid-cols-3 gap-2">
-          {(sufficiency?.gates ?? [{ sport: 'swim', passed: false, workoutCount: 0, required: 10 }, { sport: 'bike', passed: false, workoutCount: 0, required: 10 }, { sport: 'run', passed: false, workoutCount: 0, required: 10 }]).map((gate) => (
+          {(sufficiency?.gates ?? [{ sport: 'swim', passed: false, workoutCount: 0, required: 2 }, { sport: 'bike', passed: false, workoutCount: 0, required: 3 }, { sport: 'run', passed: false, workoutCount: 0, required: 3 }]).map((gate) => (
             <div
               key={gate.sport}
               className={`p-3 rounded-xl border-2 border-dashed text-center ${

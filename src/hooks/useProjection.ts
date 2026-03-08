@@ -60,7 +60,7 @@ export function useProjection(raceId: string, options?: ProjectionOptions) {
     const [{ data: workouts }, { data: logs }, { data: profileData }, { data: weatherRows }] = await Promise.all([
       supabase.from('workouts').select('*').is('deleted_at', null).order('date'),
       supabase.from('manual_logs').select('*'),
-      supabase.from('profiles').select('lthr_swim, lthr_bike, lthr_run').single(),
+      supabase.from('profiles').select('lthr_swim, lthr_bike, lthr_run, ftp_watts, threshold_pace_swim, threshold_pace_run').single(),
       supabase
         .from('race_weather')
         .select('wind_speed_mph')
@@ -74,11 +74,17 @@ export function useProjection(raceId: string, options?: ProjectionOptions) {
     const typedWorkouts = (workouts as Workout[]) || []
     const typedLogs = (logs as ManualLog[]) || []
 
-    // Build profile LTHR
+    // Build profile LTHR and thresholds
+    const profileData_ = profileData as Record<string, number | null> | null
     const profileLTHR = {
-      swim: (profileData as Record<string, number | null> | null)?.lthr_swim ?? null,
-      bike: (profileData as Record<string, number | null> | null)?.lthr_bike ?? null,
-      run: (profileData as Record<string, number | null> | null)?.lthr_run ?? null,
+      swim: profileData_?.lthr_swim ?? null,
+      bike: profileData_?.lthr_bike ?? null,
+      run: profileData_?.lthr_run ?? null,
+    }
+    const profileThresholds = {
+      ftp_watts: profileData_?.ftp_watts ?? null,
+      threshold_pace_swim: profileData_?.threshold_pace_swim ?? null,
+      threshold_pace_run: profileData_?.threshold_pace_run ?? null,
     }
 
     // Fetch session metrics for recent long workouts (last 8 weeks)
@@ -145,7 +151,8 @@ export function useProjection(raceId: string, options?: ProjectionOptions) {
       suff.bandProfile ?? undefined,
       sessionMetrics,
       profileLTHR,
-      raceWeather
+      raceWeather,
+      profileThresholds
     )
 
     // Check if it should be revealed

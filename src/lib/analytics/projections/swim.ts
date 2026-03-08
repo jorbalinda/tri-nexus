@@ -35,7 +35,8 @@ export function projectSwimSplit(
   css: number | null,
   raceDistance: RaceDistance,
   swimDistanceM: number,
-  conditions: SwimConditions | null
+  conditions: SwimConditions | null,
+  swimCV?: number | null
 ): SwimProjectionResult {
   // Default CSS for age grouper when no data
   const effectiveCSS = css ?? 105
@@ -54,10 +55,14 @@ export function projectSwimSplit(
 
   const realisticSeconds = (swimDistanceM / 100) * pacePer100
 
+  const bandWidth = (swimCV != null && swimCV > 0.15)
+    ? { opt: 0.93, cons: 1.10 }
+    : { opt: 0.96, cons: 1.06 }
+
   return {
     targetPacePer100m: Math.round(pacePer100),
     realistic: Math.round(realisticSeconds),
-    optimistic: Math.round(realisticSeconds * 0.96),
-    conservative: Math.round(realisticSeconds * 1.06),
+    optimistic: Math.round(realisticSeconds * bandWidth.opt),
+    conservative: Math.round(realisticSeconds * bandWidth.cons),
   }
 }

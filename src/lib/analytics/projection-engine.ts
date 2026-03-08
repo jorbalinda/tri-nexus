@@ -56,7 +56,8 @@ export function generateProjection(
   bandProfile?: { low: number; high: number },
   sessionMetrics?: Map<string, SessionMetric[]>,
   profileLTHR?: { swim: number | null; bike: number | null; run: number | null },
-  raceWeather?: { wind_speed_mph: number | null } | null
+  raceWeather?: { wind_speed_mph: number | null } | null,
+  profileThresholds?: { ftp_watts: number | null; threshold_pace_swim: number | null; threshold_pace_run: number | null }
 ): Omit<RaceProjection, 'id' | 'user_id' | 'created_at' | 'projected_at'> {
-  return generateProjectionV2(race, workouts, logs, bandProfile, sessionMetrics, profileLTHR, raceWeather)
+  return generateProjectionV2(race, workouts, logs, bandProfile, sessionMetrics, profileLTHR, raceWeather, profileThresholds)
 }

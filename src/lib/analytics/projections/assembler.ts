@@ -6,6 +6,7 @@ import {
   estimateCSSFromWorkouts,
   estimateFTPFromWorkouts,
   estimateLTHR,
+  estimateSwimPaceCV,
 } from '../race-pacing'
 import { deriveMaxHR, deriveRestingHR } from '../lactate-threshold'
 import { weeklyVolume, calculateCTL, calculateTSB } from '../training-stress'
@@ -94,7 +95,8 @@ export function generateProjectionV2(
   bandProfile?: { low: number; high: number },
   sessionMetrics?: Map<string, SessionMetric[]>,
   profileLTHR?: { swim: number | null; bike: number | null; run: number | null },
-  raceWeather?: { wind_speed_mph: number | null } | null
+  raceWeather?: { wind_speed_mph: number | null } | null,
+  profileThresholds?: { ftp_watts: number | null; threshold_pace_swim: number | null; threshold_pace_run: number | null }
 ): Omit<RaceProjection, 'id' | 'user_id' | 'created_at' | 'projected_at'> {
   const raceDistance = race.race_distance as RaceDistance
   const distances = getDistances(raceDistance, {
@@ -103,11 +105,11 @@ export function generateProjectionV2(
     run: race.custom_run_distance_km,
   })
 
-  // Derive fitness metrics
+  // Derive fitness metrics — profile thresholds are authoritative when set
   const maxHR = deriveMaxHR(workouts)
   const restingHR = deriveRestingHR(logs)
-  const ftp = estimateFTPFromWorkouts(workouts)
-  const css = estimateCSSFromWorkouts(workouts, maxHR)
+  const ftp = estimateFTPFromWorkouts(workouts) ?? profileThresholds?.ftp_watts
+  const css = estimateCSSFromWorkouts(workouts, maxHR) ?? profileThresholds?.threshold_pace_swim
   const lthrBike = estimateLTHR(workouts, 'bike')
   const lthrRun = estimateLTHR(workouts, 'run')
 
@@ -170,7 +172,8 @@ export function generateProjectionV2(
   const hasBrick = detectBrickWorkouts(workouts)
 
   // Generate per-discipline projections
-  const swim = projectSwimSplit(css, raceDistance, distances.swim_m, conditions)
+  const swimCV = estimateSwimPaceCV(workouts, maxHR)
+  const swim = projectSwimSplit(css, raceDistance, distances.swim_m, conditions, swimCV)
   const bike = projectBikeSplit(
     ftp,
     weight,
@@ -179,7 +182,7 @@ export function generateProjectionV2(
     conditions,
     recentBikeWorkouts
   )
-  const run = projectRunSplit(recentRuns, raceDistance, distances.run_km, conditions, hasBrick)
+  const run = projectRunSplit(recentRuns, raceDistance, distances.run_km, conditions, hasBrick, profileThresholds?.threshold_pace_run)
 
   // Transitions
   const trans = TRANSITION_DEFAULTS[raceDistance] || TRANSITION_DEFAULTS.custom

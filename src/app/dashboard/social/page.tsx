@@ -1,13 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getSocialFeed, getMyFitnessPercentiles, getPendingFollowRequests } from '@/app/actions/social'
+import { getSocialFeed, getMyFitnessPercentiles, getPendingFollowRequests, getFriendsRaceProjections } from '@/app/actions/social'
 import FitnessFingerprint from '@/components/social/FitnessFingerprint'
+import FriendsRaceProjections from '@/components/social/FriendsRaceProjections'
 import ActivityFeed from '@/components/social/ActivityFeed'
 import UserSearch from '@/components/social/UserSearch'
 import FollowRequests from '@/components/social/FollowRequests'
 import PrivacyToggle from '@/components/social/PrivacyToggle'
 import Link from 'next/link'
-import { Trophy, Settings } from 'lucide-react'
+import { Settings } from 'lucide-react'
 
 export const metadata = { title: 'Friends | Race Day' }
 
@@ -18,14 +19,15 @@ export default async function SocialPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('date_of_birth, profile_public')
+    .select('date_of_birth, profile_public, display_name, avatar_url')
     .eq('id', user.id)
     .single()
 
-  const [feedItems, percentiles, pendingRequests] = await Promise.all([
+  const [feedItems, percentiles, pendingRequests, raceProjections] = await Promise.all([
     getSocialFeed(30),
     getMyFitnessPercentiles(),
     getPendingFollowRequests(),
+    getFriendsRaceProjections(),
   ])
 
   const missingDob = !profile?.date_of_birth
@@ -73,28 +75,12 @@ export default async function SocialPage() {
           </div>
         )}
 
-        {/* Race Projections CTA */}
-        <Link
-          href="/dashboard/social/races"
-          className="card-squircle p-4 sm:p-6 flex flex-col gap-3 hover:ring-1 hover:ring-blue-300 dark:hover:ring-blue-700 transition-all group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
-              <Trophy size={18} className="text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                Race Projections
-              </h3>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                Compare projected finish times with friends
-              </p>
-            </div>
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Your upcoming races with projected finish times. Follow friends racing the same events to compare.
-          </p>
-        </Link>
+        {/* Race Projections */}
+        <FriendsRaceProjections
+          races={raceProjections}
+          myDisplayName={profile?.display_name ?? 'You'}
+          myAvatarUrl={profile?.avatar_url ?? null}
+        />
       </div>
 
       {/* Find Athletes */}

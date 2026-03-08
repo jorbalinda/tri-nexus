@@ -313,8 +313,11 @@ export function projectTrainingLoad(
   const startDate = new Date(dates[0])
   const endDate = new Date(targetDate)
 
-  const ctlAlpha = 1 / 42
-  const atlAlpha = 1 / 7
+  // True exponential decay matching TrainingPeaks PMC formula
+  const ctlDecay = Math.exp(-1 / 42)
+  const atlDecay = Math.exp(-1 / 7)
+  const ctlAlpha = 1 - ctlDecay
+  const atlAlpha = 1 - atlDecay
   let ctlEwma = 0
   let atlEwma = 0
   const projectedTSB: DailyStressPoint[] = []
@@ -327,8 +330,8 @@ export function projectTrainingLoad(
     // Use actual TSS up to today, projected average after
     const tss = dateStr <= todayStr ? (dailyTSS.get(dateStr) || 0) : avgDailyTSS
 
-    ctlEwma = ctlAlpha * tss + (1 - ctlAlpha) * ctlEwma
-    atlEwma = atlAlpha * tss + (1 - atlAlpha) * atlEwma
+    ctlEwma = ctlDecay * ctlEwma + ctlAlpha * tss
+    atlEwma = atlDecay * atlEwma + atlAlpha * tss
 
     // Only include projected dates (after today)
     if (dateStr > todayStr) {
@@ -361,8 +364,10 @@ function calculateEWMASeries(workouts: Workout[], period: number, thresholds?: A
   const lastWorkout = new Date(dates[dates.length - 1])
   const endDate = today > lastWorkout ? today : lastWorkout
 
-  // Standard PMC decay: 1/period
-  const alpha = 1 / period
+  // True exponential decay matching TrainingPeaks PMC formula:
+  // EWMA(today) = EWMA(yesterday) × e^(-1/k) + TSS(today) × (1 - e^(-1/k))
+  const decay = Math.exp(-1 / period)
+  const alpha = 1 - decay
   let ewma = 0
   const series: DailyStressPoint[] = []
 
@@ -370,7 +375,7 @@ function calculateEWMASeries(workouts: Workout[], period: number, thresholds?: A
   while (current <= endDate) {
     const dateStr = current.toISOString().split('T')[0]
     const tss = dailyTSS.get(dateStr) || 0
-    ewma = alpha * tss + (1 - alpha) * ewma
+    ewma = decay * ewma + alpha * tss
     series.push({ date: dateStr, value: Math.round(ewma) })
     current.setDate(current.getDate() + 1)
   }

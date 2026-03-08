@@ -18,6 +18,7 @@ import DataQualityCard from '@/components/races/DataQualityCard'
 import DeepDiveCard from '@/components/races/DeepDiveCard'
 import CourseConditions from '@/components/races/CourseConditions'
 import TierTransitionToast from '@/components/races/TierTransitionToast'
+import ThresholdSetCard from '@/components/races/ThresholdSetCard'
 
 function daysUntil(dateStr: string): number {
   const now = new Date()
@@ -154,6 +155,11 @@ export default function RaceDetailClient({ initialRace, initialLogs, initialWork
         trainingLoad={trainingLoad}
         daysUntilRace={days}
       />
+
+      {/* Threshold entry — Tier 2 only */}
+      {sufficiency?.tier === 2 && (
+        <ThresholdSetCard />
+      )}
 
       {/* Race Readiness */}
       <RaceReadinessCard trainingLoad={trainingLoad} daysUntilRace={days} />

@@ -8,6 +8,7 @@ import { computePercentiles } from '@/lib/social/percentile'
 import { refreshFitnessSnapshot } from '@/lib/social/snapshot'
 import { estimateCSSFromWorkouts, estimateFTPFromWorkouts } from '@/lib/analytics/race-pacing'
 import type { LeaderboardEntry, FeedItem, FitnessPercentiles, FitnessSnapshotRow } from '@/lib/types/social'
+import { newFollowerEmail } from '@/lib/email/templates'
 
 /** Follow a user — auto-accepted if their account is public, pending if private */
 export async function followUser(targetUserId: string): Promise<{ error?: string; status?: 'accepted' | 'pending' }> {
@@ -31,6 +32,32 @@ export async function followUser(targetUserId: string): Promise<{ error?: string
 
   if (error) return { error: error.message }
   revalidatePath('/dashboard/social')
+
+  // Notify the target user — fire and forget, never block the follow
+  ;(async () => {
+    try {
+      const [{ data: followerProfile }, { data: targetAuthUser }] = await Promise.all([
+        service.from('profiles').select('display_name').eq('id', user.id).single(),
+        service.auth.admin.getUserById(targetUserId),
+      ])
+      const targetEmail = targetAuthUser.user?.email
+      if (!targetEmail) return
+      const followerName = followerProfile?.display_name ?? 'Someone'
+      const { data: targetProfile } = await service
+        .from('profiles')
+        .select('display_name')
+        .eq('id', targetUserId)
+        .single()
+      const recipientName = targetProfile?.display_name ?? 'Athlete'
+      const template = newFollowerEmail(recipientName, followerName, status === 'pending')
+      const { Resend } = await import('resend')
+      const resend = new Resend(process.env.RESEND_API_KEY)
+      await resend.emails.send({ from: 'Tri Race Day <noreply@triraceday.com>', to: targetEmail, subject: template.subject, html: template.html })
+    } catch {
+      // Non-critical — swallow errors so the follow itself is unaffected
+    }
+  })()
+
   return { status }
 }
 
@@ -330,6 +357,79 @@ export async function searchUsers(query: string): Promise<{ user_id: string; dis
     avatar_url: r.avatar_url ?? null,
     follow_status: (followMap[r.id] as 'accepted' | 'pending') || false,
   }))
+}
+
+/** Compact race projections for the social page — my races + friends' projected times */
+export type FriendRaceProjection = {
+  raceId: string
+  raceName: string
+  raceDate: string
+  raceDistance: string
+  myProjected: number | null
+  friends: { display_name: string; avatar_url: string | null; projected: number | null }[]
+}
+
+export async function getFriendsRaceProjections(): Promise<FriendRaceProjection[]> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const today = new Date().toISOString().split('T')[0]
+  const since = new Date()
+  since.setDate(since.getDate() - 90)
+  const sinceStr = since.toISOString().split('T')[0]
+
+  const [{ data: myRaces }, { data: workouts }, { data: profile }, { data: follows }] = await Promise.all([
+    supabase.from('target_races').select('*').eq('user_id', user.id).eq('status', 'upcoming').gte('race_date', today).order('race_date', { ascending: true }).limit(5),
+    supabase.from('workouts').select('*').eq('user_id', user.id).is('deleted_at', null).gte('date', sinceStr),
+    supabase.from('profiles').select('ftp_watts, threshold_pace_run, max_heart_rate, display_name, avatar_url').eq('id', user.id).single(),
+    supabase.from('follows').select('following_id').eq('follower_id', user.id).eq('status', 'accepted'),
+  ])
+
+  if (!myRaces || myRaces.length === 0) return []
+
+  const { estimateCSSFromWorkouts: cssEst, estimateFTPFromWorkouts: ftpEst } = await import('@/lib/analytics/race-pacing')
+  const { projectFinishTime } = await import('@/lib/social/race-projection')
+
+  const css = cssEst(workouts ?? [], profile?.max_heart_rate ?? null)
+  const ftp = profile?.ftp_watts ?? ftpEst(workouts ?? [])
+  const recentRuns = (workouts ?? []).filter((w) => w.sport === 'run' && w.avg_pace_sec_per_km).slice(0, 5)
+  const runPace = recentRuns.length
+    ? recentRuns.reduce((s: number, w) => s + (w.avg_pace_sec_per_km as number), 0) / recentRuns.length
+    : (profile?.threshold_pace_run ?? null)
+
+  const mySnapshot = { id: '', user_id: user.id, snapshot_date: today, css_sec_per_100m: css, ftp_watts: ftp, run_pace_sec_per_km: runPace, ctl: null, atl: null, tsb: null, created_at: '', updated_at: '' }
+
+  function toProjectionDistance(d: string): 'sprint' | 'olympic' | 'half' | 'full' {
+    if (d === '70.3') return 'half'
+    if (d === '140.6') return 'full'
+    if (d === 'sprint' || d === 'olympic') return d
+    return 'olympic'
+  }
+
+  const followedIds = (follows ?? []).map((f) => f.following_id)
+  const service = createServiceClient()
+
+  return Promise.all(
+    myRaces.map(async (race) => {
+      const projRace = { distance: toProjectionDistance(race.race_distance), swim_m: race.custom_swim_distance_m ?? null, bike_km: race.custom_bike_distance_km ?? null, run_km: race.custom_run_distance_km ?? null }
+      const myProjected = projectFinishTime(projRace, mySnapshot)
+
+      const friends: FriendRaceProjection['friends'] = []
+      if (followedIds.length > 0) {
+        const { data: friendRaces } = await service.from('target_races').select('user_id').in('user_id', followedIds).ilike('race_name', race.race_name).eq('race_date', race.race_date)
+        for (const fr of friendRaces ?? []) {
+          const [{ data: fp }, { data: snap }] = await Promise.all([
+            service.from('profiles').select('display_name, avatar_url').eq('id', fr.user_id).single(),
+            service.from('fitness_snapshots').select('*').eq('user_id', fr.user_id).order('snapshot_date', { ascending: false }).limit(1).maybeSingle(),
+          ])
+          friends.push({ display_name: fp?.display_name ?? 'Athlete', avatar_url: fp?.avatar_url ?? null, projected: snap ? projectFinishTime(projRace, snap) : null })
+        }
+      }
+
+      return { raceId: race.id, raceName: race.race_name, raceDate: race.race_date, raceDistance: race.race_distance, myProjected, friends }
+    })
+  )
 }
 
 /** Register current user for a race in the catalogue */

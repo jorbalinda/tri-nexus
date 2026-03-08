@@ -137,11 +137,26 @@ export function projectBikeSplit(
 
   const bikeTimeSeconds = Math.round(baseTimeSeconds) + windAdjustmentSeconds
 
+  const qualifyingPowers = recentBikeWorkouts
+    .filter((w) => w.normalized_power && (w.duration_seconds || 0) >= 1200)
+    .map((w) => w.normalized_power!)
+
+  let bikeCV: number | null = null
+  if (qualifyingPowers.length >= 2) {
+    const mean = qualifyingPowers.reduce((a, b) => a + b, 0) / qualifyingPowers.length
+    const variance = qualifyingPowers.reduce((s, p) => s + (p - mean) ** 2, 0) / qualifyingPowers.length
+    bikeCV = Math.sqrt(variance) / mean
+  }
+
+  const bandWidth = (bikeCV != null && bikeCV > 0.15)
+    ? { opt: 0.93, cons: 1.10 }
+    : { opt: 0.97, cons: 1.05 }
+
   return {
     targetPower: Math.round(targetPower),
     windAdjustmentSeconds,
     realistic: bikeTimeSeconds,
-    optimistic: Math.round(bikeTimeSeconds * 0.97),
-    conservative: Math.round(bikeTimeSeconds * 1.05),
+    optimistic: Math.round(bikeTimeSeconds * bandWidth.opt),
+    conservative: Math.round(bikeTimeSeconds * bandWidth.cons),
   }
 }

@@ -5,7 +5,15 @@ import { ChevronLeft, ChevronRight, Waves, Bike, Footprints } from 'lucide-react
 import type { Workout } from '@/lib/types/database'
 import WorkoutDetailModal from './WorkoutDetailModal'
 
-const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const DAY_LABELS = [
+  { short: 'M', long: 'Mon' },
+  { short: 'T', long: 'Tue' },
+  { short: 'W', long: 'Wed' },
+  { short: 'T', long: 'Thu' },
+  { short: 'F', long: 'Fri' },
+  { short: 'S', long: 'Sat' },
+  { short: 'S', long: 'Sun' },
+]
 
 const SPORT_COLORS: Record<string, { bg: string; text: string; icon: typeof Waves }> = {
   swim: { bg: 'bg-blue-100 dark:bg-blue-900/40', text: 'text-blue-700 dark:text-blue-300', icon: Waves },
@@ -87,14 +95,15 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
         </div>
       </div>
 
-      {/* Grid — horizontal scroll on small mobile, natural fit at sm+ */}
-      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
-        <div className="min-w-[400px] sm:min-w-0">
+      {/* Grid — 7 columns always visible; icon-only pills on small screens */}
+      <div>
+        <div>
           <div className="grid grid-cols-7 gap-1 sm:gap-2">
             {/* Day headers */}
             {DAY_LABELS.map((label) => (
-              <div key={label} className="text-center text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-gray-500 pb-1 sm:pb-2">
-                {label}
+              <div key={label.long} className="text-center text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-gray-500 pb-1 sm:pb-2">
+                <span className="sm:hidden">{label.short}</span>
+                <span className="hidden sm:inline">{label.long}</span>
               </div>
             ))}
 
@@ -124,10 +133,10 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
                           <button
                             key={w.id}
                             onClick={() => setSelectedWorkout(w)}
-                            className={`flex items-center gap-1 px-1 sm:px-1.5 py-0.5 sm:py-1 rounded-lg ${sport.bg} ${sport.text} text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity truncate`}
+                            className={`flex items-center justify-center gap-1 px-1 sm:px-1.5 py-0.5 sm:py-1 rounded-lg ${sport.bg} ${sport.text} text-[10px] font-medium cursor-pointer hover:opacity-80 transition-opacity w-full`}
                           >
                             <Icon size={10} className="shrink-0" />
-                            <span className="truncate">{formatDuration(w.duration_seconds)}</span>
+                            <span className="hidden sm:inline truncate">{formatDuration(w.duration_seconds)}</span>
                           </button>
                         )
                       })}

@@ -44,7 +44,8 @@ export function projectRunSplit(
   raceDistance: RaceDistance,
   runDistanceKm: number,
   conditions: RunConditions | null,
-  hasBrickWorkout: boolean
+  hasBrickWorkout: boolean,
+  profileThresholdPace?: number | null
 ): RunProjectionResult {
   // Filter qualifying runs: ≥20 min, RPE ≥ 4 (exclude recovery jogs)
   // Prefer moving_time_seconds (excludes stops) over duration_seconds for more accurate pacing
@@ -58,10 +59,11 @@ export function projectRunSplit(
     .slice(0, 8)
 
   if (qualifyingRuns.length === 0) {
-    // Can't project — use default
-    const defaultTime = Math.round(DEFAULT_RUN_PACE * (FATIGUE_MULTIPLIER[raceDistance] ?? 1.10) * runDistanceKm)
+    // Fall back to profile threshold pace if set, otherwise generic default
+    const basePace = profileThresholdPace ?? DEFAULT_RUN_PACE  // profile fills in when no qualifying runs
+    const defaultTime = Math.round(basePace * (FATIGUE_MULTIPLIER[raceDistance] ?? 1.10) * runDistanceKm)
     return {
-      targetPaceSecPerKm: DEFAULT_RUN_PACE,
+      targetPaceSecPerKm: basePace,
       paceCV: 0,
       realistic: defaultTime,
       optimistic: Math.round(defaultTime * 0.93),

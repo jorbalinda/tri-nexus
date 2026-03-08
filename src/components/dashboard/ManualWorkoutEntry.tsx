@@ -1,11 +1,25 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, X, ChevronRight, ChevronLeft, Waves, Bike, Footprints } from 'lucide-react'
-import { apiPost } from '@/lib/api/client'
+import { Plus, X, ChevronRight, ChevronLeft, Waves, Bike, Footprints, Zap } from 'lucide-react'
+import { apiPost, apiPatch } from '@/lib/api/client'
 import { useUnits } from '@/hooks/useUnits'
-import { inputDistanceToMeters, feetToMeters, distanceInputLabel, elevationLabel } from '@/lib/units'
+import { inputDistanceToMeters, feetToMeters, distanceInputLabel, elevationLabel, secPerKmToSecPerMile, secPerMileToSecPerKm, secPer100mToSecPer100yd, secPer100ydToSecPer100m } from '@/lib/units'
 import type { UnitSystem } from '@/lib/units'
+
+function formatPace(sec: number | null): string {
+  if (!sec) return ''
+  const m = Math.floor(sec / 60)
+  const s = Math.round(sec % 60)
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+function parsePace(val: string): number | null {
+  const parts = val.split(':').map(Number)
+  if (parts.some(isNaN) || parts.length < 1) return null
+  if (parts.length === 2) return parts[0] * 60 + parts[1]
+  return parts[0] * 60
+}
 
 interface ManualWorkoutEntryProps {
   onSaved: () => void
@@ -14,7 +28,7 @@ interface ManualWorkoutEntryProps {
 const INPUT_CLASS = 'w-full px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all'
 const LABEL_CLASS = 'block text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1'
 
-type Sport = 'swim' | 'bike' | 'run'
+type Sport = 'swim' | 'bike' | 'run' | 'threshold'
 
 export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps) {
   const { isImperial } = useUnits()
@@ -41,6 +55,10 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   const [tss, setTss] = useState('')
   const [rpe, setRpe] = useState('')
   const [calories, setCalories] = useState('')
+  // Threshold test fields
+  const [threshFtp, setThreshFtp] = useState('')
+  const [threshCss, setThreshCss] = useState('')
+  const [threshRun, setThreshRun] = useState('')
   // Sync local units when profile preference changes
   useEffect(() => {
     setLocalUnits(isImperial ? 'imperial' : 'metric')
@@ -62,10 +80,31 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
     setTss('')
     setRpe('')
     setCalories('')
+    setThreshFtp('')
+    setThreshCss('')
+    setThreshRun('')
   }
 
   const handleSave = async () => {
     setSaving(true)
+
+    if (sport === 'threshold') {
+      const rawCss = parsePace(threshCss)
+      const rawRun = parsePace(threshRun)
+      try {
+        await apiPatch('/api/profile', {
+          ...(threshFtp && { ftp_watts: parseInt(threshFtp) }),
+          ...(rawCss !== null && { threshold_pace_swim: localImperial ? secPer100ydToSecPer100m(rawCss) : rawCss }),
+          ...(rawRun !== null && { threshold_pace_run: localImperial ? secPerMileToSecPerKm(rawRun) : rawRun }),
+        })
+        setOpen(false)
+        resetForm()
+        onSaved()
+      } catch { /* ignore */ }
+      setSaving(false)
+      return
+    }
+
     const h = parseInt(durationH || '0')
     const m = parseInt(durationM || '0')
     const durationSeconds = h * 3600 + m * 60 || null
@@ -127,6 +166,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
           <span className="text-[10px] font-medium text-blue-500 flex items-center gap-1"><Waves size={12} /> Swim</span>
           <span className="text-[10px] font-medium text-orange-500 flex items-center gap-1"><Bike size={12} /> Bike</span>
           <span className="text-[10px] font-medium text-green-500 flex items-center gap-1"><Footprints size={12} /> Run</span>
+          <span className="text-[10px] font-medium text-purple-500 flex items-center gap-1"><Zap size={12} /> Threshold</span>
         </div>
       </button>
     )
@@ -136,7 +176,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
     <div className="card-squircle p-4 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-          Log Workout {step > 1 && `(${step}/3)`}
+          {sport === 'threshold' ? 'Log Threshold Test' : `Log Workout${step > 1 ? ` (${step}/3)` : ''}`}
         </h3>
         <button onClick={() => { setOpen(false); resetForm() }} className="p-1 cursor-pointer">
           <X size={16} className="text-gray-400" />
@@ -147,22 +187,31 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
       {step === 1 && (
         <>
           <div className="mb-4">
-            <label className={LABEL_CLASS}>Sport</label>
-            <div className="flex gap-1">
-              {(['swim', 'bike', 'run'] as const).map((s) => (
+            <label className={LABEL_CLASS}>Type</label>
+            <div className="grid grid-cols-2 gap-1">
+              {(['swim', 'bike', 'run', 'threshold'] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setSport(s)}
-                  className={`flex-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                  className={`px-2 py-2.5 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                     sport === s
-                      ? 'bg-blue-600 text-white'
+                      ? s === 'threshold' ? 'bg-purple-600 text-white' : 'bg-blue-600 text-white'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
                   }`}
                 >
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                  {s === 'swim' && <Waves size={12} />}
+                  {s === 'bike' && <Bike size={12} />}
+                  {s === 'run' && <Footprints size={12} />}
+                  {s === 'threshold' && <Zap size={12} />}
+                  {s.charAt(0).toUpperCase() + s.slice(1)} {s === 'threshold' ? 'Test' : ''}
                 </button>
               ))}
             </div>
+            {sport === 'threshold' && (
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2">
+                Log FTP, CSS, or run threshold pace. Saves directly to your profile.
+              </p>
+            )}
           </div>
           <button
             onClick={() => setStep(2)}
@@ -173,8 +222,40 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
         </>
       )}
 
+      {/* Step 2: Threshold Test */}
+      {step === 2 && sport === 'threshold' && (
+        <>
+          <div className="space-y-3 mb-4">
+            <div>
+              <label className={LABEL_CLASS}><span className="text-orange-500">⚡</span> FTP (watts)</label>
+              <input type="number" value={threshFtp} onChange={(e) => setThreshFtp(e.target.value)} className={INPUT_CLASS} placeholder="e.g. 220" />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}><span className="text-blue-500">🏊</span> CSS (min:sec / 100{localImperial ? 'yd' : 'm'})</label>
+              <input type="text" value={threshCss} onChange={(e) => setThreshCss(e.target.value)} className={INPUT_CLASS} placeholder="e.g. 1:45" />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}><span className="text-green-500">🏃</span> Run Threshold (min:sec / {localImperial ? 'mile' : 'km'})</label>
+              <input type="text" value={threshRun} onChange={(e) => setThreshRun(e.target.value)} className={INPUT_CLASS} placeholder={localImperial ? 'e.g. 8:30' : 'e.g. 5:15'} />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setStep(1)} className="flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer">
+              <ChevronLeft size={16} /> Back
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving || (!threshFtp && !threshCss && !threshRun)}
+              className="flex-1 py-2.5 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {saving ? 'Saving…' : 'Save Thresholds'}
+            </button>
+          </div>
+        </>
+      )}
+
       {/* Step 2: Core Details */}
-      {step === 2 && (
+      {step === 2 && sport !== 'threshold' && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 min-w-0">
             <div className="col-span-full">
@@ -239,7 +320,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
       )}
 
       {/* Step 3: Performance Metrics + Save */}
-      {step === 3 && (
+      {step === 3 && sport !== 'threshold' && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <div>

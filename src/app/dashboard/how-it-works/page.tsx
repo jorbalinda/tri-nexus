@@ -129,7 +129,7 @@ export default function HowItWorksPage() {
         </p>
         <div className="flex flex-col gap-3">
           <Item icon={Zap} label="1. Device TSS" color="text-blue-600">
-            If your file already contains a TSS value (common with Garmin and TrainingPeaks exports),
+            If your file already contains a TSS value (common with Garmin, Wahoo, and most GPS device exports),
             that number is used directly and treated as the most accurate source.
           </Item>
           <Item icon={Target} label="2. Power or Pace" color="text-purple-600">
@@ -165,22 +165,32 @@ export default function HowItWorksPage() {
       <Section title="Training Load: CTL, ATL, and TSB">
         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
           Your Training Load card on the dashboard shows four numbers at all times. These are
-          industry-standard Performance Management Chart (PMC) metrics used by coaches worldwide.
+          industry-standard Performance Management Chart (PMC) metrics used by coaches and
+          sports scientists worldwide.
         </p>
         <div className="flex flex-col gap-3">
+          <Item icon={Activity} label="TSS (Today)" color="text-gray-500">
+            Training Stress Score is the raw load from your workouts on a given day. One hour at
+            your threshold effort equals 100 TSS. Easier or shorter sessions score lower. Harder
+            or longer sessions score higher. On a rest day TSS is zero, which is intentional.
+          </Item>
           <Item icon={Activity} label="CTL (Fitness)" color="text-blue-600">
-            Chronic Training Load is the exponentially weighted 42-day average of your daily TSS.
-            Think of it as your aerobic fitness baseline. It rises slowly when you train consistently
-            and falls slowly when you rest. A higher CTL generally means a faster race.
+            Chronic Training Load is a 42-day exponentially weighted average of your daily TSS.
+            Each day, your existing CTL decays by a factor of e to the power of negative one over
+            42, and today's TSS is added in proportion to what remains. This means fitness builds
+            slowly over months of consistent work and fades gradually during rest. A higher CTL
+            generally correlates with a faster race.
           </Item>
           <Item icon={AlertCircle} label="ATL (Fatigue)" color="text-orange-500">
-            Acute Training Load is the 7-day EWMA of daily TSS. It tracks how fatigued you are
-            right now. ATL responds quickly: a hard training block drives it up within days.
+            Acute Training Load is the same calculation with a 7-day time constant instead of 42.
+            Because the window is much shorter, ATL responds quickly. A hard training block drives
+            it up within days. A recovery week brings it back down just as fast.
           </Item>
           <Item icon={TrendingUp} label="TSB (Form)" color="text-green-600">
-            Training Stress Balance is simply CTL minus ATL. A positive number means you are
-            fresher than your baseline fitness. A negative number means you are currently carrying
-            more fatigue than your fitness baseline.
+            Training Stress Balance is CTL minus ATL. A positive number means you are fresher than
+            your fitness baseline, which is the target state for race day. A negative number means
+            you are carrying more fatigue than your fitness baseline, which is normal during hard
+            training blocks and expected to resolve during taper.
           </Item>
         </div>
 
@@ -204,37 +214,107 @@ export default function HowItWorksPage() {
         </div>
       </Section>
 
+      {/* Why We Calculate What We Do */}
+      <Section title="Why We Calculate What We Do">
+        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+          Every formula Race Day uses is grounded in peer-reviewed sports science. Here is why
+          each metric is calculated the way it is.
+        </p>
+        <div className="flex flex-col gap-3">
+          <Item icon={Zap} label="Why true exponential decay and not a simple average" color="text-blue-600">
+            A simple rolling average treats every day in the window equally and then drops off a
+            cliff when a day falls out of range. True exponential decay gives the most recent days
+            the most weight and gradually reduces the influence of older sessions rather than
+            cutting them off entirely. This mirrors how the body actually adapts. A workout you
+            did 40 days ago still has some residual effect on your fitness today, just a very small
+            one. The decay constant for CTL is e to the power of negative one over 42, and for ATL
+            it is e to the power of negative one over 7. These constants were established in
+            Banister's impulse response model and refined for endurance sport by Andrew Coggan.
+          </Item>
+          <Item icon={Activity} label="Why 42 days for CTL and 7 days for ATL" color="text-orange-500">
+            The 42-day window for fitness reflects how long it takes aerobic adaptations to
+            accumulate and stabilize. Building meaningful cardiovascular fitness is a months-long
+            process. The 7-day window for fatigue reflects how quickly acute stress accumulates
+            and dissipates. Most athletes feel the effects of a hard week within two to three days
+            and recover within five to seven. Using different time constants for fitness and fatigue
+            is what makes TSB a useful race day indicator rather than just a smoothed training log.
+          </Item>
+          <Item icon={TrendingUp} label="Why TSB is the form metric instead of something simpler" color="text-green-600">
+            TSB captures the relationship between what you have built and what you are currently
+            carrying. A high CTL with a high ATL means you are fit but tired. A high CTL with a
+            low ATL means you are fit and fresh, which is the ideal race day state. A simple
+            weekly load number cannot tell you both things at once. TSB can.
+          </Item>
+          <Item icon={Target} label="Why TSS uses IF squared and not IF directly" color="text-purple-600">
+            The squared term in the TSS formula reflects the non-linear relationship between
+            intensity and physiological cost. Going slightly harder than threshold is
+            disproportionately more stressful than going slightly easier. Squaring the Intensity
+            Factor captures this curve so that a hard two-hour ride scores appropriately higher
+            than two easy one-hour rides with the same total duration.
+          </Item>
+          <Item icon={Heart} label="Why rest days show zero TSS but CTL does not drop to zero" color="text-red-500">
+            TSS is a measure of what you did today. Zero training means zero stress, and that is
+            accurate. CTL and ATL do not drop to zero because they are running averages weighted
+            by all prior days. A single rest day contributes zero to the numerator but the
+            accumulated fitness from prior weeks is still present in the denominator. CTL will
+            decay slightly on a rest day by its natural exponential factor, which reflects the
+            real biological truth that fitness is not permanent but also does not vanish overnight.
+          </Item>
+        </div>
+      </Section>
+
       {/* Data Requirements for Projections */}
       <Section title="Data Requirements for Race Projections">
         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-          Race Day unlocks projections progressively based on how much training data you have. You
-          need a minimum of 10 qualifying workouts per sport within the past 8 weeks to pass the
-          gate for that discipline.
+          Race Day unlocks projections progressively. Each tier requires a minimum number of qualifying
+          workouts per sport within the past 8 weeks (2 swims, 3 bikes, 3 runs), but the minimum
+          workout duration increases as you move up. Longer workouts count toward both the base
+          requirement and any long workout requirements at the same time.
         </p>
 
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/80 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
-            <Waves size={16} className="text-blue-500 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Swim gate</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">10 swims, 10+ min each, in the last 8 weeks</p>
-            </div>
+        {[
+          {
+            tier: 1,
+            label: 'Tier 1 — Rough Estimate',
+            color: 'border-orange-100 dark:border-orange-900/30 bg-orange-50/40 dark:bg-orange-950/10',
+            rows: [
+              { icon: Waves, sport: 'Swim', req: '2 swims, 10+ min each', color: 'text-blue-500' },
+              { icon: Bike, sport: 'Bike', req: '3 rides, 20+ min each', color: 'text-orange-500' },
+              { icon: Footprints, sport: 'Run', req: '3 runs, 20+ min each', color: 'text-green-500' },
+            ],
+          },
+          {
+            tier: 2,
+            label: 'Tier 2 — Standard',
+            color: 'border-blue-100 dark:border-blue-900/30 bg-blue-50/40 dark:bg-blue-950/10',
+            rows: [
+              { icon: Waves, sport: 'Swim', req: '2 swims, 20+ min each', color: 'text-blue-500' },
+              { icon: Bike, sport: 'Bike', req: '3 rides, 30+ min each', color: 'text-orange-500' },
+              { icon: Footprints, sport: 'Run', req: '3 runs, 30+ min each', color: 'text-green-500' },
+            ],
+          },
+          {
+            tier: 3,
+            label: 'Tier 3 — Refined',
+            color: 'border-green-100 dark:border-green-900/30 bg-green-50/40 dark:bg-green-950/10',
+            rows: [
+              { icon: Waves, sport: 'Swim', req: '2 swims, 20+ min each + 2 of 30+ min', color: 'text-blue-500' },
+              { icon: Bike, sport: 'Bike', req: '3 rides, 30+ min each + 2 of 60+ min', color: 'text-orange-500' },
+              { icon: Footprints, sport: 'Run', req: '3 runs, 30+ min each + 2 of 45+ min', color: 'text-green-500' },
+            ],
+          },
+        ].map(({ tier, label, color, rows }) => (
+          <div key={tier} className={`rounded-xl border p-4 flex flex-col gap-2 ${color}`}>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">{label}</p>
+            {rows.map(({ icon: Icon, sport, req, color: iconColor }) => (
+              <div key={sport} className="flex items-center gap-2">
+                <Icon size={14} className={`${iconColor} shrink-0`} />
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 w-8">{sport}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">{req}</span>
+              </div>
+            ))}
           </div>
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/80 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
-            <Bike size={16} className="text-orange-500 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Bike gate</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">10 rides, 20+ min each, in the last 8 weeks</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/80 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
-            <Footprints size={16} className="text-green-500 shrink-0" />
-            <div>
-              <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">Run gate</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">10 runs, 20+ min each, in the last 8 weeks</p>
-            </div>
-          </div>
-        </div>
+        ))}
 
         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
           Workouts shorter than the minimums or older than 8 weeks do not count toward the gate.
@@ -247,7 +327,7 @@ export default function HowItWorksPage() {
       <Section title="Prediction Tiers">
         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
           Once you add a race, Race Day assigns a prediction tier based on how much data is
-          available. The tier controls the width of the finish time range shown on your race card.
+          available. The more you train and the more threshold data you set, the more realistic your prediction becomes.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -262,15 +342,15 @@ export default function HowItWorksPage() {
           <Tier
             tier={1}
             label="Rough Estimate"
-            band="Wide range: 90% to 115% of predicted time"
+            band="Early estimate — directionally useful"
             confidence="20 to 44 confidence"
             color="bg-orange-50/50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/30"
-            description="At least 2 disciplines are gated and confidence is building. The range is wide but directionally useful."
+            description="At least 2 disciplines are gated and confidence is building. The range is wide but gives you a real starting point."
           />
           <Tier
             tier={2}
             label="Standard"
-            band="Tight range: 96% to 106% of predicted time"
+            band="Solid estimate — reliable finish time window"
             confidence="45 to 69 confidence"
             color="bg-blue-50/50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/30"
             description="All 3 disciplines are gated. The model has enough data to produce a reliable finish time window."
@@ -278,10 +358,10 @@ export default function HowItWorksPage() {
           <Tier
             tier={3}
             label="Refined"
-            band="Very tight range: 97% to 103% of predicted time"
+            band="Most realistic race day prediction"
             confidence="70 and above confidence"
             color="bg-green-50/50 dark:bg-green-950/20 border-green-100 dark:border-green-900/30"
-            description="All 3 disciplines are gated and all threshold data is set. This is the most accurate prediction Race Day can produce."
+            description="All 3 disciplines are gated and all threshold data is set. This is the most realistic race day prediction Race Day can produce."
           />
         </div>
       </Section>
@@ -289,14 +369,13 @@ export default function HowItWorksPage() {
       {/* Confidence Score */}
       <Section title="Confidence Score (0-100)">
         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-          The confidence score is a composite of 5 dimensions, each worth up to 20 points:
+          The confidence score is a composite of 4 dimensions, each worth up to 25 points:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             { label: 'Volume', desc: 'How many qualifying workouts you have across all sports' },
             { label: 'Discipline Balance', desc: 'Whether swim, bike, and run are all represented' },
-            { label: 'Threshold Data', desc: 'Whether FTP, CSS, or run pace has been calibrated' },
-            { label: 'Training Load', desc: 'Whether your CTL is appropriate for your race distance' },
+            { label: 'Threshold Quality', desc: 'Whether FTP, CSS, or run pace has been calibrated' },
             { label: 'Data Completeness', desc: 'Whether workouts include HR, pace, power, and other fields' },
           ].map(({ label, desc }) => (
             <div
@@ -328,7 +407,7 @@ export default function HowItWorksPage() {
             Setting your thresholds in Profile is the single fastest way to improve accuracy.
           </Item>
           <Item icon={Info} label="Not enough qualifying workouts" color="text-blue-600">
-            If a discipline has fewer than 10 qualifying workouts in the last 8 weeks, that sport
+            If a discipline has fewer than 5 qualifying workouts in the last 8 weeks, that sport
             is not gated and its time cannot be projected. Race Day will tell you exactly how many
             more workouts you need and will show the specific sport that is blocking you.
           </Item>
