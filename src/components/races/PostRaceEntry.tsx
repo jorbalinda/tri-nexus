@@ -90,7 +90,7 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
                 status === s
                   ? s === 'completed'
                     ? 'bg-[#4cc9a0]/15 text-[#4cc9a0]'
-                    : 'bg-[#d62828]/10 text-[#d62828]'
+                    : 'bg-[#d62828]/15 text-[#d62828] dark:bg-[#d62828]/20'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'
               }`}
             >
