@@ -218,15 +218,15 @@ export default function FitnessTrends() {
           </p>
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: '#219ebc' }} />
+              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: 'rgba(33,158,188,0.65)' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Swim</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: '#fb8500' }} />
+              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: 'rgba(251,133,0,0.65)' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Bike</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-run inline-block" />
+              <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: 'rgba(76,201,160,0.65)' }} />
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Run</span>
             </div>
           </div>
@@ -248,9 +248,9 @@ export default function FitnessTrends() {
                     fontSize: '12px',
                   }}
                 />
-                <Bar dataKey="swim" stackId="a" fill="#219ebc" radius={[0, 0, 0, 0]} name="Swim" />
-                <Bar dataKey="bike" stackId="a" fill="#fb8500" radius={[0, 0, 0, 0]} name="Bike" />
-                <Bar dataKey="run" stackId="a" fill="#4cc9a0" radius={[4, 4, 0, 0]} name="Run" />
+                <Bar dataKey="swim" stackId="a" fill="#219ebc" fillOpacity={0.65} radius={[0, 0, 0, 0]} name="Swim" />
+                <Bar dataKey="bike" stackId="a" fill="#fb8500" fillOpacity={0.65} radius={[0, 0, 0, 0]} name="Bike" />
+                <Bar dataKey="run" stackId="a" fill="#4cc9a0" fillOpacity={0.65} radius={[4, 4, 0, 0]} name="Run" />
               </BarChart>
             </ResponsiveContainer>
           </div>
