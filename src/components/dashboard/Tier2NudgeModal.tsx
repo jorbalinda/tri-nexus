@@ -12,29 +12,29 @@ const REQUIREMENTS = [
   {
     icon: Waves,
     sport: 'Swim',
-    color: 'text-blue-500',
-    bg: 'bg-blue-50 dark:bg-blue-950/20',
+    color: 'text-[#219ebc]',
+    bg: 'bg-[#219ebc]/8',
     items: ['2+ swims, 20+ min each', '2 long swims, 30+ min each'],
   },
   {
     icon: Bike,
     sport: 'Bike',
-    color: 'text-orange-500',
-    bg: 'bg-orange-50 dark:bg-orange-950/20',
+    color: 'text-[#fb8500]',
+    bg: 'bg-[#fb8500]/8',
     items: ['3+ rides, 30+ min each', '2 long rides, 60+ min each'],
   },
   {
     icon: Footprints,
     sport: 'Run',
-    color: 'text-green-500',
-    bg: 'bg-green-50 dark:bg-green-950/20',
+    color: 'text-[#4cc9a0]',
+    bg: 'bg-[#4cc9a0]/8',
     items: ['3+ runs, 30+ min each', '2 long runs, 45+ min each'],
   },
   {
     icon: Zap,
     sport: 'Thresholds',
-    color: 'text-purple-500',
-    bg: 'bg-purple-50 dark:bg-purple-950/20',
+    color: 'text-[#4361ee]',
+    bg: 'bg-[#4361ee]/8',
     items: ['FTP set (bike power)', 'CSS set (swim pace)', 'Run threshold pace set'],
   },
 ]
@@ -127,7 +127,7 @@ export default function Tier2NudgeModal() {
           {/* Header */}
           <div className="flex items-start justify-between mb-1">
             <div className="flex items-center gap-2">
-              <TrendingUp size={18} className="text-blue-500" />
+              <TrendingUp size={18} className="text-[#4361ee]" />
               <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">
                 Unlock Refined Prediction
               </h2>
@@ -142,7 +142,7 @@ export default function Tier2NudgeModal() {
           </div>
 
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
-            You're at <span className="font-semibold text-blue-600 dark:text-blue-400">Standard (Tier 2)</span>.
+            You're at <span className="font-semibold text-[#57a2ea]">Standard (Tier 2)</span>.
             Log more workouts and set your thresholds to unlock Tier 3 — the most realistic race day predictions Race Day can produce.
           </p>
 
