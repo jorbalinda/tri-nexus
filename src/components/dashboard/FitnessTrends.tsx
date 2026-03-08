@@ -53,9 +53,9 @@ function weeklyVolumeByDiscipline(workouts: Workout[]): { week: string; swim: nu
   return Array.from(weekMap.entries())
     .map(([week, v]) => ({
       week,
-      swim: Number(v.swim.toFixed(1)),
-      bike: Number(v.bike.toFixed(1)),
-      run: Number(v.run.toFixed(1)),
+      swim: Number(v.swim.toFixed(2)),
+      bike: Number(v.bike.toFixed(2)),
+      run: Number(v.run.toFixed(2)),
     }))
     .sort((a, b) => a.week.localeCompare(b.week))
     .slice(-12)
@@ -230,7 +230,7 @@ export default function FitnessTrends() {
               <span className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">Run</span>
             </div>
           </div>
-          <div className="h-56">
+          <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={volumeData}>
                 <CartesianGrid stroke="var(--grid-stroke)" strokeDasharray="3 3" />
@@ -254,6 +254,33 @@ export default function FitnessTrends() {
               </BarChart>
             </ResponsiveContainer>
           </div>
+
+          {/* Weekly totals — most recent week */}
+          {(() => {
+            const latest = volumeData[volumeData.length - 1]
+            if (!latest) return null
+            const total = Number((latest.swim + latest.bike + latest.run).toFixed(2))
+            return (
+              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 grid grid-cols-4 gap-2 text-center">
+                <div>
+                  <p className="text-xs font-bold" style={{ color: '#219ebc' }}>{latest.swim.toFixed(2)}h</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Swim</p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold" style={{ color: '#fb8500' }}>{latest.bike.toFixed(2)}h</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Bike</p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold" style={{ color: '#4cc9a0' }}>{latest.run.toFixed(2)}h</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Run</p>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-900 dark:text-gray-100">{total.toFixed(2)}h</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Total</p>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       )}
     </div>
