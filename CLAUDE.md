@@ -95,7 +95,7 @@ The social layer lets athletes compare projected and actual finish times with fr
 ### Brand Blues (all teal-shifted — share a green undertone)
 | Hex | Usage |
 |---|---|
-| `#023047` | Dark navy — dark mode background, favicon background |
+| `#020c22` | Dark navy — dark mode background, favicon background |
 | `#0a5c8a` | Mid-tone teal-blue — gradients, hero panels |
 | `#1170a3` | Lighter mid-tone — gradients |
 | `#219ebc` | Swim color / bright accent |
@@ -146,9 +146,9 @@ Tile accents use `hexToRgb()` helper to produce `rgba` background (10% opacity) 
 | Hex | Usage |
 |---|---|
 | `#f7f5f3` | Light mode background |
-| `#023047` | Dark mode background |
+| `#020c22` | Dark mode background |
 | `#ffffff` | Light mode card surface |
-| `#03405f` | Dark mode card surface |
+| `#031a40` | Dark mode card surface |
 
 ---
 
@@ -175,7 +175,7 @@ Tile accents use `hexToRgb()` helper to produce `rgba` background (10% opacity) 
 - `src/app/page.tsx` uses styled-jsx and must stay `'use client'`
 - Known required client components: `src/app/page.tsx`, `src/app/auth/signup/page.tsx`, `src/app/auth/login/page.tsx`
 - OG image: `src/app/opengraph-image.tsx` (1200x630, left-logo / right-headline, navy-to-teal gradient)
-- `theme-color` meta: `#023047`
+- `theme-color` meta: `#020c22`
 
 ---
 

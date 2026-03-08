@@ -27,20 +27,20 @@
 }
 
 .dark {
-  --background: #023047;
+  --background: #020c22;
   --foreground: #f7f5f3;
   --accent: #57a2ea;
   --accent-hover: #7ab8f0;
-  --glass-bg: rgba(2, 48, 71, 0.92);
+  --glass-bg: rgba(2, 12, 34, 0.92);
   --glass-border: rgba(87, 162, 234, 0.18);
-  --card-bg: #03405f;
+  --card-bg: #031a40;
   --card-border: rgba(87, 162, 234, 0.1);
   --card-shadow: rgba(0, 0, 0, 0.45);
-  --chart-gradient-from: #022538;
-  --chart-gradient-to: #03405f;
+  --chart-gradient-from: #01091a;
+  --chart-gradient-to: #031a40;
   --grid-stroke: rgba(87, 162, 234, 0.08);
-  --tooltip-bg: #03405f;
-  --tooltip-border: #055a80;
+  --tooltip-bg: #031a40;
+  --tooltip-border: #0a3a7a;
   --scrollbar-thumb: rgba(87, 162, 234, 0.2);
   --scrollbar-hover: rgba(87, 162, 234, 0.35);
 }
