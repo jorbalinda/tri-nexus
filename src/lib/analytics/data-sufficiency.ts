@@ -376,6 +376,32 @@ export function evaluateSufficiency(
 ): SufficiencyResult {
   const cutoffMs = Date.now() - EIGHT_WEEKS_MS
 
+  // If no workout was logged within the last 8 weeks, force Tier 0 regardless
+  // of historical data or confidence score. Stale training data is not predictive.
+  const hasRecentActivity = workouts.some((w) => new Date(w.date).getTime() >= cutoffMs)
+  if (!hasRecentActivity) {
+    const gates: DisciplineGate[] = [
+      evaluateGate('swim', workouts, cutoffMs),
+      evaluateGate('bike', workouts, cutoffMs),
+      evaluateGate('run', workouts, cutoffMs),
+    ]
+    return {
+      tier: 0,
+      tierLabel: 'No Prediction',
+      confidenceScore: 0,
+      gates,
+      passingDisciplines: 0,
+      bandProfile: null,
+      nextActions: [{
+        priority: 1,
+        action: 'Log a workout to restart your prediction',
+        impact: 'No workouts recorded in the last 8 weeks',
+        category: 'workout',
+      }],
+      previousTier: null,
+    }
+  }
+
   // Evaluate per-discipline gates
   const gates: DisciplineGate[] = [
     evaluateGate('swim', workouts, cutoffMs),
