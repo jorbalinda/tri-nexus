@@ -631,107 +631,32 @@ export default function ProfilePage() {
         </p>
 
         <div className="space-y-4 mb-4">
-          {/* Row 1: Resting HR + FTP */}
+          {/* Heart rate row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={LABEL_CLASS}>Resting HR <span className="normal-case font-normal">(bpm)</span></label>
               <input type="number" value={restingHr} onChange={(e) => setRestingHr(e.target.value)} className={INPUT_CLASS} placeholder="55" />
             </div>
             <div>
-              <label className={LABEL_CLASS}>FTP <span className="normal-case font-normal">(watts)</span></label>
-              <input type="number" value={ftpWatts} onChange={(e) => setFtpWatts(e.target.value)} className={INPUT_CLASS} placeholder="250" />
+              <label className={LABEL_CLASS}>Max HR <span className="normal-case font-normal">(bpm)</span></label>
+              <input type="number" value={maxHr} onChange={(e) => { setMaxHr(e.target.value); setMaxHrSource('manual') }} className={INPUT_CLASS} placeholder="185" />
             </div>
           </div>
 
-          {/* Row 2: Swim + Run threshold */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Performance thresholds */}
+          <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className={LABEL_CLASS}>Swim Pace <span className="normal-case font-normal">({isImperial ? '/100yd' : '/100m'})</span></label>
+              <label className={LABEL_CLASS}>FTP <span className="normal-case font-normal">(W)</span></label>
+              <input type="number" value={ftpWatts} onChange={(e) => setFtpWatts(e.target.value)} className={INPUT_CLASS} placeholder="250" />
+            </div>
+            <div>
+              <label className={LABEL_CLASS}>Swim <span className="normal-case font-normal">({isImperial ? '/100yd' : '/100m'})</span></label>
               <input type="text" value={swimPace} onChange={(e) => setSwimPace(autoFormatPace(e.target.value))} className={INPUT_CLASS} placeholder="1:45" />
             </div>
             <div>
-              <label className={LABEL_CLASS}>Run Pace <span className="normal-case font-normal">({isImperial ? '/mi' : '/km'})</span></label>
+              <label className={LABEL_CLASS}>Run <span className="normal-case font-normal">({isImperial ? '/mi' : '/km'})</span></label>
               <input type="text" value={runPace} onChange={(e) => setRunPace(autoFormatPace(e.target.value))} className={INPUT_CLASS} placeholder={isImperial ? '8:00' : '5:00'} />
             </div>
-          </div>
-
-          {/* Row 3: Max HR — full width */}
-          <div>
-            <label className={LABEL_CLASS}>Max HR <span className="normal-case font-normal">(bpm)</span></label>
-            <div className="flex rounded-xl bg-gray-100 dark:bg-gray-800 p-1 mb-3">
-              {[
-                { key: 'manual' as const, label: 'Known' },
-                { key: 'age' as const, label: 'Estimate' },
-                { key: 'workout' as const, label: 'From Workouts' },
-              ].map(({ key, label }) => (
-                <button
-                  key={key}
-                  onClick={() => setMaxHrMethod(key)}
-                  className={`flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    maxHrMethod === key
-                      ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {maxHrMethod === 'manual' && (
-              <input
-                type="number"
-                value={maxHr}
-                onChange={(e) => { setMaxHr(e.target.value); setMaxHrSource('manual') }}
-                className={INPUT_CLASS}
-                placeholder="185"
-              />
-            )}
-
-            {maxHrMethod === 'age' && (
-              <div className="space-y-2">
-                {dob ? (
-                  <>
-                    <div className="flex gap-2">
-                      <button onClick={handleEstimateMaxHRTanaka} className="flex-1 px-3 py-2.5 rounded-xl text-xs font-semibold border border-blue-200 dark:border-blue-800 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-all cursor-pointer">
-                        Tanaka: {estimateMaxHRTanaka(getAge(dob)!)} bpm
-                        <span className="block text-[11px] text-gray-400 font-normal mt-0.5">208 - 0.7 × age (recommended)</span>
-                      </button>
-                      <button onClick={handleEstimateMaxHR} className="flex-1 px-3 py-2.5 rounded-xl text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all cursor-pointer">
-                        Classic: {estimateMaxHRByAge(getAge(dob)!)} bpm
-                        <span className="block text-[11px] text-gray-400 font-normal mt-0.5">220 - age</span>
-                      </button>
-                    </div>
-                    {maxHr && maxHrSource === 'age_formula' && (
-                      <p className="text-xs text-green-600 dark:text-green-400">Using estimate: {maxHr} bpm</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xs text-gray-400">Set your date of birth above to estimate Max HR.</p>
-                )}
-              </div>
-            )}
-
-            {maxHrMethod === 'workout' && (
-              <div className="space-y-2">
-                {derivedMaxHR ? (
-                  <>
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{derivedMaxHR} bpm</span>
-                      <span className="text-xs text-gray-400">from {workoutsWithHR} workouts</span>
-                    </div>
-                    <button onClick={handleDeriveMaxHR} className="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-50 dark:bg-blue-950/20 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-950/30 transition-all cursor-pointer">
-                      Use This Value
-                    </button>
-                    {maxHrSource === 'workout_derived' && maxHr === derivedMaxHR.toString() && (
-                      <p className="text-xs text-green-600 dark:text-green-400">Applied from workouts</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xs text-gray-400">No workouts with HR data found.</p>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
