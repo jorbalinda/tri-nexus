@@ -16,6 +16,12 @@ function formatPace(sec: number | null): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
+function autoFormatPace(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 4)
+  if (digits.length <= 2) return digits
+  return `${digits.slice(0, digits.length - 2)}:${digits.slice(-2)}`
+}
+
 function parsePace(val: string): number | null {
   const parts = val.split(':').map(Number)
   if (parts.some(isNaN) || parts.length < 1) return null
@@ -166,7 +172,7 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
           <input
             type="text"
             value={css}
-            onChange={(e) => setCss(e.target.value)}
+            onChange={(e) => setCss(autoFormatPace(e.target.value))}
             className={INPUT_CLASS}
             placeholder="e.g. 1:45"
           />
@@ -183,7 +189,7 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
           <input
             type="text"
             value={runPace}
-            onChange={(e) => setRunPace(e.target.value)}
+            onChange={(e) => setRunPace(autoFormatPace(e.target.value))}
             className={INPUT_CLASS}
             placeholder={isImperial ? 'e.g. 8:30' : 'e.g. 5:15'}
           />

@@ -54,6 +54,13 @@ function formatPaceInput(totalSeconds: number | null): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
+/** Auto-insert colon on 3rd digit: "130" → "1:30" */
+function autoFormatPace(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 4)
+  if (digits.length <= 2) return digits
+  return `${digits.slice(0, digits.length - 2)}:${digits.slice(-2)}`
+}
+
 /** Parse MM:SS string into total seconds */
 function parsePaceInput(value: string): number | null {
   const parts = value.split(':').map(Number)
@@ -729,11 +736,11 @@ export default function ProfilePage() {
           </div>
           <div>
             <label className={LABEL_CLASS}>Swim Threshold (MM:SS{isImperial ? '/100yd' : '/100m'})</label>
-            <input type="text" value={swimPace} onChange={(e) => setSwimPace(e.target.value)} className={INPUT_CLASS} placeholder="1:45" />
+            <input type="text" value={swimPace} onChange={(e) => setSwimPace(autoFormatPace(e.target.value))} className={INPUT_CLASS} placeholder="1:45" />
           </div>
           <div>
             <label className={LABEL_CLASS}>Run Threshold (MM:SS{isImperial ? '/mi' : '/km'})</label>
-            <input type="text" value={runPace} onChange={(e) => setRunPace(e.target.value)} className={INPUT_CLASS} placeholder={isImperial ? '8:00' : '5:00'} />
+            <input type="text" value={runPace} onChange={(e) => setRunPace(autoFormatPace(e.target.value))} className={INPUT_CLASS} placeholder={isImperial ? '8:00' : '5:00'} />
           </div>
         </div>
 
