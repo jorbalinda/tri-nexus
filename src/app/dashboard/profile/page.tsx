@@ -7,6 +7,7 @@ import { LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { apiPatch } from '@/lib/api/client'
 import DeviceConnectionCard from '@/components/profile/DeviceConnectionCard'
+import CustomSelect from '@/components/ui/CustomSelect'
 import { estimateLT, estimateMaxHRByAge, estimateMaxHRTanaka, deriveMaxHR } from '@/lib/analytics/lactate-threshold'
 import { estimateLTHR } from '@/lib/analytics/race-pacing'
 import type { Workout } from '@/lib/types/database'
@@ -100,8 +101,6 @@ export default function ProfilePage() {
   const [dobMonth, setDobMonth] = useState('')
   const [dobDay, setDobDay]     = useState('')
   const [gender, setGender] = useState('')
-  const [genderOpen, setGenderOpen] = useState(false)
-  const genderRef = useRef<HTMLDivElement>(null)
 
   // Derived ISO string for storage/calculations (YYYY-MM-DD or '')
   const dob = dobYear && dobMonth && dobDay
@@ -133,17 +132,6 @@ export default function ProfilePage() {
 
   // Workouts for auto-derive
   const [userWorkouts, setUserWorkouts] = useState<Workout[]>([])
-
-  // Close gender dropdown on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (genderRef.current && !genderRef.current.contains(e.target as Node)) {
-        setGenderOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
 
   const supabase = createClient()
   const router = useRouter()
@@ -531,87 +519,91 @@ export default function ProfilePage() {
             />
           </div>
           <div>
-            <label className={LABEL_CLASS}>Height ({isImperial ? 'in' : 'cm'})</label>
-            <input
-              type="number"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              className={INPUT_CLASS}
-              placeholder={isImperial ? '69' : '175'}
-              step="0.1"
-            />
+            <label className={LABEL_CLASS}>Height</label>
+            {isImperial ? (
+              <div className="grid grid-cols-2 gap-2">
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={height ? String(Math.floor(parseFloat(height) / 12)) : ''}
+                    onChange={(e) => {
+                      const ft = parseInt(e.target.value) || 0
+                      const inches = height ? Math.round(parseFloat(height) % 12) : 0
+                      setHeight(String(ft * 12 + inches))
+                    }}
+                    className={INPUT_CLASS}
+                    placeholder="5"
+                    min="0"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">ft</span>
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={height ? String(Math.round(parseFloat(height) % 12)) : ''}
+                    onChange={(e) => {
+                      const inches = parseInt(e.target.value) || 0
+                      const ft = height ? Math.floor(parseFloat(height) / 12) : 0
+                      setHeight(String(ft * 12 + inches))
+                    }}
+                    className={INPUT_CLASS}
+                    placeholder="11"
+                    min="0"
+                    max="11"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">in</span>
+                </div>
+              </div>
+            ) : (
+              <div className="relative">
+                <input
+                  type="number"
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  className={INPUT_CLASS}
+                  placeholder="175"
+                  step="0.1"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">cm</span>
+              </div>
+            )}
           </div>
           <div>
             <label className={LABEL_CLASS}>Date of Birth</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              <select
+              <CustomSelect
                 value={dobMonth}
-                onChange={(e) => setDobMonth(e.target.value)}
-                className={`${INPUT_CLASS} col-span-2 sm:col-span-1`}
-                aria-label="Birth month"
-              >
-                <option value="">Month</option>
-                {['January','February','March','April','May','June','July','August','September','October','November','December'].map((name, i) => (
-                  <option key={i + 1} value={String(i + 1)}>{name}</option>
-                ))}
-              </select>
-              <select
+                onChange={setDobMonth}
+                placeholder="Month"
+                className="col-span-2 sm:col-span-1"
+                options={['January','February','March','April','May','June','July','August','September','October','November','December'].map((name, i) => ({ value: String(i + 1), label: name }))}
+              />
+              <CustomSelect
                 value={dobDay}
-                onChange={(e) => setDobDay(e.target.value)}
-                className={INPUT_CLASS}
-                aria-label="Birth day"
-              >
-                <option value="">Day</option>
-                {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                  <option key={d} value={String(d)}>{d}</option>
-                ))}
-              </select>
-              <select
+                onChange={setDobDay}
+                placeholder="Day"
+                options={Array.from({ length: 31 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }))}
+              />
+              <CustomSelect
                 value={dobYear}
-                onChange={(e) => setDobYear(e.target.value)}
-                className={INPUT_CLASS}
-                aria-label="Birth year"
-              >
-                <option value="">Year</option>
-                {Array.from({ length: 85 }, (_, i) => new Date().getFullYear() - 16 - i).map((y) => (
-                  <option key={y} value={String(y)}>{y}</option>
-                ))}
-              </select>
+                onChange={setDobYear}
+                placeholder="Year"
+                options={Array.from({ length: 85 }, (_, i) => { const y = new Date().getFullYear() - 16 - i; return { value: String(y), label: String(y) } })}
+              />
             </div>
           </div>
           <div>
             <label className={LABEL_CLASS}>Gender</label>
-            <div ref={genderRef} className="relative">
-              <button
-                type="button"
-                onClick={() => setGenderOpen((o) => !o)}
-                className={`${INPUT_CLASS} flex items-center justify-between cursor-pointer`}
-              >
-                <span className={gender ? 'text-gray-900 dark:text-gray-200' : 'text-gray-400 dark:text-gray-500'}>
-                  {gender === 'male' ? 'Male' : gender === 'female' ? 'Female' : gender === 'non_binary' ? 'Non-binary' : 'Not set'}
-                </span>
-                <svg className={`w-4 h-4 text-gray-400 transition-transform ${genderOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-              </button>
-              {genderOpen && (
-                <div className="absolute bottom-full mb-1 left-0 right-0 z-20 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
-                  {[
-                    { value: '', label: 'Not set' },
-                    { value: 'male', label: 'Male' },
-                    { value: 'female', label: 'Female' },
-                    { value: 'non_binary', label: 'Non-binary' },
-                  ].map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => { setGender(opt.value); setGenderOpen(false) }}
-                      className={`w-full text-left px-4 py-3 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${gender === opt.value ? 'font-semibold text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <CustomSelect
+              value={gender}
+              onChange={setGender}
+              placeholder="Not set"
+              options={[
+                { value: 'male', label: 'Male' },
+                { value: 'female', label: 'Female' },
+                { value: 'non_binary', label: 'Non-binary' },
+              ]}
+            />
           </div>
         </div>
 
