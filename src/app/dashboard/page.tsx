@@ -81,6 +81,7 @@ export default function DashboardPage() {
             weekOffset={weekOffset}
             onWeekChange={setWeekOffset}
             loading={loading}
+            onWorkoutDeleted={handleWorkoutSaved}
           />
 
           {/* Action row — training load, add workout, import */}

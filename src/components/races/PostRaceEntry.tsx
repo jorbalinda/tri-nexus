@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { TargetRace } from '@/lib/types/target-race'
+import ParticleBurst from '@/components/ui/ParticleBurst'
 
 interface PostRaceEntryProps {
   race: TargetRace
@@ -46,6 +47,7 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
   const [t1, setT1] = useState(secondsToInput(race.actual_t1_seconds))
   const [t2, setT2] = useState(secondsToInput(race.actual_t2_seconds))
   const [saving, setSaving] = useState(false)
+  const [showBurst, setShowBurst] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -60,6 +62,7 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
         actual_t1_seconds: parseTimeInput(t1),
         actual_t2_seconds: parseTimeInput(t2),
       })
+      setShowBurst(true)
     } finally {
       setSaving(false)
     }
@@ -140,13 +143,15 @@ export default function PostRaceEntry({ race, onSave }: PostRaceEntryProps) {
         </>
       )}
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50"
-      >
-        {saving ? 'Saving...' : 'Save Results'}
-      </button>
+      <ParticleBurst active={showBurst} onComplete={() => setShowBurst(false)}>
+        <button
+          type="submit"
+          disabled={saving}
+          className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50"
+        >
+          {saving ? 'Saving...' : 'Save Results'}
+        </button>
+      </ParticleBurst>
     </form>
   )
 }

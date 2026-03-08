@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Zap, Waves, Footprints, CheckCircle2, Pencil } from 'lucide-react'
 import { apiGet, apiPatch } from '@/lib/api/client'
+import ParticleBurst from '@/components/ui/ParticleBurst'
 import { useUnits } from '@/hooks/useUnits'
 import { secPerKmToSecPerMile, secPerMileToSecPerKm, secPer100mToSecPer100yd, secPer100ydToSecPer100m } from '@/lib/units'
 
@@ -39,6 +40,7 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
   const [css, setCss] = useState('')
   const [runPace, setRunPace] = useState('')
   const [saving, setSaving] = useState(false)
+  const [showBurst, setShowBurst] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
         ...(runVal !== null && { threshold_pace_run: runVal }),
       })
       setThresholds({ ftp_watts: ftpVal, threshold_pace_swim: cssVal, threshold_pace_run: runVal })
+      setShowBurst(true)
       setEditing(false)
       onSaved?.()
     } catch {
@@ -210,13 +213,15 @@ export default function ThresholdSetCard({ onSaved }: { onSaved?: () => void }) 
             Cancel
           </button>
         )}
-        <button
-          onClick={handleSave}
-          disabled={saving || (!ftp && !css && !runPace)}
-          className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
-        >
-          {saving ? 'Saving…' : 'Save Thresholds'}
-        </button>
+        <ParticleBurst active={showBurst} onComplete={() => setShowBurst(false)} className="flex-1">
+          <button
+            onClick={handleSave}
+            disabled={saving || (!ftp && !css && !runPace)}
+            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+          >
+            {saving ? 'Saving…' : 'Save Thresholds'}
+          </button>
+        </ParticleBurst>
       </div>
     </div>
   )

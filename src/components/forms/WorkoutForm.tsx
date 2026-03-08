@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Card from '@/components/ui/Card'
+import ParticleBurst from '@/components/ui/ParticleBurst'
 import { createClient } from '@/lib/supabase/client'
 import { useUnits } from '@/hooks/useUnits'
 import { inputDistanceToMeters, feetToMeters, distanceInputLabel, elevationLabel, paceLabel as getPaceLabel } from '@/lib/units'
@@ -39,6 +40,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
 
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [showBurst, setShowBurst] = useState(false)
 
   const supabase = createClient()
 
@@ -95,6 +97,7 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
     setSaving(false)
     if (!error) {
       setSaved(true)
+      setShowBurst(true)
       setTimeout(() => setSaved(false), 3000)
     }
   }
@@ -366,13 +369,15 @@ export default function WorkoutForm({ bare = false }: { bare?: boolean }) {
         )}
 
         {/* Submit */}
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
-        >
-          {saving ? 'Saving...' : saved ? 'Saved!' : 'Log Workout'}
-        </button>
+        <ParticleBurst active={showBurst} onComplete={() => setShowBurst(false)}>
+          <button
+            type="submit"
+            disabled={saving}
+            className="w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+          >
+            {saving ? 'Saving...' : saved ? 'Saved!' : 'Log Workout'}
+          </button>
+        </ParticleBurst>
       </form>
   )
 

@@ -2,11 +2,11 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, User, HelpCircle, LogOut, Sun, Moon, Users } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { Home, User, HelpCircle, LogOut, Users, Sun, Moon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: Home, exact: true },
@@ -21,7 +21,6 @@ export default function Sidebar() {
   const supabase = createClient()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-
   useEffect(() => setMounted(true), [])
 
   const handleSignOut = async () => {

@@ -35,9 +35,10 @@ interface WeeklyCalendarProps {
   weekOffset: number
   onWeekChange: (offset: number) => void
   loading: boolean
+  onWorkoutDeleted?: () => void
 }
 
-export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWeekChange, loading }: WeeklyCalendarProps) {
+export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWeekChange, loading, onWorkoutDeleted }: WeeklyCalendarProps) {
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null)
 
   const today = new Date().toISOString().split('T')[0]
@@ -158,6 +159,7 @@ export default function WeeklyCalendar({ workoutsByDay, monday, weekOffset, onWe
         <WorkoutDetailModal
           workout={selectedWorkout}
           onClose={() => setSelectedWorkout(null)}
+          onDeleted={() => { setSelectedWorkout(null); onWorkoutDeleted?.() }}
         />
       )}
     </div>

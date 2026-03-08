@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, X, ChevronRight, ChevronLeft, Waves, Bike, Footprints, Zap } from 'lucide-react'
 import { apiPost, apiPatch } from '@/lib/api/client'
+import ParticleBurst from '@/components/ui/ParticleBurst'
 import { useUnits } from '@/hooks/useUnits'
 import { inputDistanceToMeters, feetToMeters, distanceInputLabel, elevationLabel, secPerKmToSecPerMile, secPerMileToSecPerKm, secPer100mToSecPer100yd, secPer100ydToSecPer100m } from '@/lib/units'
 import type { UnitSystem } from '@/lib/units'
@@ -35,6 +36,7 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
+  const [showBurst, setShowBurst] = useState(false)
   // Local unit toggle — defaults from profile, can be changed per-workout
   const [localUnits, setLocalUnits] = useState<UnitSystem>(isImperial ? 'imperial' : 'metric')
   const localImperial = localUnits === 'imperial'
@@ -97,9 +99,8 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
           ...(rawCss !== null && { threshold_pace_swim: localImperial ? secPer100ydToSecPer100m(rawCss) : rawCss }),
           ...(rawRun !== null && { threshold_pace_run: localImperial ? secPerMileToSecPerKm(rawRun) : rawRun }),
         })
-        setOpen(false)
-        resetForm()
-        onSaved()
+        setShowBurst(true)
+        setTimeout(() => { setOpen(false); resetForm(); onSaved() }, 700)
       } catch { /* ignore */ }
       setSaving(false)
       return
@@ -129,9 +130,8 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
         rpe: rpe ? parseFloat(rpe) : null,
         calories: calories ? parseInt(calories) : null,
       })
-      setOpen(false)
-      resetForm()
-      onSaved()
+      setShowBurst(true)
+      setTimeout(() => { setOpen(false); resetForm(); onSaved() }, 700)
     } catch { /* ignore */ }
     setSaving(false)
   }
@@ -367,13 +367,15 @@ export default function ManualWorkoutEntry({ onSaved }: ManualWorkoutEntryProps)
             >
               <ChevronLeft size={16} /> Back
             </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
-            >
-              {saving ? 'Saving...' : 'Save Workout'}
-            </button>
+            <ParticleBurst active={showBurst} onComplete={() => setShowBurst(false)} className="flex-1">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {saving ? 'Saving...' : 'Save Workout'}
+              </button>
+            </ParticleBurst>
           </div>
         </>
       )}

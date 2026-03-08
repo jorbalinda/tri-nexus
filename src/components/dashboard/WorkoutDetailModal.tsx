@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, ExternalLink, Waves, Bike, Footprints, Clock, Heart, Zap, MapPin, Trash2, Loader2, Cloud } from 'lucide-react'
+import { X, ExternalLink, Waves, Bike, Footprints, Clock, Heart, Zap, MapPin, Trash2, Cloud } from 'lucide-react'
 import type { Workout, WorkoutHRZone, WorkoutPowerZone, WorkoutLap } from '@/lib/types/database'
 import { apiGet, apiDelete } from '@/lib/api/client'
 import { useUnits } from '@/hooks/useUnits'
@@ -42,14 +42,12 @@ export default function WorkoutDetailModal({ workout, onClose, onDeleted }: Work
   const Icon = sport.icon
 
   const [fullData, setFullData] = useState<FullWorkout | null>(null)
-  const [loadingDetail, setLoadingDetail] = useState(true)
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     apiGet<FullWorkout>(`/api/workouts/${workout.id}`)
       .then(setFullData)
       .catch(() => setFullData(null))
-      .finally(() => setLoadingDetail(false))
   }, [workout.id])
 
   const handleDelete = async () => {
@@ -169,13 +167,7 @@ export default function WorkoutDetailModal({ workout, onClose, onDeleted }: Work
         )}
 
         {/* HR Zones */}
-        {loadingDetail ? (
-          <div className="flex items-center gap-2 text-gray-400 mb-4">
-            <Loader2 size={14} className="animate-spin" />
-            <span className="text-xs">Loading details...</span>
-          </div>
-        ) : (
-          <>
+        <>
             {hrZones.length > 0 && (
               <div className="mb-6">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">HR Zones</p>
@@ -267,8 +259,7 @@ export default function WorkoutDetailModal({ workout, onClose, onDeleted }: Work
                 </div>
               </div>
             )}
-          </>
-        )}
+        </>
 
         {/* Notes */}
         {workout.notes && (
@@ -292,16 +283,14 @@ export default function WorkoutDetailModal({ workout, onClose, onDeleted }: Work
             </a>
           ) : <div />}
 
-          {workout.source === 'manual' && (
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer disabled:opacity-50"
-            >
-              <Trash2 size={12} />
-              {deleting ? 'Deleting...' : 'Delete'}
-            </button>
-          )}
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer disabled:opacity-50"
+          >
+            <Trash2 size={12} />
+            {deleting ? 'Deleting...' : 'Delete'}
+          </button>
         </div>
       </div>
     </div>

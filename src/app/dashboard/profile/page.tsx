@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { apiPatch } from '@/lib/api/client'
 import DeviceConnectionCard from '@/components/profile/DeviceConnectionCard'
 import CustomSelect from '@/components/ui/CustomSelect'
+import ParticleBurst from '@/components/ui/ParticleBurst'
 import { estimateLT, estimateMaxHRByAge, estimateMaxHRTanaka, deriveMaxHR } from '@/lib/analytics/lactate-threshold'
 import { estimateLTHR } from '@/lib/analytics/race-pacing'
 import type { Workout } from '@/lib/types/database'
@@ -90,8 +91,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle')
+  const [showBurst, setShowBurst] = useState(false)
   const [savingThresholds, setSavingThresholds] = useState(false)
   const [saveThresholdsStatus, setSaveThresholdsStatus] = useState<'idle' | 'saved' | 'error'>('idle')
+  const [showThresholdBurst, setShowThresholdBurst] = useState(false)
   const [displayName, setDisplayName] = useState('')
   const [username, setUsername] = useState('')
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid' | 'unchanged'>('idle')
@@ -311,6 +314,7 @@ export default function ProfilePage() {
         return
       }
       setSaveStatus('saved')
+      setShowBurst(true)
       setTimeout(() => setSaveStatus('idle'), 2500)
     } catch {
       setSaveStatus('error')
@@ -339,6 +343,7 @@ export default function ProfilePage() {
         lthr_run: lthrRun ? parseInt(lthrRun) : null,
       })
       setSaveThresholdsStatus('saved')
+      setShowThresholdBurst(true)
       setTimeout(() => setSaveThresholdsStatus('idle'), 2500)
     } catch {
       setSaveThresholdsStatus('error')
@@ -608,19 +613,21 @@ export default function ProfilePage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
-              saveStatus === 'saved'
-                ? 'bg-green-600 text-white hover:bg-green-700'
-                : saveStatus === 'error'
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
-            }`}
-          >
-            {saving ? 'Saving…' : saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'error' ? 'Error — try again' : 'Save Profile'}
-          </button>
+          <ParticleBurst active={showBurst} onComplete={() => setShowBurst(false)}>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
+                saveStatus === 'saved'
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : saveStatus === 'error'
+                  ? 'bg-red-600 text-white hover:bg-red-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              {saving ? 'Saving…' : saveStatus === 'saved' ? '✓ Saved' : saveStatus === 'error' ? 'Error — try again' : 'Save Profile'}
+            </button>
+          </ParticleBurst>
         </div>
       </div>
 
@@ -742,19 +749,21 @@ export default function ProfilePage() {
         )}
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleSaveThresholds}
-            disabled={savingThresholds}
-            className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
-              saveThresholdsStatus === 'saved'
-                ? 'bg-green-600 text-white hover:bg-green-700'
-                : saveThresholdsStatus === 'error'
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
-            }`}
-          >
-            {savingThresholds ? 'Saving…' : saveThresholdsStatus === 'saved' ? '✓ Saved' : saveThresholdsStatus === 'error' ? 'Error — try again' : 'Save Thresholds'}
-          </button>
+          <ParticleBurst active={showThresholdBurst} onComplete={() => setShowThresholdBurst(false)}>
+            <button
+              onClick={handleSaveThresholds}
+              disabled={savingThresholds}
+              className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer ${
+                saveThresholdsStatus === 'saved'
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : saveThresholdsStatus === 'error'
+                  ? 'bg-red-600 text-white hover:bg-red-700'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              {savingThresholds ? 'Saving…' : saveThresholdsStatus === 'saved' ? '✓ Saved' : saveThresholdsStatus === 'error' ? 'Error — try again' : 'Save Thresholds'}
+            </button>
+          </ParticleBurst>
         </div>
       </div>
 

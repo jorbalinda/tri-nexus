@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
+import ParticleBurst from '@/components/ui/ParticleBurst'
 import type {
   RaceDetailsInput,
   RaceCourse,
@@ -100,6 +101,7 @@ export default function RaceDetailsForm({
 
   const [selectedCourse, setSelectedCourse] = useState<RaceCourse | null>(null)
   const [savingCourse, setSavingCourse] = useState(false)
+  const [showCourseBurst, setShowCourseBurst] = useState(false)
 
   const update = (key: keyof RaceDetailsInput, value: string) =>
     setForm((prev) => {
@@ -167,6 +169,7 @@ export default function RaceDetailsForm({
         timezone: null,
         next_race_date: null,
       })
+      setShowCourseBurst(true)
     } catch (err) {
       console.error('Failed to save course:', err)
     } finally {
@@ -533,14 +536,16 @@ export default function RaceDetailsForm({
 
         {/* Save as custom course */}
         {!selectedCourse && form.race_name && (
-          <button
-            type="button"
-            onClick={handleSaveAsCourse}
-            disabled={savingCourse}
-            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors cursor-pointer disabled:opacity-50 text-left"
-          >
-            {savingCourse ? 'Saving...' : 'Save as Custom Course'}
-          </button>
+          <ParticleBurst active={showCourseBurst} onComplete={() => setShowCourseBurst(false)} className="inline-block">
+            <button
+              type="button"
+              onClick={handleSaveAsCourse}
+              disabled={savingCourse}
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors cursor-pointer disabled:opacity-50 text-left"
+            >
+              {savingCourse ? 'Saving...' : 'Save as Custom Course'}
+            </button>
+          </ParticleBurst>
         )}
 
         {/* Submit */}
