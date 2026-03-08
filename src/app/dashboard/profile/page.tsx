@@ -93,6 +93,8 @@ export default function ProfilePage() {
   const [dobMonth, setDobMonth] = useState('')
   const [dobDay, setDobDay]     = useState('')
   const [gender, setGender] = useState('')
+  const [genderOpen, setGenderOpen] = useState(false)
+  const genderRef = useRef<HTMLDivElement>(null)
 
   // Derived ISO string for storage/calculations (YYYY-MM-DD or '')
   const dob = dobYear && dobMonth && dobDay
@@ -124,6 +126,17 @@ export default function ProfilePage() {
 
   // Workouts for auto-derive
   const [userWorkouts, setUserWorkouts] = useState<Workout[]>([])
+
+  // Close gender dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (genderRef.current && !genderRef.current.contains(e.target as Node)) {
+        setGenderOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   const supabase = createClient()
   const router = useRouter()
@@ -561,12 +574,37 @@ export default function ProfilePage() {
           </div>
           <div>
             <label className={LABEL_CLASS}>Gender</label>
-            <select value={gender} onChange={(e) => setGender(e.target.value)} className={INPUT_CLASS}>
-              <option value="">Not set</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="non_binary">Non-binary</option>
-            </select>
+            <div ref={genderRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setGenderOpen((o) => !o)}
+                className={`${INPUT_CLASS} flex items-center justify-between cursor-pointer`}
+              >
+                <span className={gender ? 'text-gray-900 dark:text-gray-200' : 'text-gray-400 dark:text-gray-500'}>
+                  {gender === 'male' ? 'Male' : gender === 'female' ? 'Female' : gender === 'non_binary' ? 'Non-binary' : 'Not set'}
+                </span>
+                <svg className={`w-4 h-4 text-gray-400 transition-transform ${genderOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              {genderOpen && (
+                <div className="absolute bottom-full mb-1 left-0 right-0 z-20 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
+                  {[
+                    { value: '', label: 'Not set' },
+                    { value: 'male', label: 'Male' },
+                    { value: 'female', label: 'Female' },
+                    { value: 'non_binary', label: 'Non-binary' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => { setGender(opt.value); setGenderOpen(false) }}
+                      className={`w-full text-left px-4 py-3 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${gender === opt.value ? 'font-semibold text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
