@@ -8,7 +8,7 @@ import UserSearch from '@/components/social/UserSearch'
 import FollowRequests from '@/components/social/FollowRequests'
 import PrivacyToggle from '@/components/social/PrivacyToggle'
 import Link from 'next/link'
-import { Settings } from 'lucide-react'
+import { Settings, CalendarDays } from 'lucide-react'
 
 export const metadata = { title: 'Friends | Race Day' }
 
@@ -51,19 +51,26 @@ export default async function SocialPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Fitness Fingerprint */}
-        {percentiles ? (
-          <div className="space-y-2">
-            <FitnessFingerprint percentiles={percentiles} />
-            {missingDob && (
-              <p className="text-xs text-gray-400 dark:text-gray-500 px-1">
-                * Benchmarked against 35–39 age group.{' '}
-                <Link href="/dashboard/profile" className="text-blue-500 hover:underline inline-flex items-center gap-1">
-                  Set your birthday <Settings size={11} />
-                </Link>{' '}
-                for accurate age-group ranking.
-              </p>
-            )}
+        {missingDob ? (
+          <div className="card-squircle p-4 sm:p-6 flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <CalendarDays size={18} className="text-accent shrink-0" />
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Fitness Fingerprint
+              </h3>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Add your date of birth to see your age-group percentile ranking across swim, bike, and run.
+            </p>
+            <Link
+              href="/dashboard/profile"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+            >
+              Set your birthday <Settings size={13} />
+            </Link>
           </div>
+        ) : percentiles ? (
+          <FitnessFingerprint percentiles={percentiles} />
         ) : (
           <div className="card-squircle p-4 sm:p-6">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
