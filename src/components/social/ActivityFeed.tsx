@@ -61,7 +61,7 @@ export default function ActivityFeed({ items }: Props) {
 
       <div className="space-y-3">
         {items.map((item) => {
-          const name = item.profile?.display_name ?? 'Athlete'
+          const name = item.profile?.display_name ?? (item.profile?.username ? `@${item.profile.username}` : 'Athlete')
           const emoji = SPORT_EMOJI[item.activity_type] ?? '🏅'
           const label = SPORT_LABEL[item.activity_type] ?? item.activity_type
           const time = relativeTime(item.created_at)
