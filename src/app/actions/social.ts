@@ -340,10 +340,16 @@ export async function searchUsers(query: string): Promise<{ user_id: string; dis
     .limit(10)
 
   // Search auth users by email fragment — service admin only, email never returned to client
-  const { data: { users: authUsers } } = await service.auth.admin.listUsers({ perPage: 1000 })
-  const emailMatchIds = (authUsers ?? [])
-    .filter((u) => u.email?.toLowerCase().includes(cleaned) && u.id !== user.id)
-    .map((u) => u.id)
+  // Wrapped in try-catch: if admin API is unavailable, profile search still works
+  let emailMatchIds: string[] = []
+  try {
+    const { data: { users: authUsers } } = await service.auth.admin.listUsers({ perPage: 1000 })
+    emailMatchIds = (authUsers ?? [])
+      .filter((u) => u.email?.toLowerCase().includes(cleaned) && u.id !== user.id)
+      .map((u) => u.id)
+  } catch {
+    // Non-critical — fall through with profile-only results
+  }
 
   // Fetch profiles for email matches not already found above
   const existingIds = new Set((profileMatches ?? []).map((p) => p.id))
@@ -460,7 +466,9 @@ export async function getFollowingList(): Promise<{ user_id: string; display_nam
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
-  const { data: follows } = await supabase
+  // Use service client so RLS on follows table never silently blocks this read
+  const service = createServiceClient()
+  const { data: follows } = await service
     .from('follows')
     .select('following_id')
     .eq('follower_id', user.id)
@@ -468,7 +476,6 @@ export async function getFollowingList(): Promise<{ user_id: string; display_nam
 
   if (!follows || follows.length === 0) return []
 
-  const service = createServiceClient()
   const { data: profiles } = await service
     .from('profiles')
     .select('id, display_name, username, avatar_url')
