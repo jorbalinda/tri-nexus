@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
@@ -149,6 +150,12 @@ export default async function RacesLeaderboardPage() {
 
   return (
     <main className="space-y-6">
+      <Link
+        href="/dashboard/social"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+      >
+        <span aria-hidden>←</span> Back to Friends
+      </Link>
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Race Projections</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
@@ -215,46 +222,62 @@ export default async function RacesLeaderboardPage() {
 
                 {/* Leaderboard entries */}
                 <div className="space-y-2">
-                  {entries.map((entry, idx) => (
-                    <div
-                      key={entry.user_id}
-                      className={`flex items-center gap-3 p-3 rounded-xl ${
-                        entry.isMe
-                          ? 'bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/50 dark:border-blue-800/50'
-                          : 'bg-gray-50/50 dark:bg-gray-800/30'
-                      }`}
-                    >
-                      <span className={`w-5 text-center text-xs font-bold ${
-                        idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-gray-400' : idx === 2 ? 'text-amber-600' : 'text-gray-400'
-                      }`}>{idx + 1}</span>
+                  {entries.map((entry, idx) => {
+                    const bgClass = entry.isMe
+                      ? 'bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/50 dark:border-blue-800/50'
+                      : 'bg-gray-50/50 dark:bg-gray-800/30'
+                    const inner = (
+                      <>
+                        <span className={`w-5 text-center text-xs font-bold ${
+                          idx === 0 ? 'text-yellow-500' : idx === 1 ? 'text-gray-400' : idx === 2 ? 'text-amber-600' : 'text-gray-400'
+                        }`}>{idx + 1}</span>
 
-                      <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 text-xs font-semibold text-blue-600 dark:text-blue-400 overflow-hidden">
-                        {entry.avatar_url
-                          ? <Image src={entry.avatar_url} alt={entry.display_name} width={32} height={32} className="w-full h-full object-cover" unoptimized />
-                          : entry.display_name.charAt(0).toUpperCase()
-                        }
-                      </div>
+                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 text-xs font-semibold text-blue-600 dark:text-blue-400 overflow-hidden">
+                          {entry.avatar_url
+                            ? <Image src={entry.avatar_url} alt={entry.display_name} width={32} height={32} className="w-full h-full object-cover" unoptimized />
+                            : entry.display_name.charAt(0).toUpperCase()
+                          }
+                        </div>
 
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium truncate ${entry.isMe ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'}`}>
-                          {entry.display_name}{entry.isMe && <span className="ml-1 text-xs text-blue-400">(you)</span>}
-                        </p>
-                      </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium truncate ${entry.isMe ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'}`}>
+                            {entry.display_name}{entry.isMe && <span className="ml-1 text-xs text-blue-400">(you)</span>}
+                          </p>
+                        </div>
 
-                      <div className="text-right">
-                        {entry.projected ? (
-                          <>
-                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums">
-                              {formatFinishTime(entry.projected)}
-                            </p>
-                            <p className="text-[10px] text-gray-400">projected</p>
-                          </>
-                        ) : (
-                          <p className="text-xs text-gray-400">No data</p>
-                        )}
+                        <div className="text-right">
+                          {entry.projected ? (
+                            <>
+                              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums">
+                                {formatFinishTime(entry.projected)}
+                              </p>
+                              <p className="text-[10px] text-gray-400">projected</p>
+                            </>
+                          ) : (
+                            <p className="text-xs text-gray-400">No data</p>
+                          )}
+                        </div>
+                      </>
+                    )
+
+                    if (!entry.isMe) {
+                      return (
+                        <Link
+                          key={entry.user_id}
+                          href={`/dashboard/social/${entry.user_id}`}
+                          className={`flex items-center gap-3 p-3 rounded-xl ${bgClass} hover:opacity-80 transition-opacity`}
+                        >
+                          {inner}
+                        </Link>
+                      )
+                    }
+
+                    return (
+                      <div key={entry.user_id} className={`flex items-center gap-3 p-3 rounded-xl ${bgClass}`}>
+                        {inner}
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {friends.length === 0 && (

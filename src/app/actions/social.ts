@@ -321,36 +321,58 @@ export async function getMyFitnessPercentiles(): Promise<FitnessPercentiles | nu
   )
 }
 
-/** Search for users by @username */
+/** Search for users by display name, username, or email fragment — public profiles only */
 export async function searchUsers(query: string): Promise<{ user_id: string; display_name: string; username: string | null; avatar_url: string | null; follow_status: 'accepted' | 'pending' | false }[]> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user || query.trim().length < 2) return []
 
-  // Strip leading @ if user typed it
-  const cleaned = query.trim().replace(/^@/, '')
-
-  // Use service client to search by username — only safe public fields returned
+  const cleaned = query.trim().replace(/^@/, '').toLowerCase()
   const service = createServiceClient()
-  const { data: results } = await service
+
+  // Search profiles by display_name or username (public profiles only)
+  const { data: profileMatches } = await service
     .from('profiles')
-    .select('id, display_name, username, avatar_url')
-    .ilike('username', `%${cleaned}%`)
+    .select('id, display_name, username, avatar_url, profile_public')
+    .or(`username.ilike.%${cleaned}%,display_name.ilike.%${cleaned}%`)
+    .eq('profile_public', true)
     .neq('id', user.id)
     .limit(10)
 
-  if (!results || results.length === 0) return []
+  // Search auth users by email fragment — service admin only, email never returned to client
+  const { data: { users: authUsers } } = await service.auth.admin.listUsers({ perPage: 1000 })
+  const emailMatchIds = (authUsers ?? [])
+    .filter((u) => u.email?.toLowerCase().includes(cleaned) && u.id !== user.id)
+    .map((u) => u.id)
+
+  // Fetch profiles for email matches not already found above
+  const existingIds = new Set((profileMatches ?? []).map((p) => p.id))
+  const newEmailIds = emailMatchIds.filter((id) => !existingIds.has(id))
+
+  let emailProfiles: typeof profileMatches = []
+  if (newEmailIds.length > 0) {
+    const { data } = await service
+      .from('profiles')
+      .select('id, display_name, username, avatar_url, profile_public')
+      .in('id', newEmailIds)
+      .eq('profile_public', true)
+      .neq('id', user.id)
+    emailProfiles = data ?? []
+  }
+
+  const allResults = [...(profileMatches ?? []), ...emailProfiles].slice(0, 10)
+  if (allResults.length === 0) return []
 
   // Check follow status for each result
   const { data: followingRows } = await supabase
     .from('follows')
     .select('following_id, status')
     .eq('follower_id', user.id)
-    .in('following_id', results.map((r) => r.id))
+    .in('following_id', allResults.map((r) => r.id))
 
   const followMap = Object.fromEntries((followingRows ?? []).map((f) => [f.following_id, f.status]))
 
-  return results.map((r) => ({
+  return allResults.map((r) => ({
     user_id: r.id,
     display_name: r.display_name ?? 'Athlete',
     username: r.username ?? null,
@@ -366,7 +388,7 @@ export type FriendRaceProjection = {
   raceDate: string
   raceDistance: string
   myProjected: number | null
-  friends: { display_name: string; avatar_url: string | null; projected: number | null }[]
+  friends: { user_id: string; display_name: string; avatar_url: string | null; projected: number | null }[]
 }
 
 export async function getFriendsRaceProjections(): Promise<FriendRaceProjection[]> {
@@ -423,13 +445,41 @@ export async function getFriendsRaceProjections(): Promise<FriendRaceProjection[
             service.from('profiles').select('display_name, avatar_url').eq('id', fr.user_id).single(),
             service.from('fitness_snapshots').select('*').eq('user_id', fr.user_id).order('snapshot_date', { ascending: false }).limit(1).maybeSingle(),
           ])
-          friends.push({ display_name: fp?.display_name ?? 'Athlete', avatar_url: fp?.avatar_url ?? null, projected: snap ? projectFinishTime(projRace, snap) : null })
+          friends.push({ user_id: fr.user_id, display_name: fp?.display_name ?? 'Athlete', avatar_url: fp?.avatar_url ?? null, projected: snap ? projectFinishTime(projRace, snap) : null })
         }
       }
 
       return { raceId: race.id, raceName: race.race_name, raceDate: race.race_date, raceDistance: race.race_distance, myProjected, friends }
     })
   )
+}
+
+/** Get the list of users the current user follows (accepted only) */
+export async function getFollowingList(): Promise<{ user_id: string; display_name: string; username: string | null; avatar_url: string | null }[]> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const { data: follows } = await supabase
+    .from('follows')
+    .select('following_id')
+    .eq('follower_id', user.id)
+    .eq('status', 'accepted')
+
+  if (!follows || follows.length === 0) return []
+
+  const service = createServiceClient()
+  const { data: profiles } = await service
+    .from('profiles')
+    .select('id, display_name, username, avatar_url')
+    .in('id', follows.map((f) => f.following_id))
+
+  return (profiles ?? []).map((p) => ({
+    user_id: p.id,
+    display_name: p.display_name ?? 'Athlete',
+    username: p.username ?? null,
+    avatar_url: p.avatar_url ?? null,
+  }))
 }
 
 /** Register current user for a race in the catalogue */

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getSocialFeed, getMyFitnessPercentiles, getPendingFollowRequests, getFriendsRaceProjections } from '@/app/actions/social'
+import { getSocialFeed, getMyFitnessPercentiles, getPendingFollowRequests, getFriendsRaceProjections, getFollowingList } from '@/app/actions/social'
 import FitnessFingerprint from '@/components/social/FitnessFingerprint'
 import FriendsRaceProjections from '@/components/social/FriendsRaceProjections'
 import ActivityFeed from '@/components/social/ActivityFeed'
@@ -8,6 +8,7 @@ import UserSearch from '@/components/social/UserSearch'
 import FollowRequests from '@/components/social/FollowRequests'
 import PrivacyToggle from '@/components/social/PrivacyToggle'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Settings, CalendarDays } from 'lucide-react'
 
 export const metadata = { title: 'Friends | Race Day' }
@@ -23,11 +24,12 @@ export default async function SocialPage() {
     .eq('id', user.id)
     .single()
 
-  const [feedItems, percentiles, pendingRequests, raceProjections] = await Promise.all([
-    getSocialFeed(30),
+  const [feedItems, percentiles, pendingRequests, raceProjections, following] = await Promise.all([
+    getSocialFeed(25),
     getMyFitnessPercentiles(),
     getPendingFollowRequests(),
     getFriendsRaceProjections(),
+    getFollowingList(),
   ])
 
   const missingDob = !profile?.date_of_birth
@@ -92,6 +94,45 @@ export default async function SocialPage() {
 
       {/* Find Athletes */}
       <UserSearch />
+
+      {/* Following list */}
+      {following.length > 0 && (
+        <div className="card-squircle p-4 sm:p-6 space-y-3">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            Following <span className="ml-1 text-xs font-normal text-gray-400 dark:text-gray-500">{following.length}</span>
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {following.map((friend) => (
+              <Link
+                key={friend.user_id}
+                href={`/dashboard/social/${friend.user_id}`}
+                className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gray-50/50 dark:bg-gray-800/30 hover:bg-gray-100/60 dark:hover:bg-gray-700/40 transition-colors min-w-0"
+              >
+                {friend.avatar_url ? (
+                  <Image
+                    src={friend.avatar_url}
+                    alt={friend.display_name}
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover flex-shrink-0"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                    {friend.display_name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">{friend.display_name}</p>
+                  {friend.username && (
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500 truncate">@{friend.username}</p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Activity Feed */}
       <ActivityFeed items={feedItems} />
