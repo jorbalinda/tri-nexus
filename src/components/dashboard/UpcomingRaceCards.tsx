@@ -47,10 +47,12 @@ export default function UpcomingRaceCards() {
 
   useEffect(() => {
     async function fetchRaces() {
+      const today = new Date().toISOString().split('T')[0]
       const { data } = await supabase
         .from('target_races')
         .select('id, race_name, race_date, race_distance, priority, status')
         .in('status', ['upcoming', 'race_week'])
+        .gte('race_date', today)
         .order('race_date', { ascending: true })
         .limit(3)
 
