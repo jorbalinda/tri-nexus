@@ -19,6 +19,15 @@ export default function UserSearch() {
   const [results, setResults] = useState<UserResult[]>([])
   const [searched, setSearched] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [fadingIds, setFadingIds] = useState<Set<string>>(new Set())
+
+  const handleFollowed = (userId: string) => {
+    setFadingIds((prev) => new Set(prev).add(userId))
+    setTimeout(() => {
+      setResults((prev) => prev.filter((r) => r.user_id !== userId))
+      setFadingIds((prev) => { const s = new Set(prev); s.delete(userId); return s })
+    }, 400)
+  }
 
   const handleSearch = () => {
     if (query.trim().length < 2) return
@@ -64,7 +73,11 @@ export default function UserSearch() {
       {results.length > 0 && (
         <div className="space-y-2">
           {results.map((r) => (
-            <div key={r.user_id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/50 dark:bg-gray-800/30">
+            <div
+              key={r.user_id}
+              className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/50 dark:bg-gray-800/30 transition-all duration-300"
+              style={fadingIds.has(r.user_id) ? { opacity: 0, transform: 'scale(0.97)' } : undefined}
+            >
               <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-blue-600 dark:text-blue-400 overflow-hidden">
                 {r.avatar_url
                   ? <Image src={r.avatar_url} alt={r.display_name} width={36} height={36} className="w-full h-full object-cover" unoptimized />
@@ -75,7 +88,11 @@ export default function UserSearch() {
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{r.display_name}</p>
                 {r.username && <p className="text-xs text-gray-400 dark:text-gray-500">@{r.username}</p>}
               </div>
-              <FollowButton targetUserId={r.user_id} initialStatus={r.follow_status} />
+              <FollowButton
+                targetUserId={r.user_id}
+                initialStatus={r.follow_status}
+                onFollowed={() => handleFollowed(r.user_id)}
+              />
             </div>
           ))}
         </div>

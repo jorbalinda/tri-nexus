@@ -24,7 +24,7 @@ export default async function SocialPage() {
     .single()
 
   const [feedItems, percentiles, pendingRequests, raceProjections] = await Promise.all([
-    getSocialFeed(30),
+    getSocialFeed(25),
     getMyFitnessPercentiles(),
     getPendingFollowRequests(),
     getFriendsRaceProjections(),

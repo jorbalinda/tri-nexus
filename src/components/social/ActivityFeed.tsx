@@ -1,5 +1,10 @@
+'use client'
+
 import Image from 'next/image'
+import { useState } from 'react'
 import type { FeedItem } from '@/lib/types/social'
+
+const INITIAL_VISIBLE = 10
 
 function relativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -40,6 +45,8 @@ type Props = {
 }
 
 export default function ActivityFeed({ items }: Props) {
+  const [visible, setVisible] = useState(INITIAL_VISIBLE)
+
   if (items.length === 0) {
     return (
       <div className="card-squircle p-4 sm:p-6">
@@ -53,20 +60,27 @@ export default function ActivityFeed({ items }: Props) {
     )
   }
 
+  const shown = items.slice(0, visible)
+  const hasMore = visible < items.length
+
   return (
     <div className="card-squircle p-4 sm:p-6">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        Activity Feed
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          Activity Feed
+        </h3>
+        <span className="text-xs text-gray-400 dark:text-gray-500">
+          {shown.length} of {items.length}
+        </span>
+      </div>
 
       <div className="space-y-3">
-        {items.map((item) => {
+        {shown.map((item) => {
           const name = item.profile?.display_name ?? (item.profile?.username ? `@${item.profile.username}` : 'Athlete')
           const emoji = SPORT_EMOJI[item.activity_type] ?? '🏅'
           const label = SPORT_LABEL[item.activity_type] ?? item.activity_type
           const time = relativeTime(item.created_at)
 
-          // Extract metadata fields if present
           const meta = item.metadata as {
             distance_km?: number
             duration_min?: number
@@ -78,7 +92,6 @@ export default function ActivityFeed({ items }: Props) {
               key={item.id}
               className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/50 dark:bg-gray-800/30"
             >
-              {/* Avatar */}
               {item.profile?.avatar_url ? (
                 <Image
                   src={item.profile.avatar_url}
@@ -96,7 +109,6 @@ export default function ActivityFeed({ items }: Props) {
                 </div>
               )}
 
-              {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-1.5 flex-wrap">
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -134,6 +146,15 @@ export default function ActivityFeed({ items }: Props) {
           )
         })}
       </div>
+
+      {hasMore && (
+        <button
+          onClick={() => setVisible(items.length)}
+          className="mt-4 w-full py-2 text-xs font-medium text-accent hover:underline transition-colors"
+        >
+          Show {items.length - visible} more
+        </button>
+      )}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { UserPlus, UserMinus, Clock, Loader2 } from 'lucide-react'
+import { UserPlus, UserMinus, Clock, Loader2, Check } from 'lucide-react'
 import { followUser, unfollowUser } from '@/app/actions/social'
 
 type FollowStatus = 'accepted' | 'pending' | false
@@ -9,10 +9,12 @@ type FollowStatus = 'accepted' | 'pending' | false
 type Props = {
   targetUserId: string
   initialStatus: FollowStatus
+  onFollowed?: () => void
 }
 
-export default function FollowButton({ targetUserId, initialStatus }: Props) {
+export default function FollowButton({ targetUserId, initialStatus, onFollowed }: Props) {
   const [status, setStatus] = useState<FollowStatus>(initialStatus)
+  const [justFollowed, setJustFollowed] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const handleClick = () => {
@@ -22,7 +24,11 @@ export default function FollowButton({ targetUserId, initialStatus }: Props) {
         if (!error) setStatus(false)
       } else {
         const { error, status: newStatus } = await followUser(targetUserId)
-        if (!error && newStatus) setStatus(newStatus)
+        if (!error && newStatus) {
+          setStatus(newStatus)
+          setJustFollowed(true)
+          if (onFollowed) setTimeout(onFollowed, 700)
+        }
       }
     })
   }
@@ -34,6 +40,15 @@ export default function FollowButton({ targetUserId, initialStatus }: Props) {
   const hoverLabel = status === 'accepted' ? 'Unfollow'
     : status === 'pending' ? 'Cancel'
     : 'Follow'
+
+  if (justFollowed) {
+    return (
+      <button disabled className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-[#2a9d8f]/15 text-[#2a9d8f] min-h-[44px]">
+        <Check size={15} />
+        Following!
+      </button>
+    )
+  }
 
   return (
     <button
