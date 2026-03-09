@@ -64,7 +64,7 @@ export default function FriendsRaceProjections({ races, myDisplayName, myAvatarU
         {races.map((race) => {
           // Build sorted leaderboard: me + friends, nulls last
           const entries = [
-            { display_name: myDisplayName, avatar_url: myAvatarUrl, projected: race.myProjected, isMe: true },
+            { user_id: undefined as string | undefined, display_name: myDisplayName, avatar_url: myAvatarUrl, projected: race.myProjected, isMe: true },
             ...race.friends.map((f) => ({ ...f, isMe: false })),
           ].sort((a, b) => {
             if (a.projected == null) return 1
@@ -86,30 +86,49 @@ export default function FriendsRaceProjections({ races, myDisplayName, myAvatarU
 
               {/* Leaderboard rows */}
               <div className="space-y-1">
-                {entries.map((entry, idx) => (
-                  <div
-                    key={`${race.raceId}-${idx}`}
-                    className={`flex items-center gap-2 px-2.5 py-2 rounded-xl ${
-                      entry.isMe
-                        ? 'bg-blue-50/80 dark:bg-blue-950/40'
-                        : 'bg-gray-50/50 dark:bg-gray-800/30'
-                    }`}
-                  >
-                    <span className="w-4 text-[10px] font-bold text-center text-gray-400 dark:text-gray-500">
-                      {idx + 1}
-                    </span>
-                    <Avatar name={entry.display_name} url={entry.avatar_url} />
-                    <p className={`flex-1 text-xs font-medium truncate ${
-                      entry.isMe ? 'text-blue-700 dark:text-blue-300' : 'text-gray-800 dark:text-gray-200'
-                    }`}>
-                      {entry.display_name}
-                      {entry.isMe && <span className="ml-1 text-blue-400 font-normal">(you)</span>}
-                    </p>
-                    <p className="text-xs font-semibold tabular-nums shrink-0 text-gray-700 dark:text-gray-300">
-                      {entry.projected ? formatFinishTime(entry.projected) : '—'}
-                    </p>
-                  </div>
-                ))}
+                {entries.map((entry, idx) => {
+                  const bgClass = entry.isMe
+                    ? 'bg-blue-50/80 dark:bg-blue-950/40'
+                    : 'bg-gray-50/50 dark:bg-gray-800/30'
+                  const inner = (
+                    <>
+                      <span className="w-4 text-[10px] font-bold text-center text-gray-400 dark:text-gray-500">
+                        {idx + 1}
+                      </span>
+                      <Avatar name={entry.display_name} url={entry.avatar_url} />
+                      <p className={`flex-1 text-xs font-medium truncate ${
+                        entry.isMe ? 'text-blue-700 dark:text-blue-300' : 'text-gray-800 dark:text-gray-200'
+                      }`}>
+                        {entry.display_name}
+                        {entry.isMe && <span className="ml-1 text-blue-400 font-normal">(you)</span>}
+                      </p>
+                      <p className="text-xs font-semibold tabular-nums shrink-0 text-gray-700 dark:text-gray-300">
+                        {entry.projected ? formatFinishTime(entry.projected) : '—'}
+                      </p>
+                    </>
+                  )
+
+                  if (!entry.isMe && entry.user_id) {
+                    return (
+                      <Link
+                        key={`${race.raceId}-${idx}`}
+                        href={`/dashboard/social/${entry.user_id}`}
+                        className={`flex items-center gap-2 px-2.5 py-2 rounded-xl ${bgClass} hover:opacity-80 transition-opacity`}
+                      >
+                        {inner}
+                      </Link>
+                    )
+                  }
+
+                  return (
+                    <div
+                      key={`${race.raceId}-${idx}`}
+                      className={`flex items-center gap-2 px-2.5 py-2 rounded-xl ${bgClass}`}
+                    >
+                      {inner}
+                    </div>
+                  )
+                })}
               </div>
 
               {race.friends.length === 0 && (

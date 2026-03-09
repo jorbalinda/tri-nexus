@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import type { FeedItem } from '@/lib/types/social'
 
@@ -90,30 +91,34 @@ export default function ActivityFeed({ items }: Props) {
           return (
             <div
               key={item.id}
-              className="flex items-start gap-3 p-3 rounded-xl bg-gray-50/50 dark:bg-gray-800/30"
+              className="flex items-start p-3 rounded-xl bg-gray-50/50 dark:bg-gray-800/30"
             >
-              {item.profile?.avatar_url ? (
-                <Image
-                  src={item.profile.avatar_url}
-                  alt={name}
-                  width={32}
-                  height={32}
-                  className="rounded-full object-cover flex-shrink-0 mt-0.5"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                    {name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
-
               <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-1.5 flex-wrap">
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {name}
-                  </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <Link
+                    href={`/dashboard/social/${item.user_id}`}
+                    className="flex items-center gap-2 shrink-0 hover:opacity-80 transition-opacity"
+                  >
+                    {item.profile?.avatar_url ? (
+                      <Image
+                        src={item.profile.avatar_url}
+                        alt={name}
+                        width={32}
+                        height={32}
+                        className="rounded-full object-cover flex-shrink-0"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                          {name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {name}
+                    </span>
+                  </Link>
                   {item.profile?.username && (
                     <span className="text-xs text-gray-400 dark:text-gray-500">@{item.profile.username}</span>
                   )}

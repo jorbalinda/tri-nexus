@@ -42,7 +42,7 @@ export default function UserSearch() {
     <div className="card-squircle p-4 sm:p-6 space-y-4">
       <div>
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Find Athletes</h3>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Search by @username to follow other athletes</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Search by name or username to follow other athletes</p>
       </div>
 
       <div className="flex gap-2">
@@ -53,7 +53,7 @@ export default function UserSearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="@username"
+            placeholder="Name or @username"
             className="w-full pl-9 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm bg-gray-50/50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
           />
         </div>
