@@ -47,12 +47,15 @@ export default function UpcomingRaceCards() {
 
   useEffect(() => {
     async function fetchRaces() {
-      const today = new Date().toISOString().split('T')[0]
+      // Give a 24-hour grace period so races don't vanish mid-day across time zones
+      const cutoff = new Date()
+      cutoff.setDate(cutoff.getDate() - 1)
+      const cutoffDate = cutoff.toISOString().split('T')[0]
       const { data } = await supabase
         .from('target_races')
         .select('id, race_name, race_date, race_distance, priority, status')
         .in('status', ['upcoming', 'race_week'])
-        .gte('race_date', today)
+        .gt('race_date', cutoffDate)
         .order('race_date', { ascending: true })
         .limit(3)
 
