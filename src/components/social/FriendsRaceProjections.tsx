@@ -95,9 +95,7 @@ export default function FriendsRaceProjections({ races, myDisplayName, myAvatarU
                         : 'bg-gray-50/50 dark:bg-gray-800/30'
                     }`}
                   >
-                    <span className={`w-4 text-[10px] font-bold text-center ${
-                      idx === 0 ? 'text-yellow-500' : 'text-gray-400 dark:text-gray-600'
-                    }`}>
+                    <span className="w-4 text-[10px] font-bold text-center text-gray-400 dark:text-gray-500">
                       {idx + 1}
                     </span>
                     <Avatar name={entry.display_name} url={entry.avatar_url} />
@@ -107,9 +105,7 @@ export default function FriendsRaceProjections({ races, myDisplayName, myAvatarU
                       {entry.display_name}
                       {entry.isMe && <span className="ml-1 text-blue-400 font-normal">(you)</span>}
                     </p>
-                    <p className={`text-xs font-semibold tabular-nums shrink-0 ${
-                      entry.isMe ? 'text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'
-                    }`}>
+                    <p className="text-xs font-semibold tabular-nums shrink-0 text-gray-700 dark:text-gray-300">
                       {entry.projected ? formatFinishTime(entry.projected) : '—'}
                     </p>
                   </div>
