@@ -17,6 +17,17 @@ export async function GET(request: NextRequest) {
   const today = new Date()
   const todayStr = today.toISOString().split('T')[0]
 
+  // Auto-complete races whose date has passed (with 1-day grace for time zones)
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
+  const yesterdayStr = yesterday.toISOString().split('T')[0]
+
+  await supabase
+    .from('target_races')
+    .update({ status: 'completed', updated_at: new Date().toISOString() })
+    .in('status', ['upcoming', 'race_week'])
+    .lt('race_date', yesterdayStr)
+
   const sevenDaysOut = new Date(today)
   sevenDaysOut.setDate(today.getDate() + 7)
   const sevenDaysStr = sevenDaysOut.toISOString().split('T')[0]
