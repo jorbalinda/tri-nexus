@@ -59,7 +59,8 @@ export default function UpcomingRaceCards() {
         .order('race_date', { ascending: true })
         .limit(3)
 
-      setRaces((data as TargetRace[]) || [])
+      const raceList = (data as TargetRace[]) || []
+      setRaces(raceList)
 
       // Fetch latest projection per race
       if (raceList.length > 0) {
