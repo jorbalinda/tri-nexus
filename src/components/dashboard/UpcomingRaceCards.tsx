@@ -59,12 +59,7 @@ export default function UpcomingRaceCards() {
         .order('race_date', { ascending: true })
         .limit(3)
 
-      // Also filter client-side in case race_date column type causes DB comparison issues
-      const raceList = ((data as TargetRace[]) || []).filter((r) => {
-        const raceMs = new Date(r.race_date).getTime()
-        return raceMs > cutoff.getTime()
-      })
-      setRaces(raceList)
+      setRaces((data as TargetRace[]) || [])
 
       // Fetch latest projection per race
       if (raceList.length > 0) {
